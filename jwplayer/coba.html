@@ -13,23 +13,17 @@ Content-Transfer-Encoding: base64
 		background-image:  url('data:image/jpg;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAYCAYAAAA7zJfaAAAAEElEQVR42mP4//8/AwP9CQD0ZEe52lV1zAAAAABJRU5ErkJggg==');
 		*background-image: expression("url(mhtml:" + window.location + "!image1)");
 	</style>
-</head>
-<body>
-	<div id='player'></div>
-	<script type='text/javascript'>
-		jwplayer('player').setup({
-			file: 'http://edge.telin.swiftserve.com/live/livetv-mbr/amlst:m-metrotv/playlist.m3u8',
-			width: '100%',
-			aspectratio: '16:9',
-			skin: 'five',
-			logo: {
-				file: "https://sites.google.com/site/gitluutru/home/khuluutrufilegmit/logo.png",
-				link: 'http://www.youtube.com/watch?v=qSTS3QkoMjc',
-			}
-		});
-	</script>
-	<img 
- alt="http://www.texasvsthenation.com/jwplayer/skins/bekle/controlbar/fullscreenButton.png"
- src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAYCAIAAABfmbuOAAAANUlEQVR42mP5+/cvAwMDy38GEGBhgFL//4MFsVIQJVAeVpUfPn6CGIYqh6KPgVjB/fv2ASkAf9A1OaFSyX8AAAAASUVORK5CYII=">
-
-</body>
+<script src="jwplayer.js" type="text/javascript"></script>
+<script type="text/javascript">
+jwplayer("tv").setup({
+  file: "http://edge.telin.swiftserve.com/live/livetv-mbr/amlst:m-metrotv/playlist.m3u8",
+        title: 'METRO USEETV',
+        width: '100%',
+        height:'100%',
+        stretching: "exactfit",
+        autostart: 'true',
+        abouttext:"TV Online",
+        aboutlink: "http://www.pakteguh.com",
+  primary: 'flash',
+  
+});</script>
