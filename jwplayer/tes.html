@@ -1,6 +1,6 @@
 <head>
 	<script type="text/javascript" src="jwplayer.js"></script>
-	<script type="text/javascript">jwplayer.key="5qMQ1qMprX8KZ79H695ZPnH4X4zDHiI0rCXt1g==";</script>
+	<script type="text/javascript">jwplayer.key="yPMF73PN41ELHL/kNjQwSO6uFlQqCtWIu7gbjRjqXOylrJvCOTu+NAHShFA=";</script>
 	<style  type="text/css">
 /*
 Content-Type: multipart/related; boundary="MYSEPARATOR"
@@ -15,21 +15,17 @@ Content-Transfer-Encoding: base64
 	</style>
 </head>
 <body>
-	<div id='player'></div>
-	<script type='text/javascript'>
-		jwplayer('player').setup({
-			file: 'http://edge.telin.swiftserve.com/live/livetv-mbr/amlst:m-metrotv/playlist.m3u8',
-			width: '100%',
-			aspectratio: '16:9',
-			skin: 'five',
-			logo: {
-				file: "https://sites.google.com/site/gitluutru/home/khuluutrufilegmit/logo.png",
-				link: 'http://www.youtube.com/watch?v=qSTS3QkoMjc',
-			}
-		});
-	</script>
-	<img 
- alt="http://www.texasvsthenation.com/jwplayer/skins/bekle/controlbar/fullscreenButton.png"
- src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAYCAIAAABfmbuOAAAANUlEQVR42mP5+/cvAwMDy38GEGBhgFL//4MFsVIQJVAeVpUfPn6CGIYqh6KPgVjB/fv2ASkAf9A1OaFSyX8AAAAASUVORK5CYII=">
-
-</body>
+	<div id="player">Loading the player...</div>
+<script type="text/javascript">
+    jwplayer("player").setup({
+     playlist: [{
+       // file is the url to m3u8 file
+       file:'http://edge.telin.swiftserve.com/live/livetv-mbr/amlst:m-metrotv/playlist.m3u8',
+       provider: '/HLSProvider6.swf',
+       type:'hls'
+      }],
+      width: 640,
+      height: 480,
+      primary: "flash"
+    });
+</script>
