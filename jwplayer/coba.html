@@ -14,8 +14,9 @@ Content-Transfer-Encoding: base64
 		*background-image: expression("url(mhtml:" + window.location + "!image1)");
 	</style>
 <script src="jwplayer.js" type="text/javascript"></script>
-<script type="text/javascript">
-jwplayer("tv").setup({
+<div id='player'></div>
+	<script type='text/javascript'>
+		jwplayer('player').setup({
   file: "http://edge.telin.swiftserve.com/live/livetv-mbr/amlst:m-metrotv/playlist.m3u8",
         title: 'METRO USEETV',
         width: '100%',
