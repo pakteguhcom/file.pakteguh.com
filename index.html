@@ -54,12 +54,14 @@ document.getElementById(container).appendChild(entry);
 listStreams(teststreams, "streamlist");
 
 function userSubmit() {
+  
 
-var ngecek = document.getElementsByName("userInput");
+var ngecek = document.myForm.userInput;
 
 for(var i = 0; i < ngecek.length; i++) {
    if(ngecek[i].checked == true) {
        loadStream(ngecek[i].value);
+       break
    }
  }
 }
