@@ -58,7 +58,7 @@ function userSubmit() {
 var ngecek = document.getElementsByName("userInput");
 
 for(var i = 0; i < ngecek.length; i++) {
-   if(genders[i].checked == true) {
+   if(ngecek[i].checked == true) {
        loadStream(ngecek[i].value);
    }
  }
