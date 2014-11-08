@@ -33,10 +33,22 @@
   </video>
 
 <br>
-<input id="userInput" value="http://edge.telin.swiftserve.com/live/livetv-mbr/amlst:m-antv/playlist.m3u8" size="40"> <button onclick="userSubmit()">Alternatif 1</button><br>
-
-
-<script type="text/javascript" src="vd/hls_streams.js"></script>
+<ul id="streamlist">
+</ul>
+<br>
+<script type="text/javascript" >
+var teststreams = [{
+    file:'http://www.useetv.com/jhos/tellin/antv.m3u8',
+    title: 'Server 1'
+},{
+    file:'http://edge.nim.mivo.tv/8g9x4zwcjns3/smil:antv2_all/playlist.m3u8',
+    title: 'Server 2'
+},{
+    file:'http://edge.telin.swiftserve.com/live/livetv-mbr/amlst:m-antv/playlist.m3u8',
+    title: 'Server 3'
+}
+];
+</script>
 <script type="text/javascript">
 
 function listStreams(list, container) {
