@@ -1,6 +1,6 @@
 var teststreams = [{
-    file:'http://streambox.fr/playlists/test_001/stream.m3u8',
-    title: 'VOD (6 levels) - ffmpeg internal segmenter x264+aac'
+    file:'rtmp://202.117.80.19/live/live4',
+    title: 'CCTV 5'
 },{
     file:'http://184.72.239.149/vod/smil:BigBuckBunny.smil/playlist.m3u8',
     title: 'BigBuckBunny 2 Levels'
