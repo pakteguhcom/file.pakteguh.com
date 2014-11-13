@@ -18,7 +18,7 @@
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-52843650-1', 'auto');
+  ga('create', 'UA-56681516-1', 'auto');
   ga('send', 'pageview');
 
 </script>
@@ -37,8 +37,21 @@
 Check with your own Playlist ! <a href="http://kb2.adobe.com/cps/142/tn_14213.html">beware of Cross Domain Policy</a><br>
 <input id="userInput" value="http://edge.nim.mivo.tv/8g9x4zwcjns3/smil:tvone2_all/playlist.m3u8" size="60"> <button onclick="userSubmit()">Load and Play</button><br>
 <p>
-
-<script type="text/javascript" src="vd/hls_streams.js"></script>
+<ul id="streamlist" style="color: #FFFFFF">
+</ul>
+<script type="text/javascript" >
+var teststreams = [{
+file:'http://edge.telin.swiftserve.com/live/livetv-mbr/amlst:m-tvone/playlist.m3u8',
+title: 'Server 1'
+},{
+file:'http://edge.nim.mivo.tv/8g9x4zwcjns3/smil:tvone2_all/playlist.m3u8',
+title: 'Server 2'
+},{
+file:'rtmp://119.110.77.181/liveorigin/ch001.stream',
+title: 'Server 3'
+}
+];
+</script>
 <script type="text/javascript">
 
 function listStreams(list, container) {
