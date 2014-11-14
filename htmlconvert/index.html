@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Yellowpipe - HTML converter: HTML to PHP, HTML to Javascript, HTML to ASP</title>
+<meta name="description" content="HTML converter. Convert any HTML file into another format: HTML to PHP, Javascript or ASP. Free service!" />
+<meta name="keywords" content="HTML converter, convert HTML, HTML to PHP, HTML to Javascript, HTML to ASP, tags, replace, convert tags" />
+<link rel="stylesheet" href="style02.css" type="text/css">
+<script type="text/javascript">
+
+function brCheck(data)
+{
+  var ns4 = document.layers;
+  var ns6 = document.getElementById && !document.all;
+  var ie4 = document.all;
+  
+  if(ns4) br = "%0A";
+  else if(ns6) br = "%0A";
+  else if(ie4) br = "%0D%0A";
+  else br = "%0D%0A";
+	 
+  data.value=data.value.replace(/"/gi,'\\"'); 
+  dataArr=escape(data.value).split(br);
+  data.value="";
+	 
+}
+
+function scriptPHP(data){
+brCheck(data);
+for (i=0; i<dataArr.length; i++){
+data.value+= (i==0) ? "<?php\necho " : "echo "
+data.value+= "\"" + unescape(dataArr[i]); 
+data.value+= (i!=dataArr.length-1) ? "\\n\"; \n" : "\\n\";\n"
+}
+data.value+="\?>"
+}
+
+function scriptJS(data){
+brCheck(data);
+for (i=0; i<dataArr.length; i++){
+data.value+= (i==0) ? "<script type=\"text/javascript\">\n<!-- \ndocument.writeln(\" " : "document.writeln(\" "
+data.value+= "" + unescape(dataArr[i])
+data.value+= (i!=dataArr.length-1) ? " \"); \n" : " \");\n" 
+}
+data.value+=" \// \-->\n<\/script>"
+}
+
+function scriptASP(data){
+brCheck(data);
+for (i=0; i<dataArr.length; i++){
+data.value+= (i==0) ? "#!/usr/bin/perl\nprint \"Content-type: text/html\\n\\n\";\n$code[0] = " : "$code["+i+"] = "
+data.value+= "\"" + unescape(dataArr[i])
+data.value+= (i!=dataArr.length-1) ? "\"; \n" : "\";\n" 
+}
+data.value+="for ($i=0;$i<scalar(@code);$i++) {print($code[$i].\"\\n\");}" 
+}
+
+function copyF(txx) {
+with(txx){
+focus(); select() 
+}
+if(document.all){
+txt=txx.createTextRange()
+txt.execCommand("Copy") 
+}}
+
+</script>
+</head>
+<body> 
+ <h2>HTML Converter</h2>
+  <div class="feature"> 
+    <h3>HTML  Converter </h3> 
+    <p>&raquo; Online HTML to Script Converter tool</p> 
+    <p>This program let you convert your HTML in various scripting languages such as: HTML to PHP, HTML to Javascript and HTML to ASP <br />
+ <br />
+    <form name="doc" action="">
+	  <textarea name="tx" cols="65" rows="7" class="input1"></textarea>
+	  <br />
+	  <input name="button" type="button" class="input2" onclick="scriptPHP(document.doc.tx)" value="HTML -> PHP">
+      <input name="button2" type="button" class="input2" onclick="scriptJS(document.doc.tx)" value="HTML -> JavaScript">
+      <input name="button2" type="button" class="input2" onclick="scriptASP(document.doc.tx)" value="HTML -> ASP">
+      <input name="reset" type="reset" class="input2" value="Reset" onClick="document.doc.tx.focus()">
+      <input name="button2" type="button" class="input2" onclick="copyF(document.doc.tx)" value="Select All">
+    </form>
+	</p>
+	<br />
+	</div> 
+  <!-- end feature --> 
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-56681516-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- pakteg_main_Blog1_300x250_as -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:300px;height:250px"
+     data-ad-client="ca-pub-2500286496421833"
+     data-ad-slot="7814905300"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</body>
+</html>
