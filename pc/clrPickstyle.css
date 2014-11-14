@@ -1,0 +1,368 @@
+body{
+	font-family: Arial,sans-serif;
+	/*color: #333333;*/
+	line-height: 1.166;	
+	margin: 0px;
+	padding: 0px;
+}
+
+a:link, a:visited, a:hover {
+	color: #006699;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: Arial,sans-serif;
+	margin: 0px;
+	padding: 0px;
+}
+
+h1{
+ font-family: Verdana,Arial,sans-serif;
+ font-size: 160%;
+ color: #334d55;
+}
+
+h2{
+ font-size: 114%;
+ color: #006699;
+}
+
+h3{
+ font-size: 100%;
+ color: #334d55;
+}
+
+h4{
+ font-size: 100%;
+ font-weight: normal;
+ color: #333333;
+}
+
+h5{
+ font-size: 100%;
+ color: #334d55;
+}
+
+ul{
+ list-style-type: square;
+}
+
+ul ul{
+ list-style-type: disc;
+}
+
+ul ul ul{
+ list-style-type: none;
+}
+
+label{
+	font: bold 100% Arial,sans-serif;
+ color: #334d55;
+}
+
+
+/***********************************************/
+/* Layout Divs                                 */
+/***********************************************/
+
+#masthead{
+	margin: 0;
+	padding: 10px 0px;
+	border-bottom: 1px solid #cccccc;
+	width: 100%;
+}
+
+#navBar{
+	margin: 0 79% 0 0;
+	padding: 0px;
+	background-color: #eeeeee;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+#content{
+  float:right;
+	width: 75%;
+	margin: 0;
+	padding: 0 3% 0 0;
+}
+
+
+/***********************************************/
+/*Component Divs                               */
+/***********************************************/
+
+#siteName{
+	margin: 0px;
+	padding: 0px 0px 10px 10px;
+}
+
+
+/*************** #pageName styles **************/
+
+#pageName{
+	padding: 0px 0px 10px 10px;
+}
+
+
+/************* #globalNav styles **************/
+
+#globalNav{
+color: #cccccc;
+padding: 0px 0px 0px 10px;
+white-space: nowrap;
+}
+
+#globalNav img{
+ display: block;
+}
+
+#globalNav a {
+	font-size: 80%;
+	padding: 0px 4px 0px 0px; 
+}
+
+
+/************* #breadCrumb styles *************/
+
+#breadCrumb{
+	font-size: 75%;
+	padding: 5px 0px 5px 10px;
+}
+
+
+/************** .feature styles ***************/
+
+.feature{
+	padding: 0px 0px 10px 10px;
+	font-size: 80%;
+}
+
+.feature h3{
+	padding: 30px 0px 5px 0px;
+	text-align: center;
+}
+
+.feature img{
+	float: left;
+	padding: 0px 10px 0px 0px;
+	margin: 0 5px 5px 0;
+}
+
+/* .feature for yis/tools/traffic/thumbnail.php (images<br>image problem)*/
+.feature2{
+	padding: 0px 0px 10px 10px;
+	font-size: 80%;
+}
+
+.feature2 h3{
+	padding: 30px 0px 5px 0px;
+	text-align: center;
+}
+
+
+
+/************** .story styles *****************/
+
+.story{
+	clear: both;
+	padding: 10px 0px 0px 10px;
+	font-size: 80%;
+}
+
+.story p{
+  padding: 0px 0px 10px 0px;
+}
+
+
+/************* #siteInfo styles ***************/
+
+#siteInfo{
+	clear: both;
+	border: 1px solid #cccccc;
+	font-size: 75%;
+	color: #cccccc;
+	padding: 10px 10px 10px 10px;
+	margin-top: -1px;
+}
+
+#siteInfo img{
+	padding: 4px 4px 4px 0px;
+	vertical-align: middle;
+}
+
+
+/************* #search styles ***************/
+
+#search{
+	padding: 5px 0px 5px 10px;
+	border-bottom: 1px solid #cccccc;
+	font-size: 80%;
+}
+
+#search form{
+ margin: 0px;
+ padding: 0px;
+}
+
+#search label{
+	display: block;
+	margin: 0px;
+	padding: 0px;
+}
+
+
+/*********** #navBar link styles ***********/
+
+#navBar ul a:link, #navBar ul a:visited {display: block;}
+#navBar ul {list-style: none; margin: 0; padding: 0;}
+
+#navBar li {border-bottom: 1px solid #EEE;}
+
+html>body #navBar li {border-bottom: none;}
+
+
+/*********** #sectionLinks styles ***********/
+
+#sectionLinks{
+	position: relative;
+	margin: 0px;
+	padding: 0px;
+	border-bottom: 1px solid #cccccc;
+	font-size: 80%;
+}
+
+#sectionLinks h3{
+	padding: 10px 0px 2px 10px;
+}
+
+#sectionLinks a:link{
+	padding: 2px 0px 2px 10px;
+	border-top: 1px solid #cccccc;
+	width: 100%;
+	voice-family: "\"}\""; 
+	voice-family:inherit;
+	width: auto;
+}
+
+#sectionLinks a:visited{
+	border-top: 1px solid #cccccc;
+	padding: 2px 0px 2px 10px;
+}
+
+#sectionLinks a:hover{
+	border-top: 1px solid #cccccc;
+	background-color: #dddddd;
+	padding: 2px 0px 2px 10px;
+}
+/*************Fancy pants style***************/
+.swatch, .swatch2 {
+  cursor: hand;
+  cursor: pointer;
+}
+
+.border, .ch {
+  cursor: default;
+}
+
+.swatch, .swatch2 {
+  height: 18px;
+}
+
+.swatch {
+  width: 18px;
+}
+
+.mono {
+  font-family: monospace;
+}
+
+.link {
+  font: 11px verdana, arial, sans-serif;
+}
+
+.text, .url {
+	font: 10px verdana, arial, sans-serif;
+}
+
+#fieldForm {
+  margin: 0px;
+}
+
+.palettes {
+  width: 16em;
+}
+
+
+/*********** .relatedLinks styles ***********/
+
+.relatedLinks{
+	margin: 0px;
+	padding: 0px 0px 10px 10px;
+	font-size: 75%;
+}
+
+.relatedLinks h3{
+	padding: 10px 0px 2px 0px;
+}
+
+
+/************** #advert styles **************/
+
+#advert{
+	padding: 10px 0px 0px 10px;
+	font-size: 80%;
+	border-top: 1px solid #cccccc;
+}
+
+#advert img{
+	display: block;
+}
+
+
+/************** #headlines styles **************/
+
+#headlines{
+	margin: 0px;
+	padding: 10px 0px 20px 10px;
+	font-size: 80%;
+}
+
+#headlines p{
+	padding: 5px 0px 5px 0px;
+}
+
+
+
+
+/************** #3 col tabl styles **************/
+div#threecolglob {
+	width: 590px;
+}
+div#threecolleft {
+    float: left;
+	width: 180px;
+	padding: 0px 10px 0px 10px;
+}
+div#threecolright {
+	float: right;
+	width: 180px;
+	padding-left: 10px;
+}
+div#threecolmiddle {
+    padding: 0px 10px 1px 10px;
+	margin: 0px;
+}
+
+/************** #2 col tabl styles **************/
+
+div#twocolglob {width: 550px;}
+div#twocolleft {float: left;width: 250px;padding: 0px 10px 0px 10px;}
+div#twocolright {float: right;width: 250px;padding-left: 10px;}
+.twocolcontent {font-size: small}
