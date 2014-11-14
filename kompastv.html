@@ -12,16 +12,7 @@
   <script>
     videojs.options.flash.swf = "vd/video-js.swf";
   </script>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-52843650-1', 'auto');
-  ga('send', 'pageview');
-
-</script>
 </head>
 <body>
 
@@ -32,8 +23,29 @@
     <source src="http://edge.nim.mivo.tv/8g9x4zwcjns3/smil:kompastv_all/playlist.m3u8" type='video/mp4' />
   </video>
 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-<script type="text/javascript" src="vd/hls_streams.js"></script>
+  ga('create', 'UA-56681516-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<ul id="streamlist" style="color: #FFFFFF">
+</ul>
+<script type="text/javascript" >
+var teststreams = [{
+file:'http://edge.nim.mivo.tv/8g9x4zwcjns3/smil:kompastv_all/playlist.m3u8',
+title: 'Server 1'
+},{
+file:'rtmp://202.137.11.52/jakarta/offair.sdp',
+title: 'Server 2'
+}
+];
+</script>
 <script type="text/javascript">
 
 function listStreams(list, container) {
