@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Pak Teguh - Pilih Warna Alias Color Picker</title>
+<meta NAME="description" 
+CONTENT="Pak Teguh Color Picker online Untuk Web Developer dan web learners" />
+<meta NAME="keywords" 
+content="color picker, webmaster, color chooser,web developer, web learner, rgb, 255 255 255" />
+<META NAME="Date-Creation-yyyymmdd" content="20141114" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="stylesheet" href="clrPickstyle.css" type="text/css" />
+<style type="text/css">
+a.overline:hover { text-decoration: overline underline; }
+a.boldover:hover { font-weight: bold; }
+a.italicover:hover { font-style: italic; }
+a.uppercaseover:hover { text-transform: uppercase; }
+a.borderover:hover {
+	border: thin solid #666666;
+	text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+<h2>Color picker for Webmaster</h2>
+	<h3>Color picker - Choose your design / web page style online</h3>
+ <form action="color-save.do" id="fieldForm" method="post">
+ <!-- Begin example table -->
+            <div onClick="ff_ce();">
+              <table style="" class="border" height="60" onClick="return ff_oc(&quot;border&quot;)" cellpadding="1" cellspacing="0" id="border">
+                <tr>
+                  <td><table cellpadding="0" align="center" cellspacing="0" height="58">
+                      <tr>
+                        <td><table cellpadding="0" width="100%" id="bg" onClick="return ff_oc(&quot;bg&quot;)" class="bg">
+                            <tr>
+                              <td align="left" valign="top" height="41"><p><span id="link" onClick="return ff_oc(&quot;link&quot;)" class="link"><b>Design style chooser</b></span></p>
+                                <p><span id="text" onClick="return ff_oc(&quot;text&quot;)" class="text">This page will help you to choose and build your design style for your page. It can be used by web designer to help their customers in selecting a style for their website.<br /><br />
+                                Select the color you like for each element below: Title, border, background, text and links:<br /><br />
+                                Web browsers can only directly display 216 colors. These will all have <strong>Hex</strong> (Hexadecimal) Values, a combination of either 00, 33, 66, 99, CC or FF.
+        For example pure red is <font color="#FF0000"><strong>#FF0000</strong></font> and pure blue is <font color="#0000FF"><strong>#0000FF</strong></font>. Other colors are rendered using a process called "<strong>Dithering</strong>".<br /><br />
+                                <strong>Dithering</strong> is when a web browser <u>attempts</u> to match a color not in its pallette by 'Mixing' other colors. The result can appear speckled and when used in a GIF file, dithering can severly increase the file size. It is therefore recommended that you stick with the native browser pallette displayed in the tables below.<br>
+					                                </span>
+					                  <span id="url" onClick="return ff_oc(&quot;url&quot;)" class="url" style="cursor: pointer;">http://www.pakteguh.com - Color picker</span></p></td>
+                            </tr>
+                          </table></td>
+                      </tr>
+                      
+                    </table></td>
+                </tr>
+              </table>
+            </div>
+			<!-- End example table -->
+
+
+<script src="test2-ColorSet.js" type="text/javascript"><!--
+//--> </script>
+<script src="test2-ColorSet2.js" type="text/javascript"><!--
+//--> </script>
+
+
+    <table cellpadding="5" width="620" align="center">
+      
+        <tr>
+          
+          <td valign="top"><p></p>
+            <b>Choose your colors</b> for each page element<br>
+            <table cellpadding="0" bgcolor="#000000" cellspacing="1">
+              <script type="text/javascript"><!--
+wt()//--> </script>
+            </table>
+            <p></p>
+            <table width="568">
+              <tr>
+                <label for="field.border">
+                <td class="ch" onClick="ff('border')">
+				<input type="radio" checked id="field.border" value="border" name="field">Border</td>
+                <td><div class="errorbox-good">
+                <input type="text" name="border" onKeyDown="sf_ok('border',this.value)" maxlength="7" onFocus="ff('border')" onChange="sf_oc('border',this.value)" class="mono" size="7">
+                  </div></td>
+                </label>
+                <label for="field.link">
+                <td class="ch" onClick="ff('link')">
+				<input type="radio" id="field.link" value="link" name="field">Title</td>
+                <td><div class="errorbox-good">
+                <input type="text" name="link" onKeyDown="sf_ok('link',this.value)" maxlength="7" onFocus="ff('link')" onChange="sf_oc('link',this.value)" class="mono" size="7">
+                  </div></td>
+                </label>
+              </tr>
+              <tr>
+                <label for="field.bg">
+                <td class="ch" onClick="ff('bg')">
+				<input type="radio" id="field.bg" value="bg" name="field">Background</td>
+                <td><div class="errorbox-good">
+                <input type="text" name="bg" onKeyDown="sf_ok('bg',this.value)" maxlength="7" onFocus="ff('bg')" onChange="sf_oc('bg',this.value)" class="mono" size="7">
+                  </div></td>
+                </label>
+                <label for="field.text">
+                <td class="ch" onClick="ff('text')">
+				<input type="radio" id="field.text" value="text" name="field">Text</td>
+                <td><div class="errorbox-good">
+                <input type="text" name="text" onKeyDown="sf_ok('text',this.value)" maxlength="7" onFocus="ff('text')" onChange="sf_oc('text',this.value)" class="mono" size="7">
+                  </div></td>
+                </label>
+              </tr>
+              <tr>
+                <td colspan="2"></td>
+                <label for="field.url">
+                <td class="ch" onClick="ff('url')">
+				<input type="radio" id="field.url" value="url" name="field">URL</td>
+                <td><div class="errorbox-good">
+                <input type="text" name="url" onKeyDown="sf_ok('url',this.value)" maxlength="7" onFocus="ff('url')" onChange="sf_oc('url',this.value)" class="mono" size="7">
+                  </div></td>
+                </label>
+              </tr>
+            </table></td>
+        </tr>
+        <tr>
+          <td colspan="3" align="center"><input type="hidden" name="action" value="">
+            <table border="0">
+              <tr>
+                
+                <td><table class="cancelborder">
+                    <tr>
+                      <td><input type="reset" name="cancel" value="Reset" onClick="f_s(this)">
+                      </td>
+                    </tr>
+                  </table></td>
+              </tr>
+            </table></td>
+        </tr>
+    
+    </table>
+</form>
+
+ <p>
+  <script type="text/javascript"><!--
+sc_oc(false);//--> </script>
+  </p>
+ <h2>LINKS STYLE </h2>
+ <p>Here are different styles of link: </p>
+
+ <p><a href="#"><u>Standard</u></a> &bull; <a href="#">Yellowpipe</a> &bull; <a href="#" class="overline">Overline On Mouse Over</a> &bull; <a href="#" style="color:#006699;" onmouseover="this.style.color='#ff0000'" onmouseout="this.style.color='#006699'">Change color On Mouse Over</a> &bull; <a href="#" onmouseover="this.style.backgroundColor='#eeeeee';" onmouseout="this.style.backgroundColor='#ffffff';">Change background On Mouse Over</a> </p>
+ <p><a href="#" class="boldover">Bold On Mouse Over</a> &bull; <a href="#" class="uppercaseover">Uppercase On Mouse Over</a> &bull; <a href="#" class="italicover">Italic On Mouse Over</a> &bull; <a href="#" class="borderover" style="text-decoration:none">Border On Mouse Over</a><br>
+      <br>
+  </p>
