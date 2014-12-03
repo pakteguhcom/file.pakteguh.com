@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="DJ" name="author">
+<title>player</title>
+<meta name="viewport" content="width=device-width" />
+<style>
+::cue(c:past) { color:yellow }  /* karaoke */
+::cue(c:future) { color:red }
+::cue(v) { color: yellow }
+::cue(v[voice="F"]) { color: magenta }
+::cue(c.blue) { color: blue }
+div, span {font-family:Helvetica }
+span {cursor:pointer}
+.sel {color:rgb(50,165,207)}
+</style>
+</head>
+
+<body>
+<span onclick='document.querySelector("input").click()' title=" or drop the audio or video or vtt here">Open...</span>
+<span accesskey="l" title="last" id="l" onclick='if(j) j=(j>1)?j-1:1; else if(k) k=(k>1)?k-1:1; else i=(i>2)?i-2:1; document.getElementById("n").click()'> I&lt;</span>
+<span onclick='r=Math.abs(r-1);this.className=(r)?"":"sel"' title="repeat"> &#x21bb;</span>
+<span accesskey="n" title="next" id="n" onclick='if(j) {document.title=audio.src=p[j-1].location[0];div.title=p[j-1].title||""; j=(j<p.length)?j+1:1;audio.play()}
+ else if(k) {audio.src = window.URL.createObjectURL(files[k-1]); document.title=files[k-1].name; k=(k<files.length)?k+1:1;audio.play()}
+ else audio.currentTime=(m)?Date.parse("T"+tags["CHAPTER0"+((i<10)?"0":"")+i]+"Z")/1000:audio.textTracks[0].cues[i-1].startTime'> &gt;I</span><br />
+<video controls="controls" ondrop="event.preventDefault();drop(event)" ondragover="event.preventDefault()">
+<track>not supported</video>
+<div>-</div>
+<input type="file" onchange="drop(this)" style="visibility:hidden" accept="audio/*,video/*" multiple>
+
+<script>
+var audio=document.querySelector("video"), div=document.querySelector("div"), i=1, m, j, k, r=1, n=0, t=location.search.slice(1)  //r=repeat; n=next chapter
+if(t) {if(!isNaN(1*t)) setInterval(function(){t--; if(!t) audio.pause()}, 60000); else audio.src=t}  //player.htm?10 plays 10 minutes; ?url plays url
+if(localStorage.last) {p=JSON.parse(localStorage.last); j=1}  //last playlist
+
+function drop(evt) {j=0; k=0
+files = (evt.dataTransfer||evt).files
+if(files.length>1) k=2
+ if (files[0] && audio.canPlayType(files[0].type))  //audio
+{audio.src = window.URL.createObjectURL(files[0]); document.title=files[0].name} else
+if (evt.dataTransfer && evt.dataTransfer.getData("URL")) audio.src=evt.dataTransfer.getData("URL"); else 
+ if (!files[0] || files[0].name.match(/.vtt$/))  //track
+{track=document.createElement("track")
+track.setAttribute( "src",(files[0])?window.URL.createObjectURL(files[0]):'data:text/vtt;charset=utf-8,'+encodeURIComponent(evt.dataTransfer.getData("Text")) )
+track.setAttribute( "default","default")
+audio.replaceChild(track,audio.childNodes[0])} else 
+ if(files[0].name.match(/.m3u8?$|.pls$|.jspf$/))  //playlist
+{var reader=new FileReader(); reader.onload=function(e) { p=e.target.result; pt=p.match(/Title.*/g)||[]
+if(files[0].name.match(/.jspf$/)) p=JSON.parse(p).playlist.track; else 
+{p=(files[0].name.match(/.m3u8?$/))?p.replace(/#EXT.*\r?\n/g,"").split("\n"):p.replace(/(:\d+)\n/g,"$1/;\n").match(/File.*/g)  //shoutc1
+for(l=0;l<p.length;l++) p[l]={"location":[p[l].replace(/^F.*?=/,"")],"title":(pt[l]||"").replace(/^T.*?=/,"")} }
+j=1;document.getElementById("n").click(); localStorage.last=JSON.stringify(p) }
+reader.readAsText(files[0])} else alert("type not supported")
+
+audio.addEventListener("timeupdate", function () {  //cuechange
+if (m) for (i = 1; tags["CHAPTER0"+((i<10)?"0":"")+i]; i++) 
+ {var tmp="CHAPTER0"+((i<10)?"0":"")+i; if (audio.currentTime >= Date.parse("T"+tags[tmp]+"Z")/1000) div.innerHTML = tags[tmp+"NAME"]; else break}
+else if (audio.textTracks[0] && audio.textTracks[0].cues) { 
+{i0=i; i=1; while (i <= audio.textTracks[0].cues.length && audio.currentTime >= audio.textTracks[0].cues[i-1].startTime) i++ }
+if (i!=i0 && i>1) { div.innerHTML = audio.textTracks[0].cues[i-2].text.replace(/\n/g,"<br>")
+ +((n &&audio.textTracks[0].cues[i])?"<br><span style='color:grey'>"+audio.textTracks[0].cues[i].text+"</span>":"")
+ var tmp=audio.textTracks[0].cues[i-2].text.match(/"[^"]+\.(jpg|png)"/); if(tmp) document.body.style.background='url('+tmp[0]+') 0 0 /cover' }  //meta
+ } })
+}
+
+if(typeof(audio.mozGetMetadata)=="function") audio.addEventListener("loadedmetadata", function () {  //ogg with FF
+tags=audio.mozGetMetadata(); m=0; div.innerHTML = (tags.ARTIST||tags.Artist||"")+"-"+(tags.TITLE||""); if(tags.CHAPTER001) m=1
+document.body.style.background = 'url('+"data:image/;base64,"+window.btoa(window.atob(tags.METADATA_BLOCK_PICTURE||"").match(/(\u0089PNG|\u00FF\u00D8)[\s\S]*/))+') 0 0 /cover' 
+})
+
+audio.addEventListener("ended", function () { if(j>r||k>r) document.getElementById("n").click(); if(j+k+r==0) audio.play() })
+</script>
+</body>
+</html>

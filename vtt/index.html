@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="DJ" name="author">
+<title>lyr to vtt</title>
+</head>
+<body>
+
+copy and paste or drag and drop the <b>lyr</b> or <b>srt</b> or <b>txt</b> file here<br>
+<textarea rows="8" cols="55" id="srt" ondrop="drop(event)" ondragover="event.preventDefault()">
+[00:12.00]Line 1 lyrics
+[00:17.20]Line 2 lyrics
+[00:21.10]Line 3 lyrics
+</textarea>
+
+<br><button onclick='convert()' id="bt">convert</button> 
+<a id="dl" download="myfile.vtt" onclick='this.href="data:text/vtt;utf-8,"+document.getElementById("vtt").value.replace(/\n/g,"%0D%0A")'>download</a>
+&nbsp;&nbsp;<span id="ti"></span>
+<button onclick='sel("b")' title='bold'><b>B</b></button><button onclick='sel("i")'><i>I</i></button><button onclick='sel("u")'><u>U</u></button>
+<button title='voice' onclick='tmp=prompt("Speaker",vc); if(tmp!=null) {sel("v "+tmp);vc=tmp}'>v</button><button title='class&#13;(e.g. blue)' 
+onclick='tmp=prompt("Style\n(e.g. Top middle=8)","left"); if(tmp!=null) sel("c."+tmp.replace(/Top/,"0%"))'>c</button>
+&nbsp;<font face="Segoe UI Symbol" title="settings" style="cursor:pointer" 
+onclick='tmp=prompt("Duration in sec (0=till next chapter)",d); if(tmp!=null) if(!isNaN(tmp)) {d=1*tmp; v=confirm("Replace font?")}'>&#x2699;</font><br>
+
+<textarea rows="24" cols="55" id="vtt">
+WEBVTT
+</textarea>
+
+<script>
+mp3mini=window.open("player.htm","player"); v=0; d=2  //optional; replace Font; duration in sec (0=till next chapter)
+tmp=location.search; if(tmp) if(isNaN(tmp.slice(1))) v=(v)?0:1; else d=1*tmp.slice(1)  // vtt maker.htm?3 set duration 3 sec
+first=1; var srt=document.getElementById("srt"), vtt, vc="", an=["left","middle","right"]
+
+function convert() {
+var srt=document.getElementById("srt").value
+if(first) vtt="WEBVTT " + (srt.match(/\[ar:.+\]\n/)||"") + "\n\n"
+
+if (/^\[..:/.test(srt)) { //lyr
+cue=srt.match(/\[[\d:\.]{8}\]/g); cue.sort(); var tmp=""  //refrain
+for (var i=0; i<cue.length; i++) {var patt=new RegExp("\\"+cue[i].replace("]","\\]")+"(.*)"); tmp+=cue[i]+patt.exec(srt)[1]+"\n"}; srt=tmp
+vtt+=srt.replace(/\[\D.+\]\n/g,"").replace(/(\])(.*\n)(\[)(.{8})/g,"$40\n$2\n$40 --\u003E ").replace(/\[(.{8})/,"$10 --\u003E ").replace(" ]"," 59:59.000\n").replace(/(\[.{8}\]){1,}/g,"<v>").replace(/(<.{8})>/g,"$10><c>")
+ } else if (/^1\r?\n/.test(srt)) {  //srt
+vtt+=srt.replace(/(:[0-5]\d),(\d{2})/g,"$1.$2").replace(/X1:(\d?\d)\d.+/g,"position:$1%"); if(v) vtt=vtt.replace(/<font color="(.+?)".*?>/g,"<c.$1>").replace(/<\/font>/g,"</c>")
+ }
+else if(first && srt) {t=new Date();cue=srt.match(/(.*\n?){1,1}/g);j=0;document.getElementById("bt").textContent="next line";first=0
+ti=setInterval(function(){document.getElementById("ti").innerHTML=Math.round((new Date()-t)/1000)+"s"},100)  //songstart
+audio1=mp3mini.audio;audio1.currentTime=0;audio1.play();document.getElementById("dl").download=mp3mini.files[0].name.match(/.*\./)+"vtt"
+ } else if(j<cue.length-1) { var s=(mp3mini && audio1)?audio1.currentTime*1000:new Date()-t  //txt
+vtt+=new Date(s).toISOString().substring(14,23)+" --\u003E "+new Date(s+d*1000).toISOString().substring(14,23)+"\n"+cue[j]+"\n"
+if(!d) vtt=vtt.replace(/--> .*(\n.*\n\n)(.*?) /g,"--> $2$1$2 ").replace(/>.*(\n.+\n?\n$)/,"> 59:59.000$1")
+j++; document.getElementById("srt").scrollTop = j*16; document.getElementById("srt").value+="\n"
+if(j==cue.length-1) {document.getElementById("bt").textContent="convert"; first=1;clearInterval(ti)}
+ }  // e.g. left=0%,100% left=100% left=1=:Bottom left; <br /> breaks line
+tmp=vtt.match(/\{\\an\d\}|<c\.\d><\/c>/g); if(tmp) for(i=0;i<tmp.length;i++) vtt=vtt.replace(/\{\\an.\}|<c\.\d><\/c>/,"<c."+(100-50*Math.floor((tmp[i].match(/\d/)-1)/3))+"% "+an[(tmp[i].match(/\d/)-1)%3]+"></c>")
+vtt=vtt.replace(/c\.(\d+%),/g,"c.position:$1").replace(/(%|c\.)(-?\d{1,3}%? )/g,"$1 line:$2").replace(/\n(.*)<c\.(.*?)(left|right|middle)><\/c>/g," $2align:$3\n$1").replace(/<br \/>/g,"\n")
+document.getElementById("vtt").value=vtt.replace(/<\/v>\n/g,"\n").replace(/\n(\D): /g,"\n<v $1>"); document.getElementById("vtt").select()
+document.getElementById("dl").href=""
+}
+
+function drop(evt) {
+var files = evt.dataTransfer.files
+if (files[0] && files[0].type.match(/text|^$/)) { evt.preventDefault()
+document.getElementById("dl").download=files[0].name.match(/.*\./)+"vtt"
+var reader = new FileReader()  
+reader.onload = function(event) {srt.value = event.target.result}
+reader.readAsText(files[0],"UTF-8") }
+}
+
+function sel(m) {
+srt.value=srt.value.substring(0,srt.selectionStart)+"<"+m+">"+srt.value.substring(srt.selectionStart,srt.selectionEnd)+"</"+m.replace(/[ \.].*/,"")+">"+srt.value.substr(srt.selectionEnd)
+}
+</script>
+</body>
+</html>
