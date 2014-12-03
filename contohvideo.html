@@ -1,10 +1,21 @@
-<script src="http://file.pakteguh.com/js/videosub-0.9.9.js"></script>
-						
-
-
-<video controls="controls" width="550" height="290">
-	<source src="https://r18---sn-npo7en7d.googlevideo.com/videoplayback?requiressl=yes&shardbypass=yes&cmbypass=yes&id=528459b97f795148&itag=18&source=picasa&ip=128.199.197.14&ipbits=0&expire=1418177779&sparams=cmbypass,expire,id,ip,ipbits,itag,mm,ms,mv,requiressl,shardbypass,source&signature=180DB6E51412E76F842334AF206978F50639151A.255722C62F1BD7CC3B964E0405F42AF0B2186341&key=cms1&begin=0&cms_redirect=yes&mm=30&ms=nxu&mt=1417572983&mv=m" type="video/mp4" /><!-- WebKit -->
-	
-	<track src="http://file.pakteguh.com/sub/FORRESTGUMP.srt" kind="subtitle" srclang="id" label="Indonesia" />
-	Your browser does not support HTML5 video.
+<video width="550" height="400" poster="http://file.pakteguh.com/pakteguh.jpg" controls="controls" preload="none">
+    <!-- MP4 file (you can also add WebM and Ogg if needed -->
+    <source type="video/mp4" src="https://r18---sn-npo7en7d.googlevideo.com/videoplayback?requiressl=yes&shardbypass=yes&cmbypass=yes&id=528459b97f795148&itag=18&source=picasa&ip=128.199.197.14&ipbits=0&expire=1418177779&sparams=cmbypass,expire,id,ip,ipbits,itag,mm,ms,mv,requiressl,shardbypass,source&signature=180DB6E51412E76F842334AF206978F50639151A.255722C62F1BD7CC3B964E0405F42AF0B2186341&key=cms1&begin=0&cms_redirect=yes&mm=30&ms=nxu&mt=1417572983&mv=m" />
+    <!-- Optional: Add subtitles for each language -->
+    <track kind="subtitles" src="http://file.pakteguh.com/sub/FORRESTGUMP.srt" srclang="id" />
 </video>
+<script src="http://file.pakteguh.com/build/jquery.js"></script>
+<script src="http://file.pakteguh.com/build/mediaelement-and-player.min.js"></script>
+<link rel="stylesheet" href="http://file.pakteguh.com/build/mediaelementplayer.css" />
+jQuery(document).ready(function($) {
+ 
+    $('audio,video').mediaelementplayer({
+        // automatically create these translations on load
+        translations:['es','ar','yi','zh-cn'],
+        // allow the user to add additional translations
+        translationSelector: true,
+        // start with English automatically turned on
+        startLanguage: 'en'
+    });
+ 
+});
