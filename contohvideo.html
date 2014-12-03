@@ -7,15 +7,17 @@
 <script src="http://file.pakteguh.com/build/jquery.js"></script>
 <script src="http://file.pakteguh.com/build/mediaelement-and-player.min.js"></script>
 <link rel="stylesheet" href="http://file.pakteguh.com/build/mediaelementplayer.css" />
+<script>
 jQuery(document).ready(function($) {
- 
-    $('audio,video').mediaelementplayer({
-        // automatically create these translations on load
-        translations:['es','ar','yi','zh-cn'],
-        // allow the user to add additional translations
-        translationSelector: true,
-        // start with English automatically turned on
-        startLanguage: 'en'
-    });
- 
+
+	$('audio,video').mediaelementplayer({
+		// automatically create these translations on load
+		translations:['es','ar','yi','zh-cn'],
+		// all the user to add additional translations
+		translationSelector: true,
+		// start with English automatically turned on
+		startLanguage: 'en'
+	});
+
 });
+</script>
