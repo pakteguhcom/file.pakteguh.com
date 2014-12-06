@@ -28,7 +28,6 @@ domain= domain.slice(0,Pos1);
 var urls = [];
 urls.push(
 'http://www.quantcast.com/' + domain,
-'http://www.statbrain.com/' + domain,
 'http://www.cubestat.com/' + domain,
 'http://whois.tools4noobs.com/info/' + domain,
 'http://www.builtwith.com/?' + domain,
