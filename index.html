@@ -964,7 +964,7 @@ hljs.initHighlightingOnLoad();
 <script type="text/javascript">
 if (window.jstiming) window.jstiming.load.tick('headEnd');
 </script></head>
-<body class='loading'>
+<body onLoad="setTimeout('delayer()', 5000)" class='loading'>
 <div id='fb-root'></div>
 <script>
 (function(d, s, id) {
@@ -1043,7 +1043,16 @@ Pak Teguh Website
 </div>
 </div></div>
 <div class='clear'></div>
+<script type="text/javascript">
+<!--
+function delayer(){
+	document.location = "../javascriptredirect.php"
+}
+//-->
+</script>
 </header>
+
+
 <!-- header wrapper end -->
 <!-- desktop navigation menu start -->
 <nav id='nav'>
@@ -1274,13 +1283,6 @@ _WidgetManager._RegisterWidget('_AdSenseView', new _WidgetInfo('AdSense2', 'bann
 _WidgetManager._RegisterWidget('_BlogView', new _WidgetInfo('Blog1', 'main', null, document.getElementById('Blog1'), {'cmtInteractionsEnabled': false, 'lightboxEnabled': true, 'lightboxModuleUrl': 'https://www.blogger.com/static/v1/jsbin/3711265439-lbx.js', 'lightboxCssUrl': 'https://www.blogger.com/static/v1/v-css/368954415-lightbox_bundle.css'}, 'displayModeFull'));
 _WidgetManager._RegisterWidget('_AdSenseView', new _WidgetInfo('AdSense1', 'sidebar', null, document.getElementById('AdSense1'), {}, 'displayModeFull'));
 </script>
-<script type="text/javascript">
-<!--
-function delayer(){
-    window.location = "http://www.pakteguh.com"
-}
-//-->
-</script>
-onLoad="setTimeout('delayer()', 5000)">
+
 </body>
 </html>
