@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:version='2' class='v2' expr:dir='data:blog.languageDirection' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+	<head>
+		<script type='text/javascript'>
+			var domainprimary = &quot;www.lnksf.net&quot;;
+		</script>
+		<meta content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1' name='viewport'/>
+		<meta content='text/html;charset=UTF-8' http-equiv='Content-Type'/>
+		<meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'/>
+		<meta name="description" content="Make Your Link More Safety">
+		<meta name="author" content="Vore Corporation">
+		<b:include data='blog' name='all-head-content'/>
+		<!-- SEO Meta Tag -->
+		<b:if cond='data:blog.homepageUrl == data:blog.url'><meta expr:content='data:blog.title' name='keywords'/></b:if>
+		<b:if cond='data:blog.pageType == &quot;item&quot;'><meta expr:content='data:blog.pageName' name='keywords'/></b:if>
+		<b:if cond='data:blog.pageType == &quot;index&quot;'><b:if cond='data:blog.searchLabel'><meta content='noindex,nofollow' name='robots'/></b:if></b:if>
+		<b:if cond='data:blog.pageType == &quot;archive&quot;'><meta content='noindex,nofollow' name='robots'/></b:if>
+		<b:if cond='data:blog.isMobile'><meta content='noindex,nofollow' name='robots'/></b:if>
+		<!-- SEO Title Tag -->
+		<b:if cond='data:blog.url == data:blog.homepageUrl'><title><data:blog.title/></title></b:if>
+		<b:if cond='data:blog.pageType == &quot;item&quot;'><title><data:blog.pageName/></title></b:if>
+		<b:if cond='data:blog.pageType == &quot;archive&quot;'><title>Archive for <data:blog.pageName/></title></b:if>
+		<b:if cond='data:blog.pageType == &quot;static_page&quot;'><title><data:blog.pageName/></title></b:if>
+		<b:if cond='data:blog.pageType == &quot;index&quot;'><b:if cond='data:blog.searchLabel'><title><data:blog.title/> - <data:blog.pageName/></title></b:if></b:if>
+		<b:if cond='data:blog.pageType == &quot;error_page&quot;'><title>404 Not Found</title></b:if>
+		<b:if cond='data:blog.pageType == &quot;index&quot;'><b:if cond='data:blog.url != data:blog.homepageUrl'><title><data:blog.pageTitle/> - All Post</title></b:if></b:if>
+		<!-- Bootstrap core CSS -->
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		
+		<!-- Custom Google Web Font -->
+		<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
+		<link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Arvo:400,700' rel='stylesheet' type='text/css'>
+		
+		<!-- Custom CSS-->
+		<link href="css/general.css" rel="stylesheet">
+		<!-- Owl-Carousel -->
+		<link href="css/custom.css" rel="stylesheet">
+		<link href="css/owl.carousel.css" rel="stylesheet">
+		<link href="css/owl.theme.css" rel="stylesheet">
+		<link href="css/style.css" rel="stylesheet">
+		<link href="css/animate.css" rel="stylesheet">
+		
+		<!-- Magnific Popup core CSS file -->
+		<link rel="stylesheet" href="css/magnific-popup.css">
+		
+		<script src="js/modernizr-2.8.3.min.js"></script>  <!-- Modernizr /-->
+
+		<script src="js/jquery.min.js"></script>
+    <b:skin><![CDATA[/*
+/*
+------------------------
+Premium Blogger Theme
+Name	 : Evo Safelink Blogger Template
+Version	 : 2.0
+Designer : Vore Corporation
+URL		 : www.vorecorp.id
+------------------------
+Built With :
+- Flatfy Theme by Andrea Galanti
+- Bootstrap
+- Zero Clipboard
+- jQuery
+*/
+]]></b:skin>
+    <b:include data='blog' name='google-analytics'/>
+<style>
+.quickedit{display:none important!}
+#Attribution1 {
+height:0px;
+visibility:hidden;
+display:none
+}
+h3.post-title, .post-icons, .post-share-buttons, #blog-pager, .blog-feeds{display:none !important;}
+/* Pie Chart */
+.progress-pie-chart {
+width:200px;
+height: 200px;
+border-radius: 50%;
+background-color: #E5E5E5;
+position: relative;
+}
+.progress-pie-chart.gt-50 {
+background-color: #81CE97;
+}
+
+.ppc-progress {
+content: &quot;&quot;;
+position: absolute;
+border-radius: 50%;
+left: calc(50% - 100px);
+top: calc(50% - 100px);
+width: 200px;
+height: 200px;
+clip: rect(0, 200px, 200px, 100px);
+}
+.ppc-progress .ppc-progress-fill {
+content: &quot;&quot;;
+position: absolute;
+border-radius: 50%;
+left: calc(50% - 100px);
+top: calc(50% - 100px);
+width: 200px;
+height: 200px;
+clip: rect(0, 100px, 200px, 0);
+background: #81CE97;
+transform: rotate(60deg);
+}
+.gt-50 .ppc-progress {
+clip: rect(0, 100px, 200px, 0);
+}
+.gt-50 .ppc-progress .ppc-progress-fill {
+clip: rect(0, 200px, 200px, 100px);
+background: #E5E5E5;
+}
+
+.ppc-percents {
+content: &quot;&quot;;
+position: absolute;
+border-radius: 50%;
+left: calc(50% - 173.91304px/2);
+top: calc(50% - 173.91304px/2);
+width: 173.91304px;
+height: 173.91304px;
+background: #fafafa;
+text-align: center;
+display: table;
+}
+.ppc-percents span {
+display: block;
+font-size: 2.6em;
+font-weight: bold;
+color: #81CE97;
+}
+
+.pcc-percents-wrapper {
+display: table-cell;
+vertical-align: middle;
+}
+
+.progress-pie-chart {
+margin: 50px auto 0;
+}
+.Visit_Link{-moz-box-shadow:inset 0px 1px 0px 0px #fff;-webkit-box-shadow:inset 0px 1px 0px 0px #fff;box-shadow:inset 0px 1px 0px 0px #fff;background:-webkit-gradient(linear,left top,left bottom,color-stop(0.05,#f9f9f9),color-stop(1,#e9e9e9));background:-moz-linear-gradient(top,#f9f9f9 5%,#e9e9e9 100%);background:-webkit-linear-gradient(top,#f9f9f9 5%,#e9e9e9 100%);background:-o-linear-gradient(top,#f9f9f9 5%,#e9e9e9 100%);background:-ms-linear-gradient(top,#f9f9f9 5%,#e9e9e9 100%);background:linear-gradient(to bottom,#f9f9f9 5%,#e9e9e9 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=&#39;#f9f9f9&#39;,endColorstr=&#39;#e9e9e9&#39;,GradientType=0);background-color:#f9f9f9;-moz-border-radius:4px;-webkit-border-radius:4px;border-radius:4px;border:1px solid #dcdcdc;display:inline-block;cursor:pointer;color:rgb(44,44,44);font-family:arial;font-size:13px;font-weight:bold;padding:1px 4px;text-decoration:none;text-shadow:0px 1px 0px #fff}.Visit_Link:hover{color:rgb(44,44,44);text-decoration:none;background:-webkit-gradient(linear,left top,left bottom,color-stop(0.05,#e9e9e9),color-stop(1,#f9f9f9));background:-moz-linear-gradient(top,#e9e9e9 5%,#f9f9f9 100%);background:-webkit-linear-gradient(top,#e9e9e9 5%,#f9f9f9 100%);background:-o-linear-gradient(top,#e9e9e9 5%,#f9f9f9 100%);background:-ms-linear-gradient(top,#e9e9e9 5%,#f9f9f9 100%);background:linear-gradient(to bottom,#e9e9e9 5%,#f9f9f9 100%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=&#39;#e9e9e9&#39;,endColorstr=&#39;#f9f9f9&#39;,GradientType=0);background-color:#e9e9e9}.Visit_Link:active, .Visit_Link:visited, .Visit_Link:focus{color:rgb(44,44,44) !important;text-decoration:none !important;position:relative;top:1px}
+/* CSS Ad block */
+#kc56{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#fff;opacity:.98;display:block;z-index:9999;overflow:hidden}
+#kc56 p{color:#000;text-align:center;margin:15% auto;font-size:2rem;max-width:750px;display:table;line-height:1.5;}
+#kc56 p:before{content:&#39;\f023&#39;;font-family:fontawesome;background:#ff675c;color:#fff;text-align:center;display:block;padding:0;width:2em;height:2em;line-height:2em;font-size:2.5rem;clear:both;border-radius:100%;margin:0 auto 3%;font-weight:normal;box-shadow:inset 0 0 5px rgba(0,0,0,.1)}
+#kc56 p:hover:before{content:&#39;\f13e&#39;}
+#kc56 p a,#kc56 p i{font-size:12px}
+#kc56 ~ *{display:none}
+</style>
+
+	</head>
+	<body id="home">
+		
+		<!-- FullScreen -->
+		<div class="intro-header">
+			<div class="col-xs-12 text-center abcen1">
+				<h1 class="h1_home wow fadeIn" data-wow-delay="0.4s">Safety Links</h1>
+				<h3 class="h3_home wow fadeIn" data-wow-delay="0.6s">We make your link safety!</h3>
+				<ul class="list-inline intro-social-buttons">
+					<li id="download" ><a href="#about-us" class="btn btn-embossed btn-info fadeIn" data-wow-delay="1.2s"><span class="network-name">About Us</span></a>
+				</li>
+			</ul>
+		</div>
+		<!-- /.container -->
+		<div class="col-xs-12 text-center abcen wow fadeIn">
+			<div class="button_down ">
+				<a class="imgcircle wow bounceInUp" data-wow-duration="1.5s"  href="#start"> <img class="img_scroll" src="img/icon/circle.png" alt=""> </a>
+			</div>
+		</div>
+	</div>
+	
+	<!-- NavBar-->
+	<nav class="navbar-default" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#home">Safety Links</a>
+			</div>
+			<div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					
+					<li class="menuItem"><a href="#start">Start Now</a></li>
+					<li class="menuItem"><a href="#features">Features</a></li>
+				</ul>
+			</div>
+			
+		</div>
+	</nav>
+	<div id="start" class="content-section-c ">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 col-md-offset-3 text-center white">
+					<h2>Get Started</h2>
+					<p class="lead" style="margin-top:0">Start convert your link for protecting from any virus and malware</p>
+				</div>
+				<div class="col-md-6 col-md-offset-3 text-center">
+					<div class="mockup-content">
+						<div class="morph-button wow pulse morph-button-inflow morph-button-inflow-1">
+							<button type="button "><span>Start Converting</span></button>
+							<div class="morph-content">
+								<div>
+									<div class="content-style-form content-style-form-4 ">
+										<h2 class="morph-clone">Start Converting</h2>
+										<form>
+											<p><label>Input the link below with <b class="text-danger">https://</b> or <b class="text-danger">http://</b></label>
+											<input id="sourceLink" type="text"/></p>
+											<p><button><i class="fa fa-retweet"></i> Convert Now</button></p>
+											<p id="linkConverted"></p>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>>
+		</div>
+	</div>
+	
+	<!-- Credits -->
+	<div id="features" class="content-section-a">
+		<div class="container">
+			<div class="row">
+				
+				<div class="col-md-6 col-md-offset-3 text-center wrap_title">
+					<h2>Features</h2>
+					<p class="lead" style="margin-top:0">This our Safety Links features</p>
+				</div>
+				
+				<div class="col-sm-6  block wow bounceIn">
+					<div class="row">
+						<div class="col-md-4 box-icon rotate">
+							<i class="fa fa-desktop fa-4x "> </i>
+						</div>
+						<div class="col-md-8 box-ct">
+							<h3> Compatible Browser </h3>
+							<p> Chrome, Mozilla, UC Browser, Opera </p>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6 block wow bounceIn">
+					<div class="row">
+						<div class="col-md-4 box-icon rotate">
+							<i class="fa fa-shield fa-4x "> </i>
+						</div>
+						<div class="col-md-8 box-ct">
+							<h3> Safety </h3>
+							<p> We make your link safe from virus &amp; malware</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row tworow">
+				<div class="col-sm-6  block wow bounceIn">
+					<div class="row">
+						<div class="col-md-4 box-icon rotate">
+							<i class="fa fa-rocket fa-4x "> </i>
+						</div>
+						<div class="col-md-8 box-ct">
+							<h3> Responsive </h3>
+							<p> Responsive design and fast loading for all device </p>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6 block wow bounceIn">
+					<div class="row">
+						<div class="col-md-4 box-icon rotate">
+							<i class="fa fa-share-alt fa-4x "></i>
+						</div>
+						<div class="col-md-8 box-ct">
+							<h3> Shared</h3>
+							<p> Share your link to your friends or any people in the world for free.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<footer>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-7">
+					<h3 id="about-us" class="footer-title">About Us</h3>
+					<p>
+						<b>Safety Links</b> is a site that will convert your link to make it more secure from viruses and malicious malware found on the internet. This site can digunkana by anyone for free without having to pay.
+					</p>
+					<p class="text-center">
+						<i class="fa fa-envelope"></i> vore.corp@gmail.com
+					</p>
+					
+					</div> <!-- /col-xs-7 -->
+					<div class="col-md-5">
+						<div class="footer-banner">
+							<h3 class="footer-title">Safety Links</h3>
+							<ul>
+								<li><a href="#">Multi Generator</a></li>
+								<li><a href="#">Disclaimer</a></li>
+								<li><a href="#">Privacy Policy</a></li>
+								<li><a href="#">Terms of Service</a></li>
+							</ul>
+							&#169; 2016 <a href="#">Safety Links</a> - All Right Reserved
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+		<!-- JavaScript -->
+		<script src="js/bootstrap.js"></script>
+		<script src="js/owl.carousel.js"></script>
+		<script src="js/script.js"></script>
+		<!-- StikyMenu -->
+		<script src="js/stickUp.min.js"></script>
+		<script type="text/javascript">
+		jQuery(function($) {
+			$(document).ready( function() {
+			$('.navbar-default').stickUp();
+			
+			});
+		});
+		
+		</script>
+		<!-- Smoothscroll -->
+		<script type="text/javascript" src="js/jquery.corner.js"></script>
+		<script src="js/wow.min.js"></script>
+		<script>
+		new WOW().init();
+		</script>
+		<script src="js/classie.js"></script>
+		<script src="js/uiMorphingButton_inflow.js"></script>
+		<!-- Magnific Popup core JS file -->
+		<script src="js/jquery.magnific-popup.js"></script>
+	</body>
+</html>
