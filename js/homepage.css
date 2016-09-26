@@ -212,7 +212,7 @@ html {
   font-size: 0.75em;
   text-align: center;
   text-shadow: rgba(255, 255, 255, 0.8) 0px 1px 0px;
-  background-color: #f8f8f8 !important;
+  background-color: #000000 !important;
   background-image: -webkit-linear-gradient(top, #e8e8e8, #bcbbbc);
   background-image: -moz-linear-gradient(top, #e8e8e8, #bcbbbc);
   background-image: linear-gradient(top, #e8e8e8, #bcbbbc);
