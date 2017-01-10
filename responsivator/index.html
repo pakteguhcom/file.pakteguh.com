@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>if (window.location.protocol == "https:") window.location.protocol = "http";</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Responsivator</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="author" href="https://www.pakteguh.com"/>
+
+    <!-- Facebook sharing. http://developers.facebook.com/docs/opengraph/ -->
+    <meta property="og:site_name" content="Responsivator" />
+    <meta property="og:title" content="Responsivator" />
+    <meta property="og:description" content="See and share how web pages look at different screen sizes" />
+    <meta property="og:image" content="http://dfcb.github.com/Responsivator/img/responsivator-icon.png" /> 
+    <!-- Thumbnail for sharing. Use absolute URL. Minimum 50x50 -->
+    
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/responsivator-icon.png">
+</head>
+<body>
+
+    <header>
+        <h1>Responsivator</h1>
+        <h2>View &amp; share how sites look at different screen sizes</h2>
+        <a href="#" class="social-btn" id="facebook-btn" target="_blank"><img src="img/facebook.png" /></a>
+        <a href="#" class="social-btn" id="twitter-btn" target="_blank"><img src="img/twitter.png" /></a>
+        <span class="author"><small>an <a href="https://www.pakteguh.com">Responsivator </a> by <a href="http://www.pakteguh.com">Pak Teguh</a></small></span>
+    </header>
+
+    <div class="controls">
+        <fieldset>
+            <label>Enter website url:</label>
+            <input type="text" id="input-site">
+            <a href="#" id="view-btn" class="btn">Responsivate!</a>
+            <a href="./" class="btn">view&nbsp;random</a>
+            <a href="#" class="btn" id="btn-customize">customize</a>
+            
+        </fieldset>
+        
+        <fieldset class="share-field">
+            <label>Share link:</label>
+            <input type="text" id="share-field-input" value="" readonly="readonly">
+            <label><input type="checkbox" id="hide-header"> hide header in link</label>
+        </fieldset>
+
+        <form id="form-customize" class="collapsed"></form>
+
+    </div>
+    
+    <!-- WRAPPER (iFrames) -->
+    <label id="curr-site"></label>
+    <div id="frames-wrapper"></div>
+
+    <script id="form-customize-tpl" type="text/x-jsrender">
+        <div id="form-customize-fields">
+        {{for frames}}
+            <fieldset><input type="text" class="input-width" value="{{>width}}"> x <input type="text" class="input-height" value="{{>height}}"> <input type="text" class="input-label" value="{{>label}}"><a href="#" class="btn btn-delete">&times;</a>
+            </fieldset>
+        {{/for}}
+        <fieldset><input type="text" class="input-width" value=""> x <input type="text" class="input-height" value=""> <input type="text" class="input-label" value=""><a href="#" class="btn btn-delete">&times;</a>
+            </fieldset>
+        </div>
+        <a href="#" id="customize-btn-finish" class="btn">Finish</a>
+    </script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery-1.8.2.min.js"><\/script>')</script>
+    <script src="js/jsrender.js"></script>
+    <script src="js/jquery.framer.js"></script>
+    <script src="js/jquery.configurator.js"></script>
+    <script>
+        $(function() {
+
+            // default random sites to show if no user selection
+            var sitesArray = [
+                'gesture.com'
+            ];
+
+            // get sizes from url params or use default
+            var frames = [];
+            var isCustomSizes = false;
+            var sizes = $.Configurator().getConfig().sizes;
+            if (sizes) {
+                isCustomSizes = true;
+                $.each(sizes, function(i,val) {
+                    frame = val.split(':');
+                    size = frame[0].toLowerCase().split('x');
+                    frames.push({ width:size[0], height:size[1], label:frame[1] || '' });
+                });
+            } else {
+                frames = [
+                    { width:320, height:480, label:'Phone (portrait)', adjustForScrollbar:false },
+                    { width:480, height:320, label:'Phone (landscape)', adjustForScrollbar:false },
+                    { width:480, height:800, label:'Small Tablet (portrait)', adjustForScrollbar:false },
+                    { width:800, height:480, label:'Small Tablet (landscape)', adjustForScrollbar:false },
+                    { width:768, height:1024, label:'Large Tablet (portrait)', adjustForScrollbar:false },
+                    { width:1024, height:768, label:'Large Tablet (landscape)', adjustForScrollbar:false },
+                    { width:1280, height:800, label:'Desktop' }
+                ];
+            }
+
+            // url of responsivator web page for share outs
+            var responsivatorURL = window.location.protocol + '//' + window.location.host + window.location.pathname;
+
+            // responsivate site to show from url parameters or do random
+            var site =  $.Configurator().getConfig().site || getRandomSite();
+            site = decodeURIComponent(site);
+            responsivate(site);
+
+            $('#input-site').val(site);
+
+            // create customize form
+            $('#form-customize').html($('#form-customize-tpl').render({frames:frames}));
+
+            // hide the header if that is option is set in the url
+            if ($.Configurator().getConfig().header === 'hide') {
+                $('header, .controls, #curr-site').css('display','none');
+            }
+
+            // button event to responsivate! the url in the input site field
+            $('#view-btn').on('click',function(e) {
+                e.preventDefault();
+                window.location = './?site='+encodeURIComponent($('#input-site').val().replace('http://','').replace('https://',''))+getSizeParams();
+            });
+
+            // when you click the share field, auto-select it so it can be copied
+            $('#share-field-input').on('click',function() {$(this).select();});
+            
+            // update share link when hide header option is checked
+            $('#hide-header').on('change',function() {
+                
+                if ($(this).is(':checked')) {
+                    $('#share-field-input').val(responsivatorURL+'?site='+encodeURIComponent(site)+'&header=hide'+getSizeParams());
+                } else {
+                    $('#share-field-input').val(responsivatorURL+'?site='+encodeURIComponent(site)+getSizeParams());
+                }
+            });
+            
+            // responsivate! on enter keypress
+            $('#input-site').keypress(function(e) {
+                if (e.keyCode == 13) {
+                    window.location = './?site='+encodeURIComponent($('#input-site').val().replace('http://','').replace('https://',''))+getSizeParams();
+                }
+            });
+
+            // customize modal
+            $()
+            $('#btn-customize').on('click', function (e) {
+                e.preventDefault();
+                isCustomSizes = true;
+                $('#form-customize').removeClass('collapsed');
+            });
+            $('#customize-btn-finish').on('click', function(e) {
+                e.preventDefault();
+                var valid = true;
+                $('.input-width,.input-height').removeClass('error');
+                var sizeConfig = '';
+                $('#form-customize').find('fieldset').each(function(){
+
+                    var width = $(this).find('.input-width').val();
+                    var height = $(this).find('.input-height').val();
+                    var label = $(this).find('.input-label').val();
+                    if (width === '' && height !== '') {
+                        valid = false;
+                        $(this).find('.input-width').addClass('error');
+                    }
+                    if (height === '' && width !== '') {
+                        valid = false;
+                        $(this).find('.input-height').addClass('error');
+                    }
+                    if (valid && width !== '' && height !== '') {
+                        if (sizeConfig !== '') sizeConfig += ',';
+                        sizeConfig += width+'x'+height+':'+label;
+                    }
+                });
+                if (valid) {
+                    $('#form-customize').addClass('collapsed');
+                    window.location = './?site='+site+'&sizes='+sizeConfig;
+                }
+            })
+            $('#form-customize').on('click','.btn-delete', function(e) {
+                e.preventDefault();
+                $(this).parent().remove();
+            })
+
+            function getRandomSite() {
+                return sitesArray[Math.floor(Math.random()*sitesArray.length)];
+            }
+
+            function getSizeParams() {
+                var sizeParams = '';
+                if (isCustomSizes) {
+                    sizeParams += '&sizes='
+                    $.each(frames, function(i,val){
+                        sizeParams += frames[i].width+'x'+frames[i].height+':'+frames[i].label;
+                        if (i !== frames.length-1) {
+                            sizeParams += ',';
+                        }
+                    });
+                }
+                return sizeParams;
+            }
+
+            function responsivate(url) {
+                // add http:// if it is missing
+                if ( url.indexOf('http:') === -1 && url.indexOf('https:')===-1) { 
+                    url = 'http://'+url; 
+                }
+
+                // create share url (and check if header hide option is checked)
+                var shareURL = responsivatorURL+'?site='+encodeURIComponent((url.replace('http://','').replace('https://','')));
+
+                if ($('#hide-header').is(':checked')) {
+                    shareURL += '&header=hide';
+                }
+                shareURL += getSizeParams();
+                $('#share-field-input').val(shareURL);
+                
+                // update frames
+                $.Framer({ url:url, target:'#frames-wrapper', frames:frames });
+
+                // update width of page
+                var pageWidth = 0;
+                $('.frame').each(function() { pageWidth += $(this).outerWidth(true); } );
+                pageWidth = (pageWidth > 1200) ? pageWidth+60 : 1200;
+                $('header, .controls, .wrapper').css('width',pageWidth+20);
+
+                // update current site label
+                $('#curr-site').html('website: <a href="'+url+'" target="_blank">'+url.replace('http://','')+'</a>');
+                
+                
+
+                
+                // update site var
+                site = url;
+            }
+
+        });
+    </script>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', '']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</body>
+</html>
