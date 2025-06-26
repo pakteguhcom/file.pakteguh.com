@@ -1,0 +1,511 @@
+{
+  "verses": [
+    {
+      "global_verse_id": 5849,
+      "surah_number": 83,
+      "verse_number": 1,
+      "arabic_text": "وَيْلٌ لِّلْمُطَفِّفِينَ",
+      "translation_id": "Kecelakaan besarlah bagi orang-orang yang curang",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5850,
+      "surah_number": 83,
+      "verse_number": 2,
+      "arabic_text": "ٱلَّذِينَ إِذَا ٱكْتَالُوا۟ عَلَى ٱلنَّاسِ يَسْتَوْفُونَ",
+      "translation_id": "(yaitu) orang-orang yang apabila menerima takaran dari orang lain mereka minta dipenuhi,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5851,
+      "surah_number": 83,
+      "verse_number": 3,
+      "arabic_text": "وَإِذَا كَالُوهُمْ أَو وَّزَنُوهُمْ يُخْسِرُونَ",
+      "translation_id": "dan apabila mereka menakar atau menimbang untuk orang lain, mereka mengurangi.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5852,
+      "surah_number": 83,
+      "verse_number": 4,
+      "arabic_text": "أَلَا يَظُنُّ أُو۟لَٰٓئِكَ أَنَّهُم مَّبْعُوثُونَ",
+      "translation_id": "Tidaklah orang-orang itu menyangka, bahwa sesungguhnya mereka akan dibangkitkan,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5853,
+      "surah_number": 83,
+      "verse_number": 5,
+      "arabic_text": "لِيَوْمٍ عَظِيمٍ",
+      "translation_id": "pada suatu hari yang besar,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5854,
+      "surah_number": 83,
+      "verse_number": 6,
+      "arabic_text": "يَوْمَ يَقُومُ ٱلنَّاسُ لِرَبِّ ٱلْعَٰلَمِينَ",
+      "translation_id": "(yaitu) hari (ketika) manusia berdiri menghadap Tuhan semesta alam?",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5855,
+      "surah_number": 83,
+      "verse_number": 7,
+      "arabic_text": "كَلَّآ إِنَّ كِتَٰبَ ٱلْفُجَّارِ لَفِى سِجِّينٍ",
+      "translation_id": "Sekali-kali jangan curang, karena sesungguhnya kitab orang yang durhaka tersimpan dalam sijjin.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5856,
+      "surah_number": 83,
+      "verse_number": 8,
+      "arabic_text": "وَمَآ أَدْرَىٰكَ مَا سِجِّينٌ",
+      "translation_id": "Tahukah kamu apakah sijjin itu?",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5857,
+      "surah_number": 83,
+      "verse_number": 9,
+      "arabic_text": "كِتَٰبٌ مَّرْقُومٌ",
+      "translation_id": "(Ialah) kitab yang bertulis.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5858,
+      "surah_number": 83,
+      "verse_number": 10,
+      "arabic_text": "وَيْلٌ يَوْمَئِذٍ لِّلْمُكَذِّبِينَ",
+      "translation_id": "Kecelakaan yang besarlah pada hari itu bagi orang-orang yang mendustakan,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5859,
+      "surah_number": 83,
+      "verse_number": 11,
+      "arabic_text": "ٱلَّذِينَ يُكَذِّبُونَ بِيَوْمِ ٱلدِّينِ",
+      "translation_id": "(yaitu) orang-orang yang mendustakan hari pembalasan.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5860,
+      "surah_number": 83,
+      "verse_number": 12,
+      "arabic_text": "وَمَا يُكَذِّبُ بِهِۦٓ إِلَّا كُلُّ مُعْتَدٍ أَثِيمٍ",
+      "translation_id": "Dan tidak ada yang mendustakan hari pembalasan itu melainkan setiap orang yang melampaui batas lagi berdosa,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5861,
+      "surah_number": 83,
+      "verse_number": 13,
+      "arabic_text": "إِذَا تُتْلَىٰ عَلَيْهِ ءَايَٰتُنَا قَالَ أَسَٰطِيرُ ٱلْأَوَّلِينَ",
+      "translation_id": "yang apabila dibacakan kepadanya ayat-ayat Kami, ia berkata: 'Itu adalah dongengan orang-orang yang dahulu'",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5862,
+      "surah_number": 83,
+      "verse_number": 14,
+      "arabic_text": "كَلَّا بَلْ رَانَ عَلَىٰ قُلُوبِهِم مَّا كَانُوا۟ يَكْسِبُونَ",
+      "translation_id": "Sekali-kali tidak (demikian), sebenarnya apa yang selalu mereka usahakan itu menutupi hati mereka.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5863,
+      "surah_number": 83,
+      "verse_number": 15,
+      "arabic_text": "كَلَّآ إِنَّهُمْ عَن رَّبِّهِمْ يَوْمَئِذٍ لَّمَحْجُوبُونَ",
+      "translation_id": "Sekali-kali tidak, sesungguhnya mereka pada hari itu benar-benar tertutup dari (rahmat) Tuhan mereka.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5864,
+      "surah_number": 83,
+      "verse_number": 16,
+      "arabic_text": "ثُمَّ إِنَّهُمْ لَصَالُوا۟ ٱلْجَحِيمِ",
+      "translation_id": "Kemudian, sesungguhnya mereka benar-benar masuk neraka.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5865,
+      "surah_number": 83,
+      "verse_number": 17,
+      "arabic_text": "ثُمَّ يُقَالُ هَٰذَا ٱلَّذِى كُنتُم بِهِۦ تُكَذِّبُونَ",
+      "translation_id": "Kemudian, dikatakan (kepada mereka): 'Inilah azab yang dahulu selalu kamu dustakan'.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5866,
+      "surah_number": 83,
+      "verse_number": 18,
+      "arabic_text": "كَلَّآ إِنَّ كِتَٰبَ ٱلْأَبْرَارِ لَفِى عِلِّيِّينَ",
+      "translation_id": "Sekali-kali tidak, sesungguhnya kitab orang-orang yang berbakti itu (tersimpan) dalam 'Illiyyin.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5867,
+      "surah_number": 83,
+      "verse_number": 19,
+      "arabic_text": "وَمَآ أَدْرَىٰكَ مَا عِلِّيُّونَ",
+      "translation_id": "Tahukah kamu apakah 'Illiyyin itu?",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5868,
+      "surah_number": 83,
+      "verse_number": 20,
+      "arabic_text": "كِتَٰبٌ مَّرْقُومٌ",
+      "translation_id": "(Yaitu) kitab yang bertulis,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5869,
+      "surah_number": 83,
+      "verse_number": 21,
+      "arabic_text": "يَشْهَدُهُ ٱلْمُقَرَّبُونَ",
+      "translation_id": "yang disaksikan oleh malaikat-malaikat yang didekatkan (kepada Allah).",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5870,
+      "surah_number": 83,
+      "verse_number": 22,
+      "arabic_text": "إِنَّ ٱلْأَبْرَارَ لَفِى نَعِيمٍ",
+      "translation_id": "Sesungguhnya orang yang berbakti itu benar-benar berada dalam kenikmatan yang besar (surga),",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5871,
+      "surah_number": 83,
+      "verse_number": 23,
+      "arabic_text": "عَلَى ٱلْأَرَآئِكِ يَنظُرُونَ",
+      "translation_id": "mereka (duduk) di atas dipan-dipan sambil memandang.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5872,
+      "surah_number": 83,
+      "verse_number": 24,
+      "arabic_text": "تَعْرِفُ فِى وُجُوهِهِمْ نَضْرَةَ ٱلنَّعِيمِ",
+      "translation_id": "Kamu dapat mengetahui dari wajah mereka kesenangan mereka yang penuh kenikmatan.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5873,
+      "surah_number": 83,
+      "verse_number": 25,
+      "arabic_text": "يُسْقَوْنَ مِن رَّحِيقٍ مَّخْتُومٍ",
+      "translation_id": "Mereka diberi minum dari khamar murni yang dilak (tempatnya),",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5874,
+      "surah_number": 83,
+      "verse_number": 26,
+      "arabic_text": "خِتَٰمُهُۥ مِسْكٌ وَفِى ذَٰلِكَ فَلْيَتَنَافَسِ ٱلْمُتَنَٰفِسُونَ",
+      "translation_id": "laknya adalah kesturi; dan untuk yang demikian itu hendaknya orang berlomba-lomba.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5875,
+      "surah_number": 83,
+      "verse_number": 27,
+      "arabic_text": "وَمِزَاجُهُۥ مِن تَسْنِيمٍ",
+      "translation_id": "Dan campuran khamar murni itu adalah dari tasnim,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5876,
+      "surah_number": 83,
+      "verse_number": 28,
+      "arabic_text": "عَيْنًا يَشْرَبُ بِهَا ٱلْمُقَرَّبُونَ",
+      "translation_id": "(yaitu) mata air yang minum daripadanya orang-orang yang didekatkan kepada Allah.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5877,
+      "surah_number": 83,
+      "verse_number": 29,
+      "arabic_text": "إِنَّ ٱلَّذِينَ أَجْرَمُوا۟ كَانُوا۟ مِنَ ٱلَّذِينَ ءَامَنُوا۟ يَضْحَكُونَ",
+      "translation_id": "Sesungguhnya orang-orang yang berdosa, adalah mereka yang menertawakan orang-orang yang beriman.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5878,
+      "surah_number": 83,
+      "verse_number": 30,
+      "arabic_text": "وَإِذَا مَرُّوا۟ بِهِمْ يَتَغَامَزُونَ",
+      "translation_id": "Dan apabila orang-orang yang beriman lalu di hadapan mereka, mereka saling mengedip-ngedipkan matanya.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5879,
+      "surah_number": 83,
+      "verse_number": 31,
+      "arabic_text": "وَإِذَا ٱنقَلَبُوٓا۟ إِلَىٰٓ أَهْلِهِمُ ٱنقَلَبُوا۟ فَكِهِينَ",
+      "translation_id": "Dan apabila orang-orang yang berdosa itu kembali kepada kaumnya, mereka kembali dengan gembira.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5880,
+      "surah_number": 83,
+      "verse_number": 32,
+      "arabic_text": "وَإِذَا رَأَوْهُمْ قَالُوٓا۟ إِنَّ هَٰٓؤُلَآءِ لَضَآلُّونَ",
+      "translation_id": "Dan apabila mereka melihat orang-orang mukmin, mereka mengatakan: 'Sesungguhnya mereka itu benar-benar orang-orang yang sesat',",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5881,
+      "surah_number": 83,
+      "verse_number": 33,
+      "arabic_text": "وَمَآ أُرْسِلُوا۟ عَلَيْهِمْ حَٰفِظِينَ",
+      "translation_id": "padahal orang-orang yang berdosa itu tidak dikirim untuk penjaga bagi orang-orang mukmin.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5882,
+      "surah_number": 83,
+      "verse_number": 34,
+      "arabic_text": "فَٱلْيَوْمَ ٱلَّذِينَ ءَامَنُوا۟ مِنَ ٱلْكُفَّارِ يَضْحَكُونَ",
+      "translation_id": "Maka pada hari ini, orang-orang yang beriman menertawakan orang-orang kafir,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5883,
+      "surah_number": 83,
+      "verse_number": 35,
+      "arabic_text": "عَلَى ٱلْأَرَآئِكِ يَنظُرُونَ",
+      "translation_id": "mereka (duduk) di atas dipan-dipan sambil memandang.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5884,
+      "surah_number": 83,
+      "verse_number": 36,
+      "arabic_text": "هَلْ ثُوِّبَ ٱلْكُفَّارُ مَا كَانُوا۟ يَفْعَلُونَ",
+      "translation_id": "Sesungguhnya orang-orang kafir telah diberi ganjaran terhadap apa yang dahulu mereka kerjakan.",
+      "juz_number": 30
+    }
+  ],
+  "audio": [],
+  "tafsir": [
+    {
+      "global_verse_id": 5849,
+      "surah_number": 83,
+      "verse_number": 1,
+      "tafsir_text": "1: 'Azab dan kehinaan yang besar pada hari Kiamat disediakan bagi orang-orang yang curang dalam menakar dan menimbang. Allah telah menyampaikan ancaman yang pedas kepada orang-orang yang curang dalam menakar dan menimbang yang terjadi di tempat-tempat jual beli di Mekah dan Medinah pada waktu itu.\\n\\nDiriwayatkan bahwa di Medinah ada seorang laki-laki bernama Abu Juhainah. Ia mempunyai dua macam takaran yang besar dan yang kecil. Bila ia membeli gandum atau kurma dari para petani, ia mempergunakan takaran yang besar, akan tetapi jika ia menjual kepada orang lain ia mempergunakan takaran yang kecil.\\n\\nPerbuatan seperti itu menunjukkan adanya sifat tamak, ingin mencari keuntungan bagi dirinya sendiri walaupun dengan jalan merugikan orang lain. Terhadap orang seperti itu, Nabi Muhammad telah memberi ancaman yang pedas sekali seperti tersebut dalam hadis ini:\\n\\nAda lima perkara yang dibalas dengan lima perkara: Tidak pernah suatu kaum yang melanggar janji, melainkan Allah akan membiarkan kaum itu dikuasai musuhnya. Tidak pernah mereka yang memutuskan suatu perkara dengan hukuman yang tidak diturunkan oleh Allah, melainkan akan tersebar luaslah kefakiran di kalangan mereka. Perzinaan tidak pernah meluas di kalangan mereka secara luas, melainkan akan tersebar luaslah bahaya kematian. Tidak pernah mereka yang berbuat curang dalam menakar dan menimbang, melainkan mereka akan kehilangan kesuburan tumbuh-tumbuhan dan ditimpa musim kemarau. Dan tidak pernah mereka yang menahan zakat, melainkan akan diazab dengan tertahannya hujan (kemarau yang panjang). (Riwayat ath-thabrani dari Ibnu 'Abbas)',"
+    },
+    {
+      "global_verse_id": 5850,
+      "surah_number": 83,
+      "verse_number": 2,
+      "tafsir_text": "2: 'Dalam dua ayat ini, Allah menjelaskan perilaku orang yang akan menjadi penghuni neraka. Mereka adalah orang-orang yang ingin dipenuhi takaran atau timbangannya ketika membeli karena tidak mau rugi. Sebaliknya, apabila menjual kepada orang lain, mereka akan mengurangi takaran atau timbangannya. \\n\\nOrang-orang yang mengurangi takaran dan timbangan mendapat dosa yang besar karena dengan perbuatan itu, dia dianggap telah memakan harta orang lain tanpa kerelaan pemiliknya. Allah melarang perbuatan yang demikian itu. Allah berfirman:\\n\\nDan janganlah kamu makan harta di antara kamu dengan jalan yang batil. (al-Baqarah/2: 188)\\n\\nYang dimaksud dengan takaran di sini mencakup segala ukuran dan timbangan yang biasa dipakai dalam jual beli dan terkait dengan pengurangan hak orang lain. Banyak sekali kita jumpai dalam kehidupan sekarang ini pengurangan-pengurangan yang merugikan orang lain, seperti menjual tabung gas yang isinya tidak sesuai dengan standar, mengurangi literan bensin yang dijual, penjual kain yang mengurangi ukuran kain yang dijualnya. Termasuk dalam pengurangan takaran yang sangat merugikan dan berbahaya adalah korupsi. Pelaku korupsi mengurangi dana sebuah proyek dari perencanaan semula demi memperoleh keuntungan untuk diri sendiri, atau mengurangi kualitas bahan yang diperlukan dalam proyek tersebut dan menggantinya dengan bahan yang berkualitas lebih rendah.\\n\\nAyat ini mengingatkan manusia untuk menjauhi praktek-praktek yang merugikan orang lain dan ancaman hukumannya sangat besar di dunia dan akhirat. Ayat senada yang menyuruh manusia untuk memenuhi dan menyempurnakan timbangan adalah firman Allah:\\n\\nDan sempurnakanlah takaran apabila kamu menakar, dan timbanglah dengan timbangan yang benar. Itulah yang lebih utama (bagimu) dan lebih baik akibatnya. (al-Isra'/17: 35)',"
+    },
+    {
+      "global_verse_id": 5851,
+      "surah_number": 83,
+      "verse_number": 3,
+      "tafsir_text": "3: 'Dalam dua ayat ini, Allah menjelaskan perilaku orang yang akan menjadi penghuni neraka. Mereka adalah orang-orang yang ingin dipenuhi takaran atau timbangannya ketika membeli karena tidak mau rugi. Sebaliknya, apabila menjual kepada orang lain, mereka akan mengurangi takaran atau timbangannya. \\n\\nOrang-orang yang mengurangi takaran dan timbangan mendapat dosa yang besar karena dengan perbuatan itu, dia dianggap telah memakan harta orang lain tanpa kerelaan pemiliknya. Allah melarang perbuatan yang demikian itu. Allah berfirman:\\n\\nDan janganlah kamu makan harta di antara kamu dengan jalan yang batil. (al-Baqarah/2: 188)\\n\\nYang dimaksud dengan takaran di sini mencakup segala ukuran dan timbangan yang biasa dipakai dalam jual beli dan terkait dengan pengurangan hak orang lain. Banyak sekali kita jumpai dalam kehidupan sekarang ini pengurangan-pengurangan yang merugikan orang lain, seperti menjual tabung gas yang isinya tidak sesuai dengan standar, mengurangi literan bensin yang dijual, penjual kain yang mengurangi ukuran kain yang dijualnya. Termasuk dalam pengurangan takaran yang sangat merugikan dan berbahaya adalah korupsi. Pelaku korupsi mengurangi dana sebuah proyek dari perencanaan semula demi memperoleh keuntungan untuk diri sendiri, atau mengurangi kualitas bahan yang diperlukan dalam proyek tersebut dan menggantinya dengan bahan yang berkualitas lebih rendah.\\n\\nAyat ini mengingatkan manusia untuk menjauhi praktek-praktek yang merugikan orang lain dan ancaman hukumannya sangat besar di dunia dan akhirat. Ayat senada yang menyuruh manusia untuk memenuhi dan menyempurnakan timbangan adalah firman Allah:\\n\\nDan sempurnakanlah takaran apabila kamu menakar, dan timbanglah dengan timbangan yang benar. Itulah yang lebih utama (bagimu) dan lebih baik akibatnya. (al-Isra'/17: 35)',"
+    },
+    {
+      "global_verse_id": 5852,
+      "surah_number": 83,
+      "verse_number": 4,
+      "tafsir_text": "4: 'Ayat ini mencela orang-orang yang mengurangi takaran dan timbangan dengan pertanyaan apakah mereka itu menyangka hari kebangkitan itu tidak akan pernah ada. Sebab, jika mereka menyangka saja, belum meyakini adanya hari kebangkitan, tentu mereka tidak tergugah untuk menghindari kecurangan. Memang mereka itu tidak mengharapkan adanya hari penghitungan, sebagaimana firman Allah:\\n\\nSesungguhnya dahulu mereka tidak pernah mengharapkan perhitungan. (an-Naba'/78: 27)',"
+    },
+    {
+      "global_verse_id": 5853,
+      "surah_number": 83,
+      "verse_number": 5,
+      "tafsir_text": "5: 'Mereka akan dibangkitkan untuk dihisab pada hari pembalasan. Allah menerangkan bahwa ketika itu semua umat manusia berdiri menghadap Allah Rabbul 'Alamin untuk dihisab dan diperiksa segala amal perbuatannya selama hidup di dunia. Semuanya dihisab dengan penuh keadilan karena Allah Mahaadil. Timbangan itu adalah lambang keadilan yang senantiasa harus ditegakkan dan dipertahankan.',"
+    },
+    {
+      "global_verse_id": 5854,
+      "surah_number": 83,
+      "verse_number": 6,
+      "tafsir_text": "6: 'Mereka akan dibangkitkan untuk dihisab pada hari pembalasan. Allah menerangkan bahwa ketika itu semua umat manusia berdiri menghadap Allah Rabbul 'Alamin untuk dihisab dan diperiksa segala amal perbuatannya selama hidup di dunia. Semuanya dihisab dengan penuh keadilan karena Allah Mahaadil. Timbangan itu adalah lambang keadilan yang senantiasa harus ditegakkan dan dipertahankan.',"
+    },
+    {
+      "global_verse_id": 5855,
+      "surah_number": 83,
+      "verse_number": 7,
+      "tafsir_text": "7: 'Ayat-ayat ini menjelaskan kepada orang-orang yang tidak percaya terhadap hari kebangkitan bahwa perbuatan mereka harus dipertanggungjawabkan. Mereka tidak bisa menghindari hukuman Allah karena masing-masing manusia diawasi oleh malaikat yang mencatat semua perbuatannya . \\n\\nBuku catatan orang-orang yang durhaka kepada Allah akan disimpan di Sijjin, yaitu kitab yang tertulis. Di dalamnya tercatat kejahatan dan kecurangan manusia. Catatan-catatan inilah yang akan dijadikan takaran untuk menghisab mereka.',"
+    },
+    {
+      "global_verse_id": 5856,
+      "surah_number": 83,
+      "verse_number": 8,
+      "tafsir_text": "8: 'Ayat-ayat ini menjelaskan kepada orang-orang yang tidak percaya terhadap hari kebangkitan bahwa perbuatan mereka harus dipertanggungjawabkan. Mereka tidak bisa menghindari hukuman Allah karena masing-masing manusia diawasi oleh malaikat yang mencatat semua perbuatannya . \\n\\nBuku catatan orang-orang yang durhaka kepada Allah akan disimpan di Sijjin, yaitu kitab yang tertulis. Di dalamnya tercatat kejahatan dan kecurangan manusia. Catatan-catatan inilah yang akan dijadikan takaran untuk menghisab mereka.',"
+    },
+    {
+      "global_verse_id": 5857,
+      "surah_number": 83,
+      "verse_number": 9,
+      "tafsir_text": "9: 'Ayat-ayat ini menjelaskan kepada orang-orang yang tidak percaya terhadap hari kebangkitan bahwa perbuatan mereka harus dipertanggungjawabkan. Mereka tidak bisa menghindari hukuman Allah karena masing-masing manusia diawasi oleh malaikat yang mencatat semua perbuatannya . \\n\\nBuku catatan orang-orang yang durhaka kepada Allah akan disimpan di Sijjin, yaitu kitab yang tertulis. Di dalamnya tercatat kejahatan dan kecurangan manusia. Catatan-catatan inilah yang akan dijadikan takaran untuk menghisab mereka.',"
+    },
+    {
+      "global_verse_id": 5858,
+      "surah_number": 83,
+      "verse_number": 10,
+      "tafsir_text": "10: 'Dua ayat ini kembali mengancam orang-orang yang mendustakan hari pembalasan dengan azab yang sangat pedih, yaitu neraka. Ancaman dan hukuman bagi orang-orang yang mengingkari hari kebangkitan memang sangat pedih, karena mengingkari hari kiamat berarti mengingkari keadilan Allah, dan hukum-hukum syariat agama yang berlaku di dunia dan berakibat di akhirat.',"
+    },
+    {
+      "global_verse_id": 5859,
+      "surah_number": 83,
+      "verse_number": 11,
+      "tafsir_text": "11: 'Dua ayat ini kembali mengancam orang-orang yang mendustakan hari pembalasan dengan azab yang sangat pedih, yaitu neraka. Ancaman dan hukuman bagi orang-orang yang mengingkari hari kebangkitan memang sangat pedih, karena mengingkari hari kiamat berarti mengingkari keadilan Allah, dan hukum-hukum syariat agama yang berlaku di dunia dan berakibat di akhirat.',"
+    },
+    {
+      "global_verse_id": 5860,
+      "surah_number": 83,
+      "verse_number": 12,
+      "tafsir_text": "12: 'Ayat ini menjelaskan bahwa tidak ada manusia yang mengingkari hari Kiamat kecuali orang-orang yang selalu melampaui batas-batas agama, yang tertutup hatinya oleh kekafiran, dan yang tidak lagi bermanfaat baginya berbagai peringatan dan ancaman. Allah berfirman:\\n\\nSesungguhnya orang-orang kafir, sama saja bagi mereka, engkau (Muhammad) beri peringatan atau tidak engkau beri peringatan, mereka tidak akan beriman. (al-Baqarah/2: 6)\\n\\nSifat lain dari manusia yang mengingkari hari Kiamat adalah tenggelam dalam perbuatan dosa-dosa besar, acuh tak acuh terhadap perintah dan larangan Allah, lebih mementingkan kesenangan duniawi daripada kehidupan akhirat. Firman Allah:\\n\\nMaka adapun orang yang melampaui batas, dan lebih mengutamakan kehidupan dunia, maka sungguh, nerakalah tempat tinggalnya. (an-Nazi'at/79: 37-39)',"
+    },
+    {
+      "global_verse_id": 5861,
+      "surah_number": 83,
+      "verse_number": 13,
+      "tafsir_text": "13: 'Ayat ini menjelaskan bahwa ketika dibacakan ayat-ayat Al-Qur'an kepada orang-orang yang melampaui batas, selalu berdosa, tidak mempercayai hari akhirat dan Al-Qur'an sebagai kitab suci yang berisi petunjuk-petunjuk Allah untuk mengantarkan manusia ke jalan yang lurus menuju kebahagiaan dunia dan akhirat, mereka tidak mau mendengarkannya dengan khusyuk atau menyimak isinya. Mereka bahkan mengatakan bahwa Al-Qur'an itu adalah dongeng-dongeng orang-orang dahulu yang didiktekan kepada Nabi Muhammad. Firman Allah:\\n\\nDan orang-orang kafir berkata, (Al-Qur'an) ini tidak lain hanyalah kebohongan yang diada-adakan oleh dia (Muhammad), dibantu oleh orang-orang lain, Sungguh, mereka telah berbuat zalim dan dusta yang besar. Dan mereka berkata, (Itu hanya) dongeng-dongeng orang-orang terdahulu, yang diminta agar dituliskan, lalu dibacakanlah dongeng itu kepadanya setiap pagi dan petang. Katakanlah (Muhammad), (Al-Qur'an) itu diturunkan oleh (Allah) yang mengetahui rahasia di langit dan di bumi. Sungguh, Dia Maha Pengampun, Maha Penyayang. (al-Furqan/25: 4-6)',"
+    },
+    {
+      "global_verse_id": 5862,
+      "surah_number": 83,
+      "verse_number": 14,
+      "tafsir_text": "14: 'Dalam ayat ini, Allah membantah tuduhan orang-orang kafir Mekah yang mengatakan bahwa Al-Qur'an itu dongengan orang dahulu. Sama sekali bukan demikian. Sebenarnya apa yang selalu mereka usahakan itu menutup hati mereka. Kebiasaan mereka berbuat dosa telah menyebabkan hati mereka jadi keras, gelap, dan tertutup laksana logam yang berkarat. Oleh karena itu, mereka tidak dapat membedakan antara dusta yang berat dengan kebenaran yang terang benderang. Hati yang demikian hanya bisa dibersihkan dengan tobat yang sempurna.',"
+    },
+    {
+      "global_verse_id": 5863,
+      "surah_number": 83,
+      "verse_number": 15,
+      "tafsir_text": "15: 'Ayat ini menjelaskan bahwa orang-orang kafir yang tidak mau mengakui Al-Qur'an sebagai wahyu Allah terhalang dari rahmat-Nya di dunia dan akhirat. Mereka terhalang dari nikmat terbesar bagi seorang hamba, yaitu memandang dan melihat Allah di akhirat. Imam Syafi'i mengatakan ayat ini bisa dijadikan dalil bahwa orang-orang Mukmin tidak akan terhalangi dari memandang Allah di akhirat, sebagaimana firman-Nya:\\n\\nWajah-wajah (orang mukmin) pada hari itu berseri-seri, memandang Tuhannya. (al-Qiyamah/75: 22-23)',"
+    },
+    {
+      "global_verse_id": 5864,
+      "surah_number": 83,
+      "verse_number": 16,
+      "tafsir_text": "16: 'Setelah dijauhkan dari rahmat Allah dan tidak dapat mencapai cita-cita yang diangan-angankannya pada hari pembalasan, orang-orang kafir itu benar-benar masuk neraka Jahim yang sangat panas.',"
+    },
+    {
+      "global_verse_id": 5865,
+      "surah_number": 83,
+      "verse_number": 17,
+      "tafsir_text": "17: 'Kemudian dikatakan kepada mereka ucapan yang mengandung cercaan sehingga penderitaan mereka itu berlipat ganda. Di samping penderitaan fisik, mereka juga menderita secara psikis (kejiwaan). Inilah azab yang selalu mereka dustakan ketika di dunia. Inilah balasan terhadap sikap mereka mendustakan berita-berita rasul yang benar, seperti anggapan mereka bahwa manusia tidak akan dibangkitkan kembali, Al-Qur'an itu dongengan orang-orang dahulu, Muhammad saw itu hanya seorang tukang sihir atau pendusta, dan berbagai macam tuduhan lainnya.\\n\\nDi akhirat nanti, akan menjadi jelas bagaimana fakta kebenaran yang sesungguhnya yang dapat disaksikan oleh pancaindra mereka. Alangkah sedihnya dirasakan oleh seorang yang sedang menderita azab bila diberi kecaman yang sangat menusuk hatinya, padahal ia sempat menempuh jalan keselamatannya jika ia benar-benar beriman dan bertakwa.',"
+    },
+    {
+      "global_verse_id": 5866,
+      "surah_number": 83,
+      "verse_number": 18,
+      "tafsir_text": "18: 'Dalam ayat ini, Allah membantah tuduhan orang-orang durhaka yang mengingkari hari kebangkitan dan kebenaran Al-Qur'an. Sekali-kali tidak demikian. Sesungguhnya kitab orang-orang yang berbakti disimpan dalam suatu tempat yang tinggi yang diberi nama 'Illiyyun, yang disaksikan oleh malaikat-malaikat muqarrabin (yang dekat dengan Allah).',"
+    },
+    {
+      "global_verse_id": 5867,
+      "surah_number": 83,
+      "verse_number": 19,
+      "tafsir_text": "19: 'Untuk memperlihatkan keagungan 'Illiyyun itu, Allah mengemukakan pertanyaan, Tahukah kamu apakah 'Illiyyun itu? Allah lalu menjelaskannya langsung, Yaitu kitab yang tertulis dan disaksikan oleh para malaikat yang didekatkan kepada Allah.',"
+    },
+    {
+      "global_verse_id": 5868,
+      "surah_number": 83,
+      "verse_number": 20,
+      "tafsir_text": "20: 'Untuk memperlihatkan keagungan 'Illiyyun itu, Allah mengemukakan pertanyaan, Tahukah kamu apakah 'Illiyyun itu? Allah lalu menjelaskannya langsung, Yaitu kitab yang tertulis dan disaksikan oleh para malaikat yang didekatkan kepada Allah.',"
+    },
+    {
+      "global_verse_id": 5869,
+      "surah_number": 83,
+      "verse_number": 21,
+      "tafsir_text": "21: 'Untuk memperlihatkan keagungan 'Illiyyun itu, Allah mengemukakan pertanyaan, Tahukah kamu apakah 'Illiyyun itu? Allah lalu menjelaskannya langsung, Yaitu kitab yang tertulis dan disaksikan oleh para malaikat yang didekatkan kepada Allah.',"
+    },
+    {
+      "global_verse_id": 5870,
+      "surah_number": 83,
+      "verse_number": 22,
+      "tafsir_text": "22: 'Setelah menerangkan kitab orang-orang yang berbakti yang diberi nama 'Illiyyun, lalu Allah menerangkan keadaan orang yang berbakti (al-abrar) itu secara terperinci. Sesungguhnya mereka yang membenarkan apa-apa yang dibawa oleh Muhammad saw itu, benar-benar berada dalam kenikmatan yang besar, yaitu surga.',"
+    },
+    {
+      "global_verse_id": 5871,
+      "surah_number": 83,
+      "verse_number": 23,
+      "tafsir_text": "23: 'Mereka duduk di atas dipan-dipan sambil memandang berbagai macam kenikmatan surga seperti bidadari, anak-anak mereka yang mati sebelum balig yang disediakan dalam surga untuk berkhidmat kepada orang tuanya, aneka macam makanan dan minuman, dan sebagainya.',"
+    },
+    {
+      "global_verse_id": 5872,
+      "surah_number": 83,
+      "verse_number": 24,
+      "tafsir_text": "24: 'Dalam ayat ini dijelaskan bahwa tanda-tanda kebahagiaan itu tampak pada wajah-wajah mereka. Orang yang melihatnya dapat merasakan kesenangan hidup mereka yang penuh dengan kenikmatan seperti tercantum dalam firman Allah:\\n\\nPada hari itu ada wajah-wajah yang berseri-seri, tertawa dan gembira ria. ('Abasa/80: 38-39)',"
+    },
+    {
+      "global_verse_id": 5873,
+      "surah_number": 83,
+      "verse_number": 25,
+      "tafsir_text": "25: 'Dalam ayat ini dijelaskan bahwa orang-orang yang berbakti itu diberi minum dari khamar murni yang bersih dari campuran dan tidak memabukkan. Khamar itu disimpan di tempat yang tersegel sehingga terpelihara dari pencemaran.',"
+    },
+    {
+      "global_verse_id": 5874,
+      "surah_number": 83,
+      "verse_number": 26,
+      "tafsir_text": "26: 'Segelnya adalah kasturi dan untuk mencapai kenikmatan yang demikian itu, hendaklah orang berlomba-lomba dalam rangka melaksanakan ketaatan dan ketakwaan kepada Allah. Barang siapa yang giat beribadah kepada-Nya, maka akan cepat pula melintasi jembatan as-sirathal-mustaqim yang berada di atas api neraka.',"
+    },
+    {
+      "global_verse_id": 5875,
+      "surah_number": 83,
+      "verse_number": 27,
+      "tafsir_text": "27: 'Dalam dua ayat ini dijelaskan bahwa campuran khamar murni itu ialah dari tasnim yang datang dari daerah yang tinggi. Tasnim adalah mata air yang menjadi sumber air minum orang-orang yang didekatkan kepada Allah.',"
+    },
+    {
+      "global_verse_id": 5876,
+      "surah_number": 83,
+      "verse_number": 28,
+      "tafsir_text": "28: 'Dalam dua ayat ini dijelaskan bahwa campuran khamar murni itu ialah dari tasnim yang datang dari daerah yang tinggi. Tasnim adalah mata air yang menjadi sumber air minum orang-orang yang didekatkan kepada Allah.',"
+    },
+    {
+      "global_verse_id": 5877,
+      "surah_number": 83,
+      "verse_number": 29,
+      "tafsir_text": "29: 'Sesungguhnya orang-orang yang melampaui batas dan berdosa dahulu selalu menertawakan orang-orang yang beriman. Ketika Nabi Muhammad membawa Al-Qur'an dengan ajaran Islam yang mengandung kebajikan, ia mendapatkan perlawanan yang hebat dari orang-orang musyrik Mekah. Perlawanan ini terutama dari para pembesarnya yang sejak nenek moyangnya sudah biasa menyembah patung berhala. Mereka menentang ajaran apa saja yang datang dari luar yang bertentangan dengan kepercayaan mereka.\\n\\nTelah menjadi kebiasaan bagi orang-orang besar yang bersandar kepada kekuasaan dan kebendaan atau kekayaan bahwa mereka selalu bersikap sinis atau mencemoohkan pihak lain yang tidak sejalan dengan kepercayaan dan kebudayaan mereka.',"
+    },
+    {
+      "global_verse_id": 5878,
+      "surah_number": 83,
+      "verse_number": 30,
+      "tafsir_text": "30: 'Apabila orang-orang yang beriman lewat di hadapan mereka, orang-orang yang berdosa itu saling memberi isyarat dengan kedipan mata yang mengandung unsur ejekan dan cemoohan. Apabila kembali kepada kaum kerabatnya, mereka membangga-banggakan diri karena telah mengadakan tindakan terhadap pengikut-pengikut Muhammad saw dengan berbagai tindakan yang mengandung unsur ejekan, cemoohan, dan permusuhan.',"
+    },
+    {
+      "global_verse_id": 5879,
+      "surah_number": 83,
+      "verse_number": 31,
+      "tafsir_text": "31: 'Apabila orang-orang yang beriman lewat di hadapan mereka, orang-orang yang berdosa itu saling memberi isyarat dengan kedipan mata yang mengandung unsur ejekan dan cemoohan. Apabila kembali kepada kaum kerabatnya, mereka membangga-banggakan diri karena telah mengadakan tindakan terhadap pengikut-pengikut Muhammad saw dengan berbagai tindakan yang mengandung unsur ejekan, cemoohan, dan permusuhan.',"
+    },
+    {
+      "global_verse_id": 5880,
+      "surah_number": 83,
+      "verse_number": 32,
+      "tafsir_text": "32: 'Apabila melihat orang-orang Mukmin, orang-orang yang berdosa itu berkata bahwa sesungguhnya mereka melihat orang yang benar-benar sesat dan menyimpang dari kebenaran, karena mengubah kepercayaan yang sejak dahulu kala mereka warisi dari nenek moyang mereka tentang penyembahan berhala.',"
+    },
+    {
+      "global_verse_id": 5881,
+      "surah_number": 83,
+      "verse_number": 33,
+      "tafsir_text": "33: 'Allah menegaskan bahwa orang-orang kafir itu hidup di dunia tidak ditugaskan untuk melindungi atau menjaga orang-orang Mukmin. Mereka tidak berwenang menjaga orang-orang Mukmin karena orang-orang Mukmin tidak berada di bawah kekuasaan mereka. Oleh sebab itu, mereka tidak berhak mengejek, mengawasi, dan menyakiti orang-orang Mukmin yang tulus ikhlas beriman kepada Allah.',"
+    },
+    {
+      "global_verse_id": 5882,
+      "surah_number": 83,
+      "verse_number": 34,
+      "tafsir_text": "34: 'Dalam ayat ini, Allah menjelaskan bahwa pada hari pembalasan giliran orang-orang Mukmin dalam surga mencemoohkan orang-orang kafir yang sedang menderita azab neraka. Pada hari itu, orang-orang yang beriman akan tertawa lebar karena menyaksikan pahala dan berbagai macam kenikmatan yang sesuai dengan janji Allah. Mereka juga menertawakan orang-orang kafir yang dahulu di dunia pernah mencemoohkan mereka.',"
+    },
+    {
+      "global_verse_id": 5883,
+      "surah_number": 83,
+      "verse_number": 35,
+      "tafsir_text": "35: 'Mereka duduk santai di atas dipan-dipan sambil memandang apa yang diperbuat oleh Allah terhadap orang-orang kafir dalam neraka.',"
+    },
+    {
+      "global_verse_id": 5884,
+      "surah_number": 83,
+      "verse_number": 36,
+      "tafsir_text": "36: 'Mereka meyakinkan bahwa sesungguhnya orang-orang kafir itu tidak dianiaya, tetapi hanya diberi balasan terhadap apa yang dahulu mereka kerjakan. Sebab, balasan itu biasanya diambil dari jenis perbuatan, yang baik dibalas dengan baik, dan yang jahat dibalas dengan jahat.'"
+    }
+  ]
+}

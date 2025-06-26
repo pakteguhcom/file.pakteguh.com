@@ -1,0 +1,357 @@
+{
+  "verses": [
+    {
+      "global_verse_id": 5885,
+      "surah_number": 84,
+      "verse_number": 1,
+      "arabic_text": "إِذَا ٱلسَّمَآءُ ٱنشَقَّتْ",
+      "translation_id": "Apabila langit terbelah,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5886,
+      "surah_number": 84,
+      "verse_number": 2,
+      "arabic_text": "وَأَذِنَتْ لِرَبِّهَا وَحُقَّتْ",
+      "translation_id": "dan patuh kepada Tuhannya, dan sudah semestinya langit itu patuh,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5887,
+      "surah_number": 84,
+      "verse_number": 3,
+      "arabic_text": "وَإِذَا ٱلْأَرْضُ مُدَّتْ",
+      "translation_id": "dan apabila bumi diratakan,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5888,
+      "surah_number": 84,
+      "verse_number": 4,
+      "arabic_text": "وَأَلْقَتْ مَا فِيهَا وَتَخَلَّتْ",
+      "translation_id": "dan dilemparkan apa yang ada di dalamnya dan menjadi kosong,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5889,
+      "surah_number": 84,
+      "verse_number": 5,
+      "arabic_text": "وَأَذِنَتْ لِرَبِّهَا وَحُقَّتْ",
+      "translation_id": "dan patuh kepada Tuhannya, dan sudah semestinya bumi itu patuh, (pada waktu itu manusia akan mengetahui akibat perbuatannya).",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5890,
+      "surah_number": 84,
+      "verse_number": 6,
+      "arabic_text": "يَٰٓأَيُّهَا ٱلْإِنسَٰنُ إِنَّكَ كَادِحٌ إِلَىٰ رَبِّكَ كَدْحًا فَمُلَٰقِيهِ",
+      "translation_id": "Hai manusia, sesungguhnya kamu telah bekerja dengan sungguh-sungguh menuju Tuhanmu, maka pasti kamu akan menemui-Nya.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5891,
+      "surah_number": 84,
+      "verse_number": 7,
+      "arabic_text": "فَأَمَّا مَنْ أُوتِىَ كِتَٰبَهُۥ بِيَمِينِهِۦ",
+      "translation_id": "Adapun orang yang diberikan kitabnya dari sebelah kanannya,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5892,
+      "surah_number": 84,
+      "verse_number": 8,
+      "arabic_text": "فَسَوْفَ يُحَاسَبُ حِسَابًا يَسِيرًا",
+      "translation_id": "maka dia akan diperiksa dengan pemeriksaan yang mudah,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5893,
+      "surah_number": 84,
+      "verse_number": 9,
+      "arabic_text": "وَيَنقَلِبُ إِلَىٰٓ أَهْلِهِۦ مَسْرُورًا",
+      "translation_id": "dan dia akan kembali kepada kaumnya (yang sama-sama beriman) dengan gembira.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5894,
+      "surah_number": 84,
+      "verse_number": 10,
+      "arabic_text": "وَأَمَّا مَنْ أُوتِىَ كِتَٰبَهُۥ وَرَآءَ ظَهْرِهِۦ",
+      "translation_id": "Adapun orang-orang yang diberikan kitabnya dari belakang,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5895,
+      "surah_number": 84,
+      "verse_number": 11,
+      "arabic_text": "فَسَوْفَ يَدْعُوا۟ ثُبُورًا",
+      "translation_id": "maka dia akan berteriak: 'Celakalah aku'.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5896,
+      "surah_number": 84,
+      "verse_number": 12,
+      "arabic_text": "وَيَصْلَىٰ سَعِيرًا",
+      "translation_id": "Dan dia akan masuk ke dalam api yang menyala-nyala (neraka).",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5897,
+      "surah_number": 84,
+      "verse_number": 13,
+      "arabic_text": "إِنَّهُۥ كَانَ فِىٓ أَهْلِهِۦ مَسْرُورًا",
+      "translation_id": "Sesungguhnya dia dahulu (di dunia) bergembira di kalangan kaumnya (yang sama-sama kafir).",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5898,
+      "surah_number": 84,
+      "verse_number": 14,
+      "arabic_text": "إِنَّهُۥ ظَنَّ أَن لَّن يَحُورَ",
+      "translation_id": "Sesungguhnya dia menyangka bahwa dia sekali-kali tidak akan kembali (kepada Tuhannya).",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5899,
+      "surah_number": 84,
+      "verse_number": 15,
+      "arabic_text": "بَلَىٰٓ إِنَّ رَبَّهُۥ كَانَ بِهِۦ بَصِيرًا",
+      "translation_id": "(Bukan demikian), yang benar, sesungguhnya Tuhannya selalu melihatnya.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5900,
+      "surah_number": 84,
+      "verse_number": 16,
+      "arabic_text": "فَلَآ أُقْسِمُ بِٱلشَّفَقِ",
+      "translation_id": "Maka sesungguhnya Aku bersumpah dengan cahaya merah di waktu senja,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5901,
+      "surah_number": 84,
+      "verse_number": 17,
+      "arabic_text": "وَٱلَّيْلِ وَمَا وَسَقَ",
+      "translation_id": "dan dengan malam dan apa yang diselubunginya,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5902,
+      "surah_number": 84,
+      "verse_number": 18,
+      "arabic_text": "وَٱلْقَمَرِ إِذَا ٱتَّسَقَ",
+      "translation_id": "dan dengan bulan apabila jadi purnama,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5903,
+      "surah_number": 84,
+      "verse_number": 19,
+      "arabic_text": "لَتَرْكَبُنَّ طَبَقًا عَن طَبَقٍ",
+      "translation_id": "sesungguhnya kamu melalui tingkat demi tingkat (dalam kehidupan),",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5904,
+      "surah_number": 84,
+      "verse_number": 20,
+      "arabic_text": "فَمَا لَهُمْ لَا يُؤْمِنُونَ",
+      "translation_id": "Mengapa mereka tidak mau beriman?",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5905,
+      "surah_number": 84,
+      "verse_number": 21,
+      "arabic_text": "وَإِذَا قُرِئَ عَلَيْهِمُ ٱلْقُرْءَانُ لَا يَسْجُدُونَ",
+      "translation_id": "dan apabila Al Quran dibacakan kepada mereka, mereka tidak bersujud,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5906,
+      "surah_number": 84,
+      "verse_number": 22,
+      "arabic_text": "بَلِ ٱلَّذِينَ كَفَرُوا۟ يُكَذِّبُونَ",
+      "translation_id": "bahkan orang-orang kafir itu mendustakan(nya).",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5907,
+      "surah_number": 84,
+      "verse_number": 23,
+      "arabic_text": "وَٱللَّهُ أَعْلَمُ بِمَا يُوعُونَ",
+      "translation_id": "Padahal Allah mengetahui apa yang mereka sembunyikan (dalam hati mereka).",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5908,
+      "surah_number": 84,
+      "verse_number": 24,
+      "arabic_text": "فَبَشِّرْهُم بِعَذَابٍ أَلِيمٍ",
+      "translation_id": "Maka beri kabar gembiralah mereka dengan azab yang pedih,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5909,
+      "surah_number": 84,
+      "verse_number": 25,
+      "arabic_text": "إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ لَهُمْ أَجْرٌ غَيْرُ مَمْنُونٍۭ",
+      "translation_id": "tetapi orang-orang yang beriman dan beramal saleh, bagi mereka pahala yang tidak putus-putusnya.",
+      "juz_number": 30
+    }
+  ],
+  "audio": [],
+  "tafsir": [
+    {
+      "global_verse_id": 5885,
+      "surah_number": 84,
+      "verse_number": 1,
+      "tafsir_text": "1: 'Dalam ayat-ayat ini, Allah menerangkan bahwa apabila langit terbelah karena telah rusak hubungan bagian-bagiannya dengan rusaknya peraturan alam semesta pada hari Kiamat nanti, disebabkan perbenturan bintang-bintang di langit karena masing-masing mempunyai daya tarik tersendiri. Oleh karena itu, rusaklah peraturan alam semesta dan terjadilah gumpalan-gumpalan awan yang gelap gulita yang timbul di beberapa tempat di angkasa luar, dan langit itu akan patuh kepada apa-apa yang diperintahkan Allah. Ia pantas menjadi patuh karena dialah makhluk Tuhan yang senantiasa berada dalam kekuasaan-Nya.',"
+    },
+    {
+      "global_verse_id": 5886,
+      "surah_number": 84,
+      "verse_number": 2,
+      "tafsir_text": "2: 'Dalam ayat-ayat ini, Allah menerangkan bahwa apabila langit terbelah karena telah rusak hubungan bagian-bagiannya dengan rusaknya peraturan alam semesta pada hari Kiamat nanti, disebabkan perbenturan bintang-bintang di langit karena masing-masing mempunyai daya tarik tersendiri. Oleh karena itu, rusaklah peraturan alam semesta dan terjadilah gumpalan-gumpalan awan yang gelap gulita yang timbul di beberapa tempat di angkasa luar, dan langit itu akan patuh kepada apa-apa yang diperintahkan Allah. Ia pantas menjadi patuh karena dialah makhluk Tuhan yang senantiasa berada dalam kekuasaan-Nya.',"
+    },
+    {
+      "global_verse_id": 5887,
+      "surah_number": 84,
+      "verse_number": 3,
+      "tafsir_text": "3: 'Selanjutnya Allah menerangkan bahwa bila bumi dan gunung-gunung hancur berkeping-keping sehingga menjadi rata dan mengeluarkan apa yang ada di dalam perut-nya, maka hal itu adalah karena ketundukannya pada perintah Allah dan kepatuhan melakukan kehendak-Nya.\\n\\nDalam ayat-ayat lain, Allah berfirman:\\n\\nApabila bumi diguncangkan dengan guncangan yang dahsyat, dan bumi telah mengeluarkan beban-beban berat (yang dikandung)nya. (az-Zalzalah/99: 1-2)\\n\\nDan apabila kuburan-kuburan dibongkar. (al-Infithar/82: 4)\\n\\nMaka tidakkah dia mengetahui apabila apa yang di dalam kubur dikeluarkan. (al-'Adiyat/100: 9)\\n\\nUntuk tafsir pada kalimat langit terbelah di atas, dapat dilihat kembali pada telaah ilmiah Surah al-Insyiqaq/84:1-5, lihat pula telaah ilmiah Surah al-haqqah/69:16 dan Surah al-Infithar/82:1. Kemudian, kalimat yang mengikutinya: ¦dan patuh kepada Tuhannya, dan sudah semestinya langit itu patuh, mengandung pengertian bahwa kejadian itu berlangsung menurut sunatullah, yaitu menurut hukum-hukum Allah yang ada di alam semesta ini. Pengertian bumi diratakan, dan memuntahkan apa yang ada di dalamnya dan menjadi kosong adalah bahwa bumi benar-benar luluh lantak, baik terjadinya benturan dengan planet atau benda langit lainnya, karena hilang atau kacaunya gaya gravitasi. Luluh lantaknya bumi inilah yang juga menyebabkan seluruh isi bumi dimuntahkan dan menjadikan isi bumi kosong. Kemudian, kalimat yang mengikutinya: ¦dan patuh kepada Tuhannya, dan sudah semestinya bumi itu patuh, mengandung pengertian bahwa kejadian itu berlangsung menurut sunatullah, yaitu menurut hukum-hukum Allah yang ada di alam semesta ini.',"
+    },
+    {
+      "global_verse_id": 5888,
+      "surah_number": 84,
+      "verse_number": 4,
+      "tafsir_text": "4: 'Selanjutnya Allah menerangkan bahwa bila bumi dan gunung-gunung hancur berkeping-keping sehingga menjadi rata dan mengeluarkan apa yang ada di dalam perut-nya, maka hal itu adalah karena ketundukannya pada perintah Allah dan kepatuhan melakukan kehendak-Nya.\\n\\nDalam ayat-ayat lain, Allah berfirman:\\n\\nApabila bumi diguncangkan dengan guncangan yang dahsyat, dan bumi telah mengeluarkan beban-beban berat (yang dikandung)nya. (az-Zalzalah/99: 1-2)\\n\\nDan apabila kuburan-kuburan dibongkar. (al-Infithar/82: 4)\\n\\nMaka tidakkah dia mengetahui apabila apa yang di dalam kubur dikeluarkan. (al-'Adiyat/100: 9)\\n\\nUntuk tafsir pada kalimat langit terbelah di atas, dapat dilihat kembali pada telaah ilmiah Surah al-Insyiqaq/84:1-5, lihat pula telaah ilmiah Surah al-haqqah/69:16 dan Surah al-Infithar/82:1. Kemudian, kalimat yang mengikutinya: ¦dan patuh kepada Tuhannya, dan sudah semestinya langit itu patuh, mengandung pengertian bahwa kejadian itu berlangsung menurut sunatullah, yaitu menurut hukum-hukum Allah yang ada di alam semesta ini. Pengertian bumi diratakan, dan memuntahkan apa yang ada di dalamnya dan menjadi kosong adalah bahwa bumi benar-benar luluh lantak, baik terjadinya benturan dengan planet atau benda langit lainnya, karena hilang atau kacaunya gaya gravitasi. Luluh lantaknya bumi inilah yang juga menyebabkan seluruh isi bumi dimuntahkan dan menjadikan isi bumi kosong. Kemudian, kalimat yang mengikutinya: ¦dan patuh kepada Tuhannya, dan sudah semestinya bumi itu patuh, mengandung pengertian bahwa kejadian itu berlangsung menurut sunatullah, yaitu menurut hukum-hukum Allah yang ada di alam semesta ini.',"
+    },
+    {
+      "global_verse_id": 5889,
+      "surah_number": 84,
+      "verse_number": 5,
+      "tafsir_text": "5: 'Selanjutnya Allah menerangkan bahwa bila bumi dan gunung-gunung hancur berkeping-keping sehingga menjadi rata dan mengeluarkan apa yang ada di dalam perut-nya, maka hal itu adalah karena ketundukannya pada perintah Allah dan kepatuhan melakukan kehendak-Nya.\\n\\nDalam ayat-ayat lain, Allah berfirman:\\n\\nApabila bumi diguncangkan dengan guncangan yang dahsyat, dan bumi telah mengeluarkan beban-beban berat (yang dikandung)nya. (az-Zalzalah/99: 1-2)\\n\\nDan apabila kuburan-kuburan dibongkar. (al-Infithar/82: 4)\\n\\nMaka tidakkah dia mengetahui apabila apa yang di dalam kubur dikeluarkan. (al-'Adiyat/100: 9)\\n\\nUntuk tafsir pada kalimat langit terbelah di atas, dapat dilihat kembali pada telaah ilmiah Surah al-Insyiqaq/84:1-5, lihat pula telaah ilmiah Surah al-haqqah/69:16 dan Surah al-Infithar/82:1. Kemudian, kalimat yang mengikutinya: ¦dan patuh kepada Tuhannya, dan sudah semestinya langit itu patuh, mengandung pengertian bahwa kejadian itu berlangsung menurut sunatullah, yaitu menurut hukum-hukum Allah yang ada di alam semesta ini. Pengertian bumi diratakan, dan memuntahkan apa yang ada di dalamnya dan menjadi kosong adalah bahwa bumi benar-benar luluh lantak, baik terjadinya benturan dengan planet atau benda langit lainnya, karena hilang atau kacaunya gaya gravitasi. Luluh lantaknya bumi inilah yang juga menyebabkan seluruh isi bumi dimuntahkan dan menjadikan isi bumi kosong. Kemudian, kalimat yang mengikutinya: ¦dan patuh kepada Tuhannya, dan sudah semestinya bumi itu patuh, mengandung pengertian bahwa kejadian itu berlangsung menurut sunatullah, yaitu menurut hukum-hukum Allah yang ada di alam semesta ini.',"
+    },
+    {
+      "global_verse_id": 5890,
+      "surah_number": 84,
+      "verse_number": 6,
+      "tafsir_text": "6: 'Dalam ayat ini, Allah mengungkapkan bahwa manusia dalam masa hidupnya bekerja dengan sungguh-sungguh untuk mencapai cita-citanya. Setiap langkah manusia sesungguhnya menuju kepada akhir hidupnya, yaitu mati. Hal ini berarti kembali kepada Allah. Oleh karena itu, manusia akan mengetahui tentang baik buruk pekerjaan yang telah mereka kerjakan.',"
+    },
+    {
+      "global_verse_id": 5891,
+      "surah_number": 84,
+      "verse_number": 7,
+      "tafsir_text": "7: 'Dalam ayat-ayat ini diterangkan golongan yang menerima catatan dengan tangan kanannya yang berisi apa-apa yang telah dikerjakannya, maka ia akan dihisab dengan mudah dan ringan. Dipaparkanlah semua perbuatannya yang baik dan yang buruk, kemudian diberi ganjaran atas perbuatannya yang baik dan dimaafkanlah perbuatannya yang buruk.\\n\\nDalam sebuah hadis Nabi saw dijelaskan:\\n\\nDari 'Aisyah, ia berkata, Aku mendengar Rasulullah saw. berdoa dalam sebagian salat yang dilakukannya, Wahai Allah, hisablah aku dengan hisab yang mudah. Ketika Rasul selesai salat, aku berkata: Wahai Nabi Allah, apakah hisab yang mudah itu? Rasulullah menjawab, Hisab yang mudah adalah ketika Allah memeriksa catatan amal seseorang, Dia memaafkan. Wahai 'Aisyah, orang yang diinterogasi pada perhitungan amalnya di hari itu (Hari Kiamat), maka ia celaka. Dan setiap musibah yang menimpa seorang mukmin, Allah akan mengampuni (dosanya) dengan musibah itu, walau hanya sekedar tertusuk duri. (Riwayat Ahmad)\\n\\nMaksud Rasulullah dengan perhitungan yang mudah ialah dimaafkan segala kesalahannya, sedangkan orang yang diperiksa catatannya dengan teliti adalah orang yang mendapat malapetaka. Barang siapa mendapat perhitungan yang mudah dan ringan, ia akan kembali kepada keluarganya yang mukmin dengan gembira sebagaimana firman Allah:\\n\\nAdapun orang yang kitabnya diberikan di tangan kanannya, maka dia berkata, Ambillah, bacalah kitabku (ini). Sesungguhnya aku yakin bahwa (suatu saat) aku akan menerima perhitungan terhadap diriku. Maka orang itu berada dalam kehidupan yang diridai. (al-haqqah/69: 19-21)',"
+    },
+    {
+      "global_verse_id": 5892,
+      "surah_number": 84,
+      "verse_number": 8,
+      "tafsir_text": "8: 'Dalam ayat-ayat ini diterangkan golongan yang menerima catatan dengan tangan kanannya yang berisi apa-apa yang telah dikerjakannya, maka ia akan dihisab dengan mudah dan ringan. Dipaparkanlah semua perbuatannya yang baik dan yang buruk, kemudian diberi ganjaran atas perbuatannya yang baik dan dimaafkanlah perbuatannya yang buruk.\\n\\nDalam sebuah hadis Nabi saw dijelaskan:\\n\\nDari 'Aisyah, ia berkata, Aku mendengar Rasulullah saw. berdoa dalam sebagian salat yang dilakukannya, Wahai Allah, hisablah aku dengan hisab yang mudah. Ketika Rasul selesai salat, aku berkata: Wahai Nabi Allah, apakah hisab yang mudah itu? Rasulullah menjawab, Hisab yang mudah adalah ketika Allah memeriksa catatan amal seseorang, Dia memaafkan. Wahai 'Aisyah, orang yang diinterogasi pada perhitungan amalnya di hari itu (Hari Kiamat), maka ia celaka. Dan setiap musibah yang menimpa seorang mukmin, Allah akan mengampuni (dosanya) dengan musibah itu, walau hanya sekedar tertusuk duri. (Riwayat Ahmad)\\n\\nMaksud Rasulullah dengan perhitungan yang mudah ialah dimaafkan segala kesalahannya, sedangkan orang yang diperiksa catatannya dengan teliti adalah orang yang mendapat malapetaka. Barang siapa mendapat perhitungan yang mudah dan ringan, ia akan kembali kepada keluarganya yang mukmin dengan gembira sebagaimana firman Allah:\\n\\nAdapun orang yang kitabnya diberikan di tangan kanannya, maka dia berkata, Ambillah, bacalah kitabku (ini). Sesungguhnya aku yakin bahwa (suatu saat) aku akan menerima perhitungan terhadap diriku. Maka orang itu berada dalam kehidupan yang diridai. (al-haqqah/69: 19-21)',"
+    },
+    {
+      "global_verse_id": 5893,
+      "surah_number": 84,
+      "verse_number": 9,
+      "tafsir_text": "9: 'Dalam ayat-ayat ini diterangkan golongan yang menerima catatan dengan tangan kanannya yang berisi apa-apa yang telah dikerjakannya, maka ia akan dihisab dengan mudah dan ringan. Dipaparkanlah semua perbuatannya yang baik dan yang buruk, kemudian diberi ganjaran atas perbuatannya yang baik dan dimaafkanlah perbuatannya yang buruk.\\n\\nDalam sebuah hadis Nabi saw dijelaskan:\\n\\nDari 'Aisyah, ia berkata, Aku mendengar Rasulullah saw. berdoa dalam sebagian salat yang dilakukannya, Wahai Allah, hisablah aku dengan hisab yang mudah. Ketika Rasul selesai salat, aku berkata: Wahai Nabi Allah, apakah hisab yang mudah itu? Rasulullah menjawab, Hisab yang mudah adalah ketika Allah memeriksa catatan amal seseorang, Dia memaafkan. Wahai 'Aisyah, orang yang diinterogasi pada perhitungan amalnya di hari itu (Hari Kiamat), maka ia celaka. Dan setiap musibah yang menimpa seorang mukmin, Allah akan mengampuni (dosanya) dengan musibah itu, walau hanya sekedar tertusuk duri. (Riwayat Ahmad)\\n\\nMaksud Rasulullah dengan perhitungan yang mudah ialah dimaafkan segala kesalahannya, sedangkan orang yang diperiksa catatannya dengan teliti adalah orang yang mendapat malapetaka. Barang siapa mendapat perhitungan yang mudah dan ringan, ia akan kembali kepada keluarganya yang mukmin dengan gembira sebagaimana firman Allah:\\n\\nAdapun orang yang kitabnya diberikan di tangan kanannya, maka dia berkata, Ambillah, bacalah kitabku (ini). Sesungguhnya aku yakin bahwa (suatu saat) aku akan menerima perhitungan terhadap diriku. Maka orang itu berada dalam kehidupan yang diridai. (al-haqqah/69: 19-21)',"
+    },
+    {
+      "global_verse_id": 5894,
+      "surah_number": 84,
+      "verse_number": 10,
+      "tafsir_text": "10: 'Dalam ayat-ayat ini, Allah menerangkan bahwa golongan kedua adalah mereka yang banyak mengerjakan perbuatan maksiat, durhaka, dan tidak diridai Allah. Mereka akan menerima catatan perbuatan mereka dengan tangan kiri, dan dari belakang, kemudian mereka dimasukkan ke dalam neraka.\\n\\nDan adapun orang yang kitabnya diberikan di tangan kirinya, maka dia berkata, Alangkah baiknya jika kitabku (ini) tidak diberikan kepadaku. Sehingga aku tidak mengetahui bagaimana perhitunganku. Wahai, kiranya (kematian) itulah yang menyudahi segala sesuatu. Hartaku sama sekali tidak berguna bagiku. Kekuasaanku telah hilang dariku. (al-haqqah/69: 25-29)',"
+    },
+    {
+      "global_verse_id": 5895,
+      "surah_number": 84,
+      "verse_number": 11,
+      "tafsir_text": "11: 'Dalam ayat-ayat ini, Allah menerangkan bahwa golongan kedua adalah mereka yang banyak mengerjakan perbuatan maksiat, durhaka, dan tidak diridai Allah. Mereka akan menerima catatan perbuatan mereka dengan tangan kiri, dan dari belakang, kemudian mereka dimasukkan ke dalam neraka.\\n\\nDan adapun orang yang kitabnya diberikan di tangan kirinya, maka dia berkata, Alangkah baiknya jika kitabku (ini) tidak diberikan kepadaku. Sehingga aku tidak mengetahui bagaimana perhitunganku. Wahai, kiranya (kematian) itulah yang menyudahi segala sesuatu. Hartaku sama sekali tidak berguna bagiku. Kekuasaanku telah hilang dariku. (al-haqqah/69: 25-29)',"
+    },
+    {
+      "global_verse_id": 5896,
+      "surah_number": 84,
+      "verse_number": 12,
+      "tafsir_text": "12: 'Dalam ayat-ayat ini, Allah menerangkan bahwa golongan kedua adalah mereka yang banyak mengerjakan perbuatan maksiat, durhaka, dan tidak diridai Allah. Mereka akan menerima catatan perbuatan mereka dengan tangan kiri, dan dari belakang, kemudian mereka dimasukkan ke dalam neraka.\\n\\nDan adapun orang yang kitabnya diberikan di tangan kirinya, maka dia berkata, Alangkah baiknya jika kitabku (ini) tidak diberikan kepadaku. Sehingga aku tidak mengetahui bagaimana perhitunganku. Wahai, kiranya (kematian) itulah yang menyudahi segala sesuatu. Hartaku sama sekali tidak berguna bagiku. Kekuasaanku telah hilang dariku. (al-haqqah/69: 25-29)',"
+    },
+    {
+      "global_verse_id": 5897,
+      "surah_number": 84,
+      "verse_number": 13,
+      "tafsir_text": "13: 'Dalam ayat-ayat ini, Allah menjelaskan bahwa ada dua hal yang menjadi sebab mengapa mereka menerima catatan amalnya dengan tangan kiri, yaitu: pertama, mereka berbuat sekehendak hatinya, mengerjakan kejahatan dan kemaksiatan dengan tidak memikirkan akibat buruk yang akan menimpa mereka di akhirat kelak.\\n\\nKedua, mereka menyangka bahwa mereka tidak akan kembali kepada Tuhannya dan tidak akan dibangkitkan kembali untuk dihisab dan menerima hasil perbuatan mereka di dunia.',"
+    },
+    {
+      "global_verse_id": 5898,
+      "surah_number": 84,
+      "verse_number": 14,
+      "tafsir_text": "14: 'Dalam ayat-ayat ini, Allah menjelaskan bahwa ada dua hal yang menjadi sebab mengapa mereka menerima catatan amalnya dengan tangan kiri, yaitu: pertama, mereka berbuat sekehendak hatinya, mengerjakan kejahatan dan kemaksiatan dengan tidak memikirkan akibat buruk yang akan menimpa mereka di akhirat kelak.\\n\\nKedua, mereka menyangka bahwa mereka tidak akan kembali kepada Tuhannya dan tidak akan dibangkitkan kembali untuk dihisab dan menerima hasil perbuatan mereka di dunia.',"
+    },
+    {
+      "global_verse_id": 5899,
+      "surah_number": 84,
+      "verse_number": 15,
+      "tafsir_text": "15: 'Dalam ayat ini, Allah menegaskan bahwa mereka sesungguhnya akan kembali kepada-Nya dan akan menerima hasil perbuatan mereka di dunia. Orang yang saleh dan patuh mengerjakan perintah-Nya akan dimasukkan ke dalam surga, sedang orang yang durhaka dan banyak berbuat maksiat akan dimasukkan ke dalam neraka.',"
+    },
+    {
+      "global_verse_id": 5900,
+      "surah_number": 84,
+      "verse_number": 16,
+      "tafsir_text": "16: 'Dalam ayat-ayat ini, Allah bersumpah dengan cahaya merah pada waktu senja, dengan malam dan apa-apa yang diselubunginya dan dengan bulan apabila jadi purnama bahwa sesungguhnya manusia melalui tahap demi tahap dalam kehidupan, dari setetes air mani sampai dilahirkan.\\n\\nKemudian melalui masa kanak-kanak, remaja dan dewasa sampai tua. Kemudian dari hidup sampai mati, lalu dibangkitkan kembali, hidup kembali di surga atau neraka setelah melalui ujian dan perhitungan yang sangat teliti.',"
+    },
+    {
+      "global_verse_id": 5901,
+      "surah_number": 84,
+      "verse_number": 17,
+      "tafsir_text": "17: 'Dalam ayat-ayat ini, Allah bersumpah dengan cahaya merah pada waktu senja, dengan malam dan apa-apa yang diselubunginya dan dengan bulan apabila jadi purnama bahwa sesungguhnya manusia melalui tahap demi tahap dalam kehidupan, dari setetes air mani sampai dilahirkan.\\n\\nKemudian melalui masa kanak-kanak, remaja dan dewasa sampai tua. Kemudian dari hidup sampai mati, lalu dibangkitkan kembali, hidup kembali di surga atau neraka setelah melalui ujian dan perhitungan yang sangat teliti.',"
+    },
+    {
+      "global_verse_id": 5902,
+      "surah_number": 84,
+      "verse_number": 18,
+      "tafsir_text": "18: 'Dalam ayat-ayat ini, Allah bersumpah dengan cahaya merah pada waktu senja, dengan malam dan apa-apa yang diselubunginya dan dengan bulan apabila jadi purnama bahwa sesungguhnya manusia melalui tahap demi tahap dalam kehidupan, dari setetes air mani sampai dilahirkan.\\n\\nKemudian melalui masa kanak-kanak, remaja dan dewasa sampai tua. Kemudian dari hidup sampai mati, lalu dibangkitkan kembali, hidup kembali di surga atau neraka setelah melalui ujian dan perhitungan yang sangat teliti.',"
+    },
+    {
+      "global_verse_id": 5903,
+      "surah_number": 84,
+      "verse_number": 19,
+      "tafsir_text": "19: 'Dalam ayat-ayat ini, Allah bersumpah dengan cahaya merah pada waktu senja, dengan malam dan apa-apa yang diselubunginya dan dengan bulan apabila jadi purnama bahwa sesungguhnya manusia melalui tahap demi tahap dalam kehidupan, dari setetes air mani sampai dilahirkan.\\n\\nKemudian melalui masa kanak-kanak, remaja dan dewasa sampai tua. Kemudian dari hidup sampai mati, lalu dibangkitkan kembali, hidup kembali di surga atau neraka setelah melalui ujian dan perhitungan yang sangat teliti.',"
+    },
+    {
+      "global_verse_id": 5904,
+      "surah_number": 84,
+      "verse_number": 20,
+      "tafsir_text": "20: 'Dalam ayat ini, Allah mencela sikap dan perbuatan mereka, Mengapa mereka masih tidak mau beriman, sedangkan bukti telah nyata menunjukkan adanya hari kebangkitan itu? Firman Allah:\\n\\nOrang-orang yang kafir mengira, bahwa mereka tidak akan dibangkitkan. Katakanlah (Muhammad), Tidak demikian, demi Tuhanku, kamu pasti dibangkitkan, kemudian diberitakan semua yang telah kamu kerjakan. Dan yang demikian itu mudah bagi Allah. (at-Tagabun/64: 7)',"
+    },
+    {
+      "global_verse_id": 5905,
+      "surah_number": 84,
+      "verse_number": 21,
+      "tafsir_text": "21: 'Dalam ayat ini, Allah menerangkan bahwa mereka tidak mau mengakui bahwa Al-Qur'an itu kalam Ilahi yang harus dimuliakan dan dipatuhi serta mengakui bahwa sesungguhnya Nabi Muhammad saw utusan Allah.',"
+    },
+    {
+      "global_verse_id": 5906,
+      "surah_number": 84,
+      "verse_number": 22,
+      "tafsir_text": "22: 'Dalam ayat ini, Allah menerangkan bahwa mereka tidak mau mengakui bahwa Al-Qur'an itu kalam Ilahi yang harus dimuliakan dan dipatuhi serta mengakui bahwa sesungguhnya Nabi Muhammad saw utusan Allah.',"
+    },
+    {
+      "global_verse_id": 5907,
+      "surah_number": 84,
+      "verse_number": 23,
+      "tafsir_text": "23: 'Dalam ayat-ayat berikut ini, Allah menerangkan sebab mereka tidak mau mengakuinya, yaitu:\\n\\n1.Mereka dengki kepada Nabi Muhammad atas kelebihan yang telah dikaruniakan Allah kepadanya.\\n\\n2.Mereka takut kehilangan pengaruh dan kedudukan sebagai pemimpin bangsanya.\\n\\n3.Mereka tidak mau mengganti kepercayaan yang telah dianut oleh nenek moyang mereka dengan kepercayaan yang lain. Allah mengetahui apa yang mereka sembunyikan dalam hati mereka. Oleh karena itu, Allah mengejek mereka dengan kata-kata, Berilah kabar gembira kepada mereka dengan azab yang pedih di hari Kiamat nanti.',"
+    },
+    {
+      "global_verse_id": 5908,
+      "surah_number": 84,
+      "verse_number": 24,
+      "tafsir_text": "24: 'Dalam ayat-ayat berikut ini, Allah menerangkan sebab mereka tidak mau mengakuinya, yaitu:\\n\\n1.Mereka dengki kepada Nabi Muhammad atas kelebihan yang telah dikaruniakan Allah kepadanya.\\n\\n2.Mereka takut kehilangan pengaruh dan kedudukan sebagai pemimpin bangsanya.\\n\\n3.Mereka tidak mau mengganti kepercayaan yang telah dianut oleh nenek moyang mereka dengan kepercayaan yang lain. Allah mengetahui apa yang mereka sembunyikan dalam hati mereka. Oleh karena itu, Allah mengejek mereka dengan kata-kata, Berilah kabar gembira kepada mereka dengan azab yang pedih di hari Kiamat nanti.',"
+    },
+    {
+      "global_verse_id": 5909,
+      "surah_number": 84,
+      "verse_number": 25,
+      "tafsir_text": "25: 'Dalam ayat ini, Allah menerangkan bahwa orang-orang yang beriman kepada Allah dan Rasul-Nya, percaya kepada Al-Qur'an, serta mengerjakan ajarannya dengan sebaik-baiknya, akan mendapat ganjaran dari Allah yang tidak ada putus-putusnya, abadi selama-lamanya.'"
+    }
+  ]
+}

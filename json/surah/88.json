@@ -1,0 +1,371 @@
+{
+  "verses": [
+    {
+      "global_verse_id": 5968,
+      "surah_number": 88,
+      "verse_number": 1,
+      "arabic_text": "هَلْ أَتَىٰكَ حَدِيثُ ٱلْغَٰشِيَةِ",
+      "translation_id": "Sudah datangkah kepadamu berita (tentang) hari pembalasan?",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5969,
+      "surah_number": 88,
+      "verse_number": 2,
+      "arabic_text": "وُجُوهٌ يَوْمَئِذٍ خَٰشِعَةٌ",
+      "translation_id": "Banyak muka pada hari itu tunduk terhina,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5970,
+      "surah_number": 88,
+      "verse_number": 3,
+      "arabic_text": "عَامِلَةٌ نَّاصِبَةٌ",
+      "translation_id": "bekerja keras lagi kepayahan,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5971,
+      "surah_number": 88,
+      "verse_number": 4,
+      "arabic_text": "تَصْلَىٰ نَارًا حَامِيَةً",
+      "translation_id": "memasuki api yang sangat panas (neraka),",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5972,
+      "surah_number": 88,
+      "verse_number": 5,
+      "arabic_text": "تُسْقَىٰ مِنْ عَيْنٍ ءَانِيَةٍ",
+      "translation_id": "diberi minum (dengan air) dari sumber yang sangat panas.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5973,
+      "surah_number": 88,
+      "verse_number": 6,
+      "arabic_text": "لَّيْسَ لَهُمْ طَعَامٌ إِلَّا مِن ضَرِيعٍ",
+      "translation_id": "Mereka tiada memperoleh makanan selain dari pohon yang berduri,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5974,
+      "surah_number": 88,
+      "verse_number": 7,
+      "arabic_text": "لَّا يُسْمِنُ وَلَا يُغْنِى مِن جُوعٍ",
+      "translation_id": "yang tidak menggemukkan dan tidak pula menghilangkan lapar.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5975,
+      "surah_number": 88,
+      "verse_number": 8,
+      "arabic_text": "وُجُوهٌ يَوْمَئِذٍ نَّاعِمَةٌ",
+      "translation_id": "Banyak muka pada hari itu berseri-seri,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5976,
+      "surah_number": 88,
+      "verse_number": 9,
+      "arabic_text": "لِّسَعْيِهَا رَاضِيَةٌ",
+      "translation_id": "merasa senang karena usahanya,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5977,
+      "surah_number": 88,
+      "verse_number": 10,
+      "arabic_text": "فِى جَنَّةٍ عَالِيَةٍ",
+      "translation_id": "dalam surga yang tinggi,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5978,
+      "surah_number": 88,
+      "verse_number": 11,
+      "arabic_text": "لَّا تَسْمَعُ فِيهَا لَٰغِيَةً",
+      "translation_id": "tidak kamu dengar di dalamnya perkataan yang tidak berguna.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5979,
+      "surah_number": 88,
+      "verse_number": 12,
+      "arabic_text": "فِيهَا عَيْنٌ جَارِيَةٌ",
+      "translation_id": "Di dalamnya ada mata air yang mengalir.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5980,
+      "surah_number": 88,
+      "verse_number": 13,
+      "arabic_text": "فِيهَا سُرُرٌ مَّرْفُوعَةٌ",
+      "translation_id": "Di dalamnya ada takhta-takhta yang ditinggikan,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5981,
+      "surah_number": 88,
+      "verse_number": 14,
+      "arabic_text": "وَأَكْوَابٌ مَّوْضُوعَةٌ",
+      "translation_id": "dan gelas-gelas yang terletak (di dekatnya),",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5982,
+      "surah_number": 88,
+      "verse_number": 15,
+      "arabic_text": "وَنَمَارِقُ مَصْفُوفَةٌ",
+      "translation_id": "dan bantal-bantal sandaran yang tersusun,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5983,
+      "surah_number": 88,
+      "verse_number": 16,
+      "arabic_text": "وَزَرَابِىُّ مَبْثُوثَةٌ",
+      "translation_id": "dan permadani-permadani yang terhampar.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5984,
+      "surah_number": 88,
+      "verse_number": 17,
+      "arabic_text": "أَفَلَا يَنظُرُونَ إِلَى ٱلْإِبِلِ كَيْفَ خُلِقَتْ",
+      "translation_id": "Maka apakah mereka tidak memperhatikan unta bagaimana dia diciptakan,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5985,
+      "surah_number": 88,
+      "verse_number": 18,
+      "arabic_text": "وَإِلَى ٱلسَّمَآءِ كَيْفَ رُفِعَتْ",
+      "translation_id": "Dan langit, bagaimana ia ditinggikan?",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5986,
+      "surah_number": 88,
+      "verse_number": 19,
+      "arabic_text": "وَإِلَى ٱلْجِبَالِ كَيْفَ نُصِبَتْ",
+      "translation_id": "Dan gunung-gunung bagaimana ia ditegakkan?",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5987,
+      "surah_number": 88,
+      "verse_number": 20,
+      "arabic_text": "وَإِلَى ٱلْأَرْضِ كَيْفَ سُطِحَتْ",
+      "translation_id": "Dan bumi bagaimana ia dihamparkan?",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5988,
+      "surah_number": 88,
+      "verse_number": 21,
+      "arabic_text": "فَذَكِّرْ إِنَّمَآ أَنتَ مُذَكِّرٌ",
+      "translation_id": "Maka berilah peringatan, karena sesungguhnya kamu hanyalah orang yang memberi peringatan.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5989,
+      "surah_number": 88,
+      "verse_number": 22,
+      "arabic_text": "لَّسْتَ عَلَيْهِم بِمُصَيْطِرٍ",
+      "translation_id": "Kamu bukanlah orang yang berkuasa atas mereka,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5990,
+      "surah_number": 88,
+      "verse_number": 23,
+      "arabic_text": "إِلَّا مَن تَوَلَّىٰ وَكَفَرَ",
+      "translation_id": "tetapi orang yang berpaling dan kafir,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5991,
+      "surah_number": 88,
+      "verse_number": 24,
+      "arabic_text": "فَيُعَذِّبُهُ ٱللَّهُ ٱلْعَذَابَ ٱلْأَكْبَرَ",
+      "translation_id": "maka Allah akan mengazabnya dengan azab yang besar.",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5992,
+      "surah_number": 88,
+      "verse_number": 25,
+      "arabic_text": "إِنَّ إِلَيْنَآ إِيَابَهُمْ",
+      "translation_id": "Sesungguhnya kepada Kami-lah kembali mereka,",
+      "juz_number": 30
+    },
+    {
+      "global_verse_id": 5993,
+      "surah_number": 88,
+      "verse_number": 26,
+      "arabic_text": "ثُمَّ إِنَّ عَلَيْنَا حِسَابَهُم",
+      "translation_id": "kemudian sesungguhnya kewajiban Kami-lah menghisab mereka.",
+      "juz_number": 30
+    }
+  ],
+  "audio": [],
+  "tafsir": [
+    {
+      "global_verse_id": 5968,
+      "surah_number": 88,
+      "verse_number": 1,
+      "tafsir_text": "1: 'Allah menyindir penduduk neraka dengan mengatakan, Sudahkah sampai kepada kamu berita tentang hari Kiamat.',"
+    },
+    {
+      "global_verse_id": 5969,
+      "surah_number": 88,
+      "verse_number": 2,
+      "tafsir_text": "2: 'Kemudian Allah menjelaskan bahwa manusia ketika itu terbagi dua, yaitu golongan orang kafir dan golongan orang mukmin.\\n\\nGolongan orang kafir ketika melihat kedahsyatan yang terjadi ketika itu, menjadi tertunduk dan merasa terhina. Allah berfirman:\\n\\nDan (alangkah ngerinya), jika sekiranya kamu melihat orang-orang yang berdosa itu menundukkan kepalanya di hadapan Tuhannya, (mereka berkata), Ya Tuhan kami, kami telah melihat dan mendengar, maka kembalikanlah kami (ke dunia), niscaya kami akan mengerjakan kebajikan. Sungguh, kami adalah orang-orang yang yakin. (as-Sajdah/32: 12)\\n\\nDan firman Allah:\\n\\nDan kamu akan melihat mereka dihadapkan ke neraka dalam keadaan tertunduk karena (merasa) hina, mereka melihat dengan pandangan yang lesu. Dan orang-orang yang beriman berkata, Sesungguhnya orang-orang yang rugi ialah orang-orang yang merugikan diri mereka sendiri dan keluarganya pada hari Kiamat. Ingatlah, sesungguhnya orang-orang zalim itu berada dalam azab yang kekal. (asy-Syura/42: 45)',"
+    },
+    {
+      "global_verse_id": 5970,
+      "surah_number": 88,
+      "verse_number": 3,
+      "tafsir_text": "3: 'Allah menerangkan bahwa orang-orang kafir itu semasa hidup di dunia bekerja dengan rajin dan sungguh-sungguh. Akan tetapi, perbuatan mereka itu tidak diterima karena mereka tidak beriman kepada Allah dan Rasul-Nya, yang merupakan syarat utama untuk diterimanya perbuatan dan mendapat ganjaran-Nya.',"
+    },
+    {
+      "global_verse_id": 5971,
+      "surah_number": 88,
+      "verse_number": 4,
+      "tafsir_text": "4: 'Dalam ayat-ayat ini, Allah menerangkan bahwa orang-orang kafir akan dimasukkan ke dalam neraka. Bila mereka meminta air karena haus, maka mereka diberi air bersumber dari mata air yang sangat panas. Bila mereka meminta makan, maka diberi makanan yang jelek, yang tidak ada artinya. Allah berfirman:\\n\\nDan tidak ada makanan (baginya) kecuali dari darah dan nanah. (al-haqqah/69: 36)\\n\\nDan firman Allah:\\n\\nKemudian sesungguhnya kamu, wahai orang-orang yang sesat lagi mendustakan! pasti akan memakan pohon zaqqum. (al-Waqi'ah/56: 51-52)\\n\\nDalam ayat lain Allah berfirman:\\n\\nSungguh pohon zaqqum itu, makanan bagi orang yang banyak dosa. (ad-Dukhan/44: 43-44)',"
+    },
+    {
+      "global_verse_id": 5972,
+      "surah_number": 88,
+      "verse_number": 5,
+      "tafsir_text": "5: 'Dalam ayat-ayat ini, Allah menerangkan bahwa orang-orang kafir akan dimasukkan ke dalam neraka. Bila mereka meminta air karena haus, maka mereka diberi air bersumber dari mata air yang sangat panas. Bila mereka meminta makan, maka diberi makanan yang jelek, yang tidak ada artinya. Allah berfirman:\\n\\nDan tidak ada makanan (baginya) kecuali dari darah dan nanah. (al-haqqah/69: 36)\\n\\nDan firman Allah:\\n\\nKemudian sesungguhnya kamu, wahai orang-orang yang sesat lagi mendustakan! pasti akan memakan pohon zaqqum. (al-Waqi'ah/56: 51-52)\\n\\nDalam ayat lain Allah berfirman:\\n\\nSungguh pohon zaqqum itu, makanan bagi orang yang banyak dosa. (ad-Dukhan/44: 43-44)',"
+    },
+    {
+      "global_verse_id": 5973,
+      "surah_number": 88,
+      "verse_number": 6,
+      "tafsir_text": "6: 'Dalam ayat-ayat ini, Allah menerangkan bahwa orang-orang kafir akan dimasukkan ke dalam neraka. Bila mereka meminta air karena haus, maka mereka diberi air bersumber dari mata air yang sangat panas. Bila mereka meminta makan, maka diberi makanan yang jelek, yang tidak ada artinya. Allah berfirman:\\n\\nDan tidak ada makanan (baginya) kecuali dari darah dan nanah. (al-haqqah/69: 36)\\n\\nDan firman Allah:\\n\\nKemudian sesungguhnya kamu, wahai orang-orang yang sesat lagi mendustakan! pasti akan memakan pohon zaqqum. (al-Waqi'ah/56: 51-52)\\n\\nDalam ayat lain Allah berfirman:\\n\\nSungguh pohon zaqqum itu, makanan bagi orang yang banyak dosa. (ad-Dukhan/44: 43-44)',"
+    },
+    {
+      "global_verse_id": 5974,
+      "surah_number": 88,
+      "verse_number": 7,
+      "tafsir_text": "7: 'Dalam ayat-ayat ini, Allah menerangkan bahwa orang-orang kafir akan dimasukkan ke dalam neraka. Bila mereka meminta air karena haus, maka mereka diberi air bersumber dari mata air yang sangat panas. Bila mereka meminta makan, maka diberi makanan yang jelek, yang tidak ada artinya. Allah berfirman:\\n\\nDan tidak ada makanan (baginya) kecuali dari darah dan nanah. (al-haqqah/69: 36)\\n\\nDan firman Allah:\\n\\nKemudian sesungguhnya kamu, wahai orang-orang yang sesat lagi mendustakan! pasti akan memakan pohon zaqqum. (al-Waqi'ah/56: 51-52)\\n\\nDalam ayat lain Allah berfirman:\\n\\nSungguh pohon zaqqum itu, makanan bagi orang yang banyak dosa. (ad-Dukhan/44: 43-44)',"
+    },
+    {
+      "global_verse_id": 5975,
+      "surah_number": 88,
+      "verse_number": 8,
+      "tafsir_text": "8: 'Allah menerangkan bahwa di dalam surga, muka orang mukmin berseri penuh kegembiraan. Mereka merasa senang melihat hasil usaha mereka yang mendapat keridaan Allah yang kemudian mendapat imbalan surga yang diidam-idamkan.\\n\\n(10-16) Dalam ayat-ayat berikut ini, Allah menerangkan keadaan surga:\\n\\n1.Surga tempatnya bernilai tinggi, lebih tinggi dari nilai tempat-tempat yang lain.\\n\\n2.Di dalamnya tidak terdengar perkataan yang tidak berguna, sebab tempat itu adalah tempat orang-orang yang dikasihi Allah.\\n\\n3.Di dalamnya terdapat mata air yang mengalirkan air bersih yang menarik pandangan bagi siapa saja yang melihatnya.\\n\\n4.Di dalamnya terdapat mahligai yang tinggi.\\n\\n5.Di dekat mereka tersedia gelas-gelas yang berisi minuman yang sudah siap diminum.\\n\\n6.Di dalamnya terdapat bantal-bantal tersusun yang dapat dipergunakan menurut selera mereka, duduk di atasnya atau dipakai untuk bersandar dan sebagainya.\\n\\n7.Di sana terdapat pula permadani yang indah dan terhampar pada setiap tempat.\\n\\n8.Terdapat segala macam kenikmatan rohani dan jasmani yang jauh dari yang dapat kita bayangkan.',"
+    },
+    {
+      "global_verse_id": 5976,
+      "surah_number": 88,
+      "verse_number": 9,
+      "tafsir_text": "9: 'Allah menerangkan bahwa di dalam surga, muka orang mukmin berseri penuh kegembiraan. Mereka merasa senang melihat hasil usaha mereka yang mendapat keridaan Allah yang kemudian mendapat imbalan surga yang diidam-idamkan.\\n\\n(10-16) Dalam ayat-ayat berikut ini, Allah menerangkan keadaan surga:\\n\\n1.Surga tempatnya bernilai tinggi, lebih tinggi dari nilai tempat-tempat yang lain.\\n\\n2.Di dalamnya tidak terdengar perkataan yang tidak berguna, sebab tempat itu adalah tempat orang-orang yang dikasihi Allah.\\n\\n3.Di dalamnya terdapat mata air yang mengalirkan air bersih yang menarik pandangan bagi siapa saja yang melihatnya.\\n\\n4.Di dalamnya terdapat mahligai yang tinggi.\\n\\n5.Di dekat mereka tersedia gelas-gelas yang berisi minuman yang sudah siap diminum.\\n\\n6.Di dalamnya terdapat bantal-bantal tersusun yang dapat dipergunakan menurut selera mereka, duduk di atasnya atau dipakai untuk bersandar dan sebagainya.\\n\\n7.Di sana terdapat pula permadani yang indah dan terhampar pada setiap tempat.\\n\\n8.Terdapat segala macam kenikmatan rohani dan jasmani yang jauh dari yang dapat kita bayangkan.',"
+    },
+    {
+      "global_verse_id": 5977,
+      "surah_number": 88,
+      "verse_number": 10,
+      "tafsir_text": "10: 'Dalam ayat-ayat berikut ini, Allah menerangkan keadaan surga:\\n\\n1.Surga tempatnya bernilai tinggi, lebih tinggi dari nilai tempat-tempat yang lain.\\n\\n2.Di dalamnya tidak terdengar perkataan yang tidak berguna, sebab tempat itu adalah tempat orang-orang yang dikasihi Allah.\\n\\n3.Di dalamnya terdapat mata air yang mengalirkan air bersih yang menarik pandangan bagi siapa saja yang melihatnya.\\n\\n4.Di dalamnya terdapat mahligai yang tinggi.\\n\\n5.Di dekat mereka tersedia gelas-gelas yang berisi minuman yang sudah siap diminum.\\n\\n6.Di dalamnya terdapat bantal-bantal tersusun yang dapat dipergunakan menurut selera mereka, duduk di atasnya atau dipakai untuk bersandar dan sebagainya.\\n\\n7.Di sana terdapat pula permadani yang indah dan terhampar pada setiap tempat.\\n\\n8.Terdapat segala macam kenikmatan rohani dan jasmani yang jauh dari yang dapat kita bayangkan.',"
+    },
+    {
+      "global_verse_id": 5978,
+      "surah_number": 88,
+      "verse_number": 11,
+      "tafsir_text": "11: 'Dalam ayat-ayat berikut ini, Allah menerangkan keadaan surga:\\n\\n1.Surga tempatnya bernilai tinggi, lebih tinggi dari nilai tempat-tempat yang lain.\\n\\n2.Di dalamnya tidak terdengar perkataan yang tidak berguna, sebab tempat itu adalah tempat orang-orang yang dikasihi Allah.\\n\\n3.Di dalamnya terdapat mata air yang mengalirkan air bersih yang menarik pandangan bagi siapa saja yang melihatnya.\\n\\n4.Di dalamnya terdapat mahligai yang tinggi.\\n\\n5.Di dekat mereka tersedia gelas-gelas yang berisi minuman yang sudah siap diminum.\\n\\n6.Di dalamnya terdapat bantal-bantal tersusun yang dapat dipergunakan menurut selera mereka, duduk di atasnya atau dipakai untuk bersandar dan sebagainya.\\n\\n7.Di sana terdapat pula permadani yang indah dan terhampar pada setiap tempat.\\n\\n8.Terdapat segala macam kenikmatan rohani dan jasmani yang jauh dari yang dapat kita bayangkan.',"
+    },
+    {
+      "global_verse_id": 5979,
+      "surah_number": 88,
+      "verse_number": 12,
+      "tafsir_text": "12: 'Dalam ayat-ayat berikut ini, Allah menerangkan keadaan surga:\\n\\n1.Surga tempatnya bernilai tinggi, lebih tinggi dari nilai tempat-tempat yang lain.\\n\\n2.Di dalamnya tidak terdengar perkataan yang tidak berguna, sebab tempat itu adalah tempat orang-orang yang dikasihi Allah.\\n\\n3.Di dalamnya terdapat mata air yang mengalirkan air bersih yang menarik pandangan bagi siapa saja yang melihatnya.\\n\\n4.Di dalamnya terdapat mahligai yang tinggi.\\n\\n5.Di dekat mereka tersedia gelas-gelas yang berisi minuman yang sudah siap diminum.\\n\\n6.Di dalamnya terdapat bantal-bantal tersusun yang dapat dipergunakan menurut selera mereka, duduk di atasnya atau dipakai untuk bersandar dan sebagainya.\\n\\n7.Di sana terdapat pula permadani yang indah dan terhampar pada setiap tempat.\\n\\n8.Terdapat segala macam kenikmatan rohani dan jasmani yang jauh dari yang dapat kita bayangkan.',"
+    },
+    {
+      "global_verse_id": 5980,
+      "surah_number": 88,
+      "verse_number": 13,
+      "tafsir_text": "13: 'Dalam ayat-ayat berikut ini, Allah menerangkan keadaan surga:\\n\\n1.Surga tempatnya bernilai tinggi, lebih tinggi dari nilai tempat-tempat yang lain.\\n\\n2.Di dalamnya tidak terdengar perkataan yang tidak berguna, sebab tempat itu adalah tempat orang-orang yang dikasihi Allah.\\n\\n3.Di dalamnya terdapat mata air yang mengalirkan air bersih yang menarik pandangan bagi siapa saja yang melihatnya.\\n\\n4.Di dalamnya terdapat mahligai yang tinggi.\\n\\n5.Di dekat mereka tersedia gelas-gelas yang berisi minuman yang sudah siap diminum.\\n\\n6.Di dalamnya terdapat bantal-bantal tersusun yang dapat dipergunakan menurut selera mereka, duduk di atasnya atau dipakai untuk bersandar dan sebagainya.\\n\\n7.Di sana terdapat pula permadani yang indah dan terhampar pada setiap tempat.\\n\\n8.Terdapat segala macam kenikmatan rohani dan jasmani yang jauh dari yang dapat kita bayangkan.',"
+    },
+    {
+      "global_verse_id": 5981,
+      "surah_number": 88,
+      "verse_number": 14,
+      "tafsir_text": "14: 'Dalam ayat-ayat berikut ini, Allah menerangkan keadaan surga:\\n\\n1.Surga tempatnya bernilai tinggi, lebih tinggi dari nilai tempat-tempat yang lain.\\n\\n2.Di dalamnya tidak terdengar perkataan yang tidak berguna, sebab tempat itu adalah tempat orang-orang yang dikasihi Allah.\\n\\n3.Di dalamnya terdapat mata air yang mengalirkan air bersih yang menarik pandangan bagi siapa saja yang melihatnya.\\n\\n4.Di dalamnya terdapat mahligai yang tinggi.\\n\\n5.Di dekat mereka tersedia gelas-gelas yang berisi minuman yang sudah siap diminum.\\n\\n6.Di dalamnya terdapat bantal-bantal tersusun yang dapat dipergunakan menurut selera mereka, duduk di atasnya atau dipakai untuk bersandar dan sebagainya.\\n\\n7.Di sana terdapat pula permadani yang indah dan terhampar pada setiap tempat.\\n\\n8.Terdapat segala macam kenikmatan rohani dan jasmani yang jauh dari yang dapat kita bayangkan.',"
+    },
+    {
+      "global_verse_id": 5982,
+      "surah_number": 88,
+      "verse_number": 15,
+      "tafsir_text": "15: 'Dalam ayat-ayat berikut ini, Allah menerangkan keadaan surga:\\n\\n1.Surga tempatnya bernilai tinggi, lebih tinggi dari nilai tempat-tempat yang lain.\\n\\n2.Di dalamnya tidak terdengar perkataan yang tidak berguna, sebab tempat itu adalah tempat orang-orang yang dikasihi Allah.\\n\\n3.Di dalamnya terdapat mata air yang mengalirkan air bersih yang menarik pandangan bagi siapa saja yang melihatnya.\\n\\n4.Di dalamnya terdapat mahligai yang tinggi.\\n\\n5.Di dekat mereka tersedia gelas-gelas yang berisi minuman yang sudah siap diminum.\\n\\n6.Di dalamnya terdapat bantal-bantal tersusun yang dapat dipergunakan menurut selera mereka, duduk di atasnya atau dipakai untuk bersandar dan sebagainya.\\n\\n7.Di sana terdapat pula permadani yang indah dan terhampar pada setiap tempat.\\n\\n8.Terdapat segala macam kenikmatan rohani dan jasmani yang jauh dari yang dapat kita bayangkan.',"
+    },
+    {
+      "global_verse_id": 5983,
+      "surah_number": 88,
+      "verse_number": 16,
+      "tafsir_text": "16: 'Dalam ayat-ayat berikut ini, Allah menerangkan keadaan surga:\\n\\n1.Surga tempatnya bernilai tinggi, lebih tinggi dari nilai tempat-tempat yang lain.\\n\\n2.Di dalamnya tidak terdengar perkataan yang tidak berguna, sebab tempat itu adalah tempat orang-orang yang dikasihi Allah.\\n\\n3.Di dalamnya terdapat mata air yang mengalirkan air bersih yang menarik pandangan bagi siapa saja yang melihatnya.\\n\\n4.Di dalamnya terdapat mahligai yang tinggi.\\n\\n5.Di dekat mereka tersedia gelas-gelas yang berisi minuman yang sudah siap diminum.\\n\\n6.Di dalamnya terdapat bantal-bantal tersusun yang dapat dipergunakan menurut selera mereka, duduk di atasnya atau dipakai untuk bersandar dan sebagainya.\\n\\n7.Di sana terdapat pula permadani yang indah dan terhampar pada setiap tempat.\\n\\n8.Terdapat segala macam kenikmatan rohani dan jasmani yang jauh dari yang dapat kita bayangkan.',"
+    },
+    {
+      "global_verse_id": 5984,
+      "surah_number": 88,
+      "verse_number": 17,
+      "tafsir_text": "17: 'Dalam ayat-ayat ini, Allah mempertanyakan apakah mereka tidak memperhatikan bagaimana unta, yang ada di depan mata mereka dan dipergunakan setiap waktu, diciptakan. Bagaimana pula langit yang berada di tempat yang tinggi tanpa tiang; bagaimana gunung-gunung dipancangkan dengan kukuh, tidak bergoyang dan dijadikan petunjuk bagi orang yang dalam perjalanan. Di atasnya terdapat danau dan mata air yang dapat dipergunakan untuk keperluan manusia, mengairi tumbuh-tumbuhan, dan memberi minum binatang ternak. Bagaimana pula bumi dihamparkan sebagai tempat tinggal bagi manusia.\\n\\nApabila mereka telah memperhatikan semua itu dengan seksama, tentu mereka akan mengakui bahwa penciptanya dapat membangkitkan manusia kembali pada hari Kiamat.',"
+    },
+    {
+      "global_verse_id": 5985,
+      "surah_number": 88,
+      "verse_number": 18,
+      "tafsir_text": "18: 'Dalam ayat-ayat ini, Allah mempertanyakan apakah mereka tidak memperhatikan bagaimana unta, yang ada di depan mata mereka dan dipergunakan setiap waktu, diciptakan. Bagaimana pula langit yang berada di tempat yang tinggi tanpa tiang; bagaimana gunung-gunung dipancangkan dengan kukuh, tidak bergoyang dan dijadikan petunjuk bagi orang yang dalam perjalanan. Di atasnya terdapat danau dan mata air yang dapat dipergunakan untuk keperluan manusia, mengairi tumbuh-tumbuhan, dan memberi minum binatang ternak. Bagaimana pula bumi dihamparkan sebagai tempat tinggal bagi manusia.\\n\\nApabila mereka telah memperhatikan semua itu dengan seksama, tentu mereka akan mengakui bahwa penciptanya dapat membangkitkan manusia kembali pada hari Kiamat.',"
+    },
+    {
+      "global_verse_id": 5986,
+      "surah_number": 88,
+      "verse_number": 19,
+      "tafsir_text": "19: 'Dalam ayat-ayat ini, Allah mempertanyakan apakah mereka tidak memperhatikan bagaimana unta, yang ada di depan mata mereka dan dipergunakan setiap waktu, diciptakan. Bagaimana pula langit yang berada di tempat yang tinggi tanpa tiang; bagaimana gunung-gunung dipancangkan dengan kukuh, tidak bergoyang dan dijadikan petunjuk bagi orang yang dalam perjalanan. Di atasnya terdapat danau dan mata air yang dapat dipergunakan untuk keperluan manusia, mengairi tumbuh-tumbuhan, dan memberi minum binatang ternak. Bagaimana pula bumi dihamparkan sebagai tempat tinggal bagi manusia.\\n\\nApabila mereka telah memperhatikan semua itu dengan seksama, tentu mereka akan mengakui bahwa penciptanya dapat membangkitkan manusia kembali pada hari Kiamat.',"
+    },
+    {
+      "global_verse_id": 5987,
+      "surah_number": 88,
+      "verse_number": 20,
+      "tafsir_text": "20: 'Dalam ayat-ayat ini, Allah mempertanyakan apakah mereka tidak memperhatikan bagaimana unta, yang ada di depan mata mereka dan dipergunakan setiap waktu, diciptakan. Bagaimana pula langit yang berada di tempat yang tinggi tanpa tiang; bagaimana gunung-gunung dipancangkan dengan kukuh, tidak bergoyang dan dijadikan petunjuk bagi orang yang dalam perjalanan. Di atasnya terdapat danau dan mata air yang dapat dipergunakan untuk keperluan manusia, mengairi tumbuh-tumbuhan, dan memberi minum binatang ternak. Bagaimana pula bumi dihamparkan sebagai tempat tinggal bagi manusia.\\n\\nApabila mereka telah memperhatikan semua itu dengan seksama, tentu mereka akan mengakui bahwa penciptanya dapat membangkitkan manusia kembali pada hari Kiamat.',"
+    },
+    {
+      "global_verse_id": 5988,
+      "surah_number": 88,
+      "verse_number": 21,
+      "tafsir_text": "21: 'Dalam ayat ini, Allah memerintahkan Nabi Muhammad agar memberi peringatan dan petunjuk serta menyampaikan agama-Nya kepada umat manusia, karena tugasnya tidak lain hanyalah memberi peringatan dengan menyampaikan kabar gembira dan kabar yang menakutkan.',"
+    },
+    {
+      "global_verse_id": 5989,
+      "surah_number": 88,
+      "verse_number": 22,
+      "tafsir_text": "22: 'Dalam ayat-ayat ini, Allah menerangkan bahwa Nabi Muhammad tidak berkuasa menjadikan seseorang beriman. Akan tetapi, Allah-lah yang berkuasa menjadikan manusia beriman. Sementara itu, barang siapa yang berpaling dengan mengingkari kebenaran petunjuk Nabi-Nya, niscaya Allah menghukumnya. Allah berfirman:\\n\\nDan jika Tuhanmu menghendaki, tentulah beriman semua orang di bumi seluruhnya. Tetapi apakah kamu (hendak) memaksa manusia agar mereka menjadi orang-orang yang beriman? (Yunus/10: 99)\\n\\nDan Allah berfirman:\\n\\nKami lebih mengetahui tentang apa yang mereka katakan, dan engkau (Muhammad) bukanlah seorang pemaksa terhadap mereka. Maka berilah peringatan dengan Al-Qur'an kepada siapa pun yang takut kepada ancaman-Ku. (Qaf/50: 45)\\n\\nBerkaitan dengan hal itu, para juru dakwah cukup menyampaikan pesan-pesan Al-Qur'an dan hadis Nabi sambil mengajak setiap manusia untuk beriman dan beramal saleh, serta masuk ke dalam agama Islam secara keseluruhan (kaffah). Penampilan dan metode dakwah perlu dengan cara yang baik dan tidak boleh bersikap memaksa, sebagaimana firman Allah:\\n\\nTidak ada paksaan dalam (menganut) agama (Islam), sesungguhnya telah jelas (perbedaan) antara jalan yang benar dengan jalan yang sesat. (al-Baqarah/2: 256)\\n\\nDan Allah berfirman:\\n\\nSerulah (manusia) kepada jalan Tuhanmu dengan hikmah dan pengajaran yang baik, dan berdebatlah dengan mereka dengan cara yang baik. Sesungguhnya Tuhanmu, Dialah yang lebih mengetahui siapa yang sesat dari jalan-Nya dan Dialah yang lebih mengetahui siapa yang mendapat petunjuk. (an-Nahl/16: 125)',"
+    },
+    {
+      "global_verse_id": 5990,
+      "surah_number": 88,
+      "verse_number": 23,
+      "tafsir_text": "23: 'Dalam ayat-ayat ini, Allah menerangkan bahwa Nabi Muhammad tidak berkuasa menjadikan seseorang beriman. Akan tetapi, Allah-lah yang berkuasa menjadikan manusia beriman. Sementara itu, barang siapa yang berpaling dengan mengingkari kebenaran petunjuk Nabi-Nya, niscaya Allah menghukumnya. Allah berfirman:\\n\\nDan jika Tuhanmu menghendaki, tentulah beriman semua orang di bumi seluruhnya. Tetapi apakah kamu (hendak) memaksa manusia agar mereka menjadi orang-orang yang beriman? (Yunus/10: 99)\\n\\nDan Allah berfirman:\\n\\nKami lebih mengetahui tentang apa yang mereka katakan, dan engkau (Muhammad) bukanlah seorang pemaksa terhadap mereka. Maka berilah peringatan dengan Al-Qur'an kepada siapa pun yang takut kepada ancaman-Ku. (Qaf/50: 45)\\n\\nBerkaitan dengan hal itu, para juru dakwah cukup menyampaikan pesan-pesan Al-Qur'an dan hadis Nabi sambil mengajak setiap manusia untuk beriman dan beramal saleh, serta masuk ke dalam agama Islam secara keseluruhan (kaffah). Penampilan dan metode dakwah perlu dengan cara yang baik dan tidak boleh bersikap memaksa, sebagaimana firman Allah:\\n\\nTidak ada paksaan dalam (menganut) agama (Islam), sesungguhnya telah jelas (perbedaan) antara jalan yang benar dengan jalan yang sesat. (al-Baqarah/2: 256)\\n\\nDan Allah berfirman:\\n\\nSerulah (manusia) kepada jalan Tuhanmu dengan hikmah dan pengajaran yang baik, dan berdebatlah dengan mereka dengan cara yang baik. Sesungguhnya Tuhanmu, Dialah yang lebih mengetahui siapa yang sesat dari jalan-Nya dan Dialah yang lebih mengetahui siapa yang mendapat petunjuk. (an-Nahl/16: 125)',"
+    },
+    {
+      "global_verse_id": 5991,
+      "surah_number": 88,
+      "verse_number": 24,
+      "tafsir_text": "24: 'Dalam ayat-ayat ini, Allah menerangkan bahwa Nabi Muhammad tidak berkuasa menjadikan seseorang beriman. Akan tetapi, Allah-lah yang berkuasa menjadikan manusia beriman. Sementara itu, barang siapa yang berpaling dengan mengingkari kebenaran petunjuk Nabi-Nya, niscaya Allah menghukumnya. Allah berfirman:\\n\\nDan jika Tuhanmu menghendaki, tentulah beriman semua orang di bumi seluruhnya. Tetapi apakah kamu (hendak) memaksa manusia agar mereka menjadi orang-orang yang beriman? (Yunus/10: 99)\\n\\nDan Allah berfirman:\\n\\nKami lebih mengetahui tentang apa yang mereka katakan, dan engkau (Muhammad) bukanlah seorang pemaksa terhadap mereka. Maka berilah peringatan dengan Al-Qur'an kepada siapa pun yang takut kepada ancaman-Ku. (Qaf/50: 45)\\n\\nBerkaitan dengan hal itu, para juru dakwah cukup menyampaikan pesan-pesan Al-Qur'an dan hadis Nabi sambil mengajak setiap manusia untuk beriman dan beramal saleh, serta masuk ke dalam agama Islam secara keseluruhan (kaffah). Penampilan dan metode dakwah perlu dengan cara yang baik dan tidak boleh bersikap memaksa, sebagaimana firman Allah:\\n\\nTidak ada paksaan dalam (menganut) agama (Islam), sesungguhnya telah jelas (perbedaan) antara jalan yang benar dengan jalan yang sesat. (al-Baqarah/2: 256)\\n\\nDan Allah berfirman:\\n\\nSerulah (manusia) kepada jalan Tuhanmu dengan hikmah dan pengajaran yang baik, dan berdebatlah dengan mereka dengan cara yang baik. Sesungguhnya Tuhanmu, Dialah yang lebih mengetahui siapa yang sesat dari jalan-Nya dan Dialah yang lebih mengetahui siapa yang mendapat petunjuk. (an-Nahl/16: 125)',"
+    },
+    {
+      "global_verse_id": 5992,
+      "surah_number": 88,
+      "verse_number": 25,
+      "tafsir_text": "25: 'Dalam ayat-ayat ini, Allah menerangkan bahwa mereka akan kembali kepada-Nya. Tidak ada jalan bagi mereka untuk lari daripada-Nya. Dialah yang akan menghisab mereka atas perbuatan yang telah mereka perbuat di dunia dan kemudian menjatuhkan hukuman-Nya. Ayat-ayat ini adalah penghibur hati bagi Nabi Muhammad dan sebagai obat bagi kesedihan dan kepedihan hatinya atas keingkaran orang-orang kafir itu.',"
+    },
+    {
+      "global_verse_id": 5993,
+      "surah_number": 88,
+      "verse_number": 26,
+      "tafsir_text": "26: 'Dalam ayat-ayat ini, Allah menerangkan bahwa mereka akan kembali kepada-Nya. Tidak ada jalan bagi mereka untuk lari daripada-Nya. Dialah yang akan menghisab mereka atas perbuatan yang telah mereka perbuat di dunia dan kemudian menjatuhkan hukuman-Nya. Ayat-ayat ini adalah penghibur hati bagi Nabi Muhammad dan sebagai obat bagi kesedihan dan kepedihan hatinya atas keingkaran orang-orang kafir itu.'"
+    }
+  ]
+}
