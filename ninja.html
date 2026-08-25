@@ -3,991 +3,711 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Ninja: Misi Bilangan Bulat (AI Motion)</title>
+    <title>Math Ninja: Misi Bilangan Bulat</title>
     
-    <!-- Tailwind CSS untuk tata letak yang cepat dan responsif -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- MediaPipe Libraries untuk Deteksi Pose AI -->
+    <!-- MediaPipe Libraries (Stable versions) -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
-
-    <!-- Font ramah anak/remaja -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti untuk efek menang -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        :root {
-            --primary: #4F46E5; /* Indigo */
-            --secondary: #EC4899; /* Pink */
-            --success: #10B981; /* Green */
-            --danger: #EF4444; /* Red */
-            --bg-color: #0f172a;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
 
         body {
             font-family: 'Fredoka', sans-serif;
-            background-color: var(--bg-color);
-            color: white;
-            overflow: hidden; /* Mencegah scroll saat bermain */
-            touch-action: none; /* Mencegah gesture zoom di mobile */
+            margin: 0;
+            overflow: hidden;
+            background-color: #0f172a; /* Fallback color */
         }
 
-        /* Animasi Background Sci-Fi/Ninja */
-        .bg-animated {
-            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #0f172a);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Glassmorphism */
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
-        /* Neon Text & Borders */
-        .neon-text {
-            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--secondary), 0 0 40px var(--secondary);
-        }
-        .neon-border {
-            box-shadow: 0 0 5px #fff, 0 0 10px var(--primary), inset 0 0 10px var(--primary);
-            border: 2px solid var(--primary);
-        }
-        
-        .neon-box-blue {
-            box-shadow: 0 0 15px #3b82f6, inset 0 0 10px #3b82f6;
-            border: 4px solid #60a5fa;
-            background: rgba(59, 130, 246, 0.3);
-        }
-        
-        .neon-box-orange {
-            box-shadow: 0 0 15px #f97316, inset 0 0 10px #f97316;
-            border: 4px solid #fb923c;
-            background: rgba(249, 115, 22, 0.3);
-        }
-
-        /* Animasi Hitbox berkedip (Pulsing) */
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.8; }
-        }
-        .animate-pulse-custom {
-            animation: pulse 2s infinite ease-in-out;
-        }
-
-        /* Animasi Salah (Shake) */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-            20%, 40%, 60%, 80% { transform: translateX(10px); }
-        }
-        .shake {
-            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-        }
-
-        /* Efek Flash Layar */
-        .flash-green { animation: flashSuccess 1s ease-out; }
-        .flash-red { animation: flashDanger 1s ease-out; }
-        @keyframes flashSuccess {
-            0% { background-color: rgba(16, 185, 129, 0.5); }
-            100% { background-color: transparent; }
-        }
-        @keyframes flashDanger {
-            0% { background-color: rgba(239, 68, 68, 0.5); }
-            100% { background-color: transparent; }
-        }
-
-        /* Animasi Fire (Combo) */
-        .on-fire {
-            color: #fbbf24;
-            text-shadow: 0 0 10px #f59e0b, 0 0 20px #ef4444, 0 0 30px #ef4444;
-            animation: flicker 1s infinite alternate;
-        }
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-
-        /* Layout Kamera */
-        #game-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-        }
-        #output_canvas {
+        /* Kamera dan Canvas Fullscreen */
+        #video-container {
             position: absolute;
             top: 0;
             left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        /* PENTING: Jangan gunakan scaleX(-1) di sini, biarkan MediaPipe selfieMode yang mengurusnya */
+        #output_canvas, #video_element {
+            position: absolute;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* Flip horizontal sudah dilakukan di JS saat draw, tapi jaga-jaga CSS */
-            transform: scaleX(-1); 
+            top: 0;
+            left: 0;
         }
         
-        /* UI Overlay di atas Canvas */
+        #video_element {
+            display: none; /* Sembunyikan elemen video asli, kita hanya butuh canvas */
+        }
+
+        /* UI Layer */
         #ui-layer {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none; /* Agar klik tembus ke bawah jika diperlukan */
-            z-index: 10;
-        }
-
-        .screen {
-            display: none;
             width: 100vw;
             height: 100vh;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 50;
+            z-index: 10;
+            pointer-events: none; /* Agar klik tembus ke bawah jika perlu, meski kita pakai deteksi gerak */
         }
-        .screen.active {
-            display: flex;
+
+        /* Animasi */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); transform: scale(1); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.9); transform: scale(1.02); }
         }
         
-        /* Loading Spinner */
-        .loader {
-            border: 8px solid rgba(255,255,255,0.1);
-            border-top: 8px solid var(--secondary);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px) rotate(-2deg); }
+            50% { transform: translateX(10px) rotate(2deg); }
+            75% { transform: translateX(-10px) rotate(-2deg); }
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .anim-pulse {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+        
+        .anim-shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+            border-color: #ef4444 !important; /* Merah saat salah */
+            background: rgba(239, 68, 68, 0.3) !important;
+        }
+
+        .anim-success {
+            border-color: #22c55e !important;
+            background: rgba(34, 197, 94, 0.4) !important;
+        }
+
+        /* Kotak Jawaban (Hitbox) */
+        .answer-box {
+            pointer-events: auto; /* Bisa diklik dengan mouse untuk testing */
+            transition: all 0.3s ease;
+        }
+
+        /* Tombol interaktif untuk mouse (opsional) */
+        .interactive-btn {
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .interactive-btn:hover {
+            transform: scale(1.05);
+        }
+        .interactive-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .fire-text {
+            background: linear-gradient(to right, #ff4e50, #f9d423);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
-<body class="bg-animated flex flex-col items-center justify-center min-h-screen">
+<body class="text-white overflow-hidden">
 
-    <!-- MAIN MENU SCREEN -->
-    <div id="screen-menu" class="screen active flex-col items-center justify-center p-4">
-        <div class="glass p-8 md:p-12 rounded-3xl text-center max-w-2xl w-full border-t border-l border-white/30 relative overflow-hidden">
-            <!-- Hiasan Ninja/Sci-fi -->
-            <div class="absolute -top-10 -right-10 text-9xl opacity-10">🥷</div>
+    <!-- Kontainer Media (Background AI) -->
+    <div id="video-container">
+        <video id="video_element" playsinline></video>
+        <canvas id="output_canvas"></canvas>
+    </div>
+
+    <!-- Kontainer UI Utama -->
+    <div id="ui-layer" class="flex flex-col justify-between p-4 sm:p-8">
+        
+        <!-- Header (HUD) -->
+        <div id="hud" class="hidden flex-row justify-between items-start w-full">
+            <div class="glass-panel p-4 rounded-2xl flex flex-col items-center min-w-[120px]">
+                <span class="text-sm text-gray-300 font-bold tracking-wider">SKOR NINJA</span>
+                <span id="score-display" class="text-4xl font-bold text-yellow-400">0</span>
+                <div id="combo-display" class="mt-1 text-sm font-bold opacity-0 transition-opacity duration-300 fire-text">🔥 COMBO x2</div>
+            </div>
             
-            <h1 class="text-5xl md:text-6xl font-bold mb-2 neon-text">Math Ninja</h1>
-            <p class="text-xl text-blue-200 mb-8 font-semibold tracking-wider">Misi Bilangan Bulat</p>
+            <div class="glass-panel p-4 rounded-2xl flex flex-col items-center min-w-[120px]">
+                <span class="text-sm text-gray-300 font-bold tracking-wider">MISI</span>
+                <span class="text-3xl font-bold"><span id="question-current">1</span> <span class="text-xl text-gray-400">/ <span id="question-total">20</span></span></span>
+            </div>
+        </div>
+
+        <!-- Papan Soal Tengah -->
+        <div id="question-board" class="hidden flex-col items-center justify-center absolute top-1/4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-3xl">
+            <div id="question-container" class="glass-panel w-full p-6 sm:p-10 rounded-3xl text-center anim-pulse border-4 border-blue-500">
+                <p class="text-lg sm:text-2xl text-blue-200 mb-2 font-bold" id="question-desc">Hitunglah:</p>
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold text-white tracking-wide" id="question-text">-3 + 5 = ?</h1>
+            </div>
+            <!-- Feedback Overlay -->
+            <div id="feedback-overlay" class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300">
+                <span id="feedback-text" class="text-5xl md:text-7xl font-bold drop-shadow-2xl">Tepat Sekali! 💥</span>
+            </div>
+        </div>
+
+        <!-- Area Jawaban Kiri & Kanan (Bottom) -->
+        <div id="answers-area" class="hidden flex-row justify-between w-full absolute bottom-8 left-0 px-4 sm:px-12 pointer-events-none">
+            <!-- Box Kiri -->
+            <div id="box-left" class="answer-box bg-red-500 bg-opacity-80 border-4 border-red-300 rounded-3xl w-40 h-40 sm:w-56 sm:h-48 md:w-64 md:h-56 flex items-center justify-center shadow-[0_0_30px_rgba(239,68,68,0.6)]">
+                <span class="text-5xl sm:text-6xl md:text-7xl font-bold text-white drop-shadow-lg" id="ans-text-left">-8</span>
+            </div>
             
-            <div class="flex flex-col gap-4 w-full max-w-md mx-auto">
-                <button onclick="startGamePrecheck()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-full text-xl shadow-lg transform transition hover:scale-105 neon-border">
-                    🎮 Mulai Misi
+            <!-- Box Kanan -->
+            <div id="box-right" class="answer-box bg-green-500 bg-opacity-80 border-4 border-green-300 rounded-3xl w-40 h-40 sm:w-56 sm:h-48 md:w-64 md:h-56 flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.6)]">
+                <span class="text-5xl sm:text-6xl md:text-7xl font-bold text-white drop-shadow-lg" id="ans-text-right">2</span>
+            </div>
+        </div>
+
+        <!-- Main Menu -->
+        <div id="main-menu" class="absolute inset-0 flex flex-col items-center justify-center z-50 bg-slate-900 bg-opacity-80 backdrop-blur-md">
+            <h1 class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 mb-4 text-center px-4 drop-shadow-lg">
+                MATH NINJA
+            </h1>
+            <h2 class="text-2xl text-blue-200 mb-12">Misi Bilangan Bulat</h2>
+            
+            <div id="loading-ai" class="hidden flex-col items-center mb-8">
+                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p class="text-blue-300 animate-pulse">Menghidupkan Sensor AI Kamera...</p>
+            </div>
+
+            <div class="flex flex-col gap-4 w-64">
+                <button id="btn-start" class="interactive-btn py-4 px-6 bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl font-bold text-xl shadow-lg shadow-blue-500/50 border border-blue-400 hover:from-blue-500 hover:to-blue-400">
+                    Mulai Misi 🥷
                 </button>
-                <button onclick="showScreen('screen-leaderboard')" class="bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-8 rounded-full transition border border-white/30">
+                <button id="btn-leaderboard" class="interactive-btn py-3 px-6 glass-panel rounded-2xl font-bold text-lg hover:bg-white/10">
                     🏆 Papan Peringkat
                 </button>
-                <button onclick="promptTeacherMode()" class="bg-white/5 hover:bg-white/10 text-gray-300 font-medium py-2 px-8 rounded-full transition text-sm mt-4">
-                    ⚙️ Mode Guru
-                </button>
-            </div>
-            
-            <div id="loading-ai" class="hidden flex-col items-center mt-6">
-                <div class="loader mb-2"></div>
-                <p class="text-sm text-yellow-300 animate-pulse">Menyiapkan AI Vision & Kamera...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- TEACHER MODE SCREEN -->
-    <div id="screen-teacher" class="screen flex-col items-center justify-center p-4">
-        <div class="glass p-8 rounded-2xl w-full max-w-md text-left relative">
-            <button onclick="showScreen('screen-menu')" class="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
-            <h2 class="text-3xl font-bold mb-6 text-purple-300 border-b border-white/20 pb-2">⚙️ Mode Guru</h2>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Jumlah Soal</label>
-                    <select id="setting-questions" class="w-full bg-slate-800 border border-slate-600 rounded-lg p-2 text-white">
-                        <option value="10">10 Soal (Cepat)</option>
-                        <option value="15">15 Soal (Sedang)</option>
-                        <option value="20" selected>20 Soal (Penuh)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Waktu Tahan (Hover Time)</label>
-                    <select id="setting-hover" class="w-full bg-slate-800 border border-slate-600 rounded-lg p-2 text-white">
-                        <option value="1">1 Detik</option>
-                        <option value="1.5" selected>1.5 Detik (Rekomendasi)</option>
-                        <option value="2">2 Detik</option>
-                    </select>
-                </div>
-                <div class="flex items-center mt-4">
-                    <input type="checkbox" id="setting-zigzag" class="w-5 h-5 rounded bg-slate-800 border-slate-600 text-purple-600 focus:ring-purple-600">
-                    <label for="setting-zigzag" class="ml-2 block text-sm text-gray-300">
-                        Aktifkan Mode Zig-Zag Fisik <br>
-                        <span class="text-xs text-gray-400">(Jeda 5 detik antar soal untuk lari keliling cone)</span>
-                    </label>
-                </div>
-                <button onclick="saveSettings()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg mt-6 transition">
-                    Simpan & Kembali
+                <button id="btn-teacher" class="interactive-btn py-3 px-6 glass-panel rounded-2xl font-bold text-lg text-gray-300 hover:bg-white/10 mt-4 border-dashed border-2">
+                    👨‍🏫 Mode Guru
                 </button>
             </div>
         </div>
-    </div>
 
-    <!-- LEADERBOARD SCREEN -->
-    <div id="screen-leaderboard" class="screen flex-col items-center justify-center p-4">
-        <div class="glass p-8 rounded-2xl w-full max-w-md relative text-center">
-            <button onclick="showScreen('screen-menu')" class="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
-            <h2 class="text-3xl font-bold mb-6 text-yellow-400">🏆 Top 10 Ninja</h2>
-            
-            <div id="leaderboard-list" class="space-y-2 mb-6 max-h-60 overflow-y-auto text-left">
-                <!-- Data akan diisi via JS -->
+        <!-- Modal Peringatan -->
+        <div id="modal-alert" class="hidden absolute inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
+            <div class="glass-panel p-8 rounded-3xl max-w-md text-center">
+                <h3 id="modal-title" class="text-2xl font-bold text-red-400 mb-4">Peringatan</h3>
+                <p id="modal-msg" class="text-gray-200 mb-6">Pesan error di sini.</p>
+                <button id="btn-close-modal" class="interactive-btn py-2 px-6 bg-blue-600 rounded-xl font-bold">Mengerti</button>
             </div>
-            
-            <button onclick="showScreen('screen-menu')" class="bg-white/20 hover:bg-white/30 text-white py-2 px-6 rounded-full transition">
-                Kembali
-            </button>
         </div>
+        
     </div>
-
-    <!-- GAME SCREEN -->
-    <div id="screen-game" class="screen bg-black">
-        <div id="game-container">
-            <!-- Video tidak ditampilkan langsung, kita gambar ke Canvas agar bisa dilapis (overlay) -->
-            <video id="input_video" class="hidden" playsinline></video>
-            
-            <!-- Layer Dasar: Gambar Kamera & AI Lines -->
-            <canvas id="output_canvas"></canvas>
-            
-            <!-- Layer UI HTML di atas Canvas -->
-            <div id="ui-layer" class="flex flex-col justify-between p-4 md:p-8">
-                
-                <!-- Top Bar (HUD) -->
-                <div class="flex justify-between items-start w-full">
-                    <!-- Skor & Combo Kiri Atas -->
-                    <div class="glass px-4 py-2 rounded-xl flex flex-col pointer-events-auto">
-                        <div class="text-sm text-gray-300 font-semibold uppercase tracking-wider">Skor Ninja</div>
-                        <div id="hud-score" class="text-4xl font-bold text-yellow-400">0</div>
-                        <div id="hud-combo" class="text-sm font-bold text-red-400 mt-1 opacity-0 transition-opacity">🔥 Combo x2!</div>
-                    </div>
-                    
-                    <!-- Progress Soal Kanan Atas -->
-                    <div class="glass px-4 py-2 rounded-xl text-right">
-                        <div class="text-sm text-gray-300 font-semibold uppercase tracking-wider">Misi</div>
-                        <div class="text-2xl font-bold text-white"><span id="hud-q-current">1</span> / <span id="hud-q-total">20</span></div>
-                    </div>
-                </div>
-
-                <!-- Papan Soal (Tengah Atas, di bawah HUD) -->
-                <div class="w-full flex justify-center mt-4">
-                    <div id="question-board" class="glass px-8 py-6 rounded-3xl text-center neon-border transform transition duration-300">
-                        <p class="text-lg text-indigo-300 font-semibold mb-1">Hitunglah:</p>
-                        <h2 id="question-text" class="text-5xl md:text-7xl font-bold text-white tracking-wider">-3 + 5 = ?</h2>
-                    </div>
-                </div>
-
-                <!-- Spacer untuk mendorong jawaban ke bawah -->
-                <div class="flex-grow flex items-center justify-center">
-                    <!-- Pesan Notifikasi Peringatan di Tengah -->
-                    <div id="warning-msg" class="glass px-6 py-3 rounded-full text-xl font-bold text-red-400 bg-red-900/50 hidden">
-                        ⚠️ Tidak Terdeteksi! Masuk ke kamera.
-                    </div>
-                    <!-- Overlay Angka Countdown (untuk mode zigzag) -->
-                    <div id="countdown-overlay" class="text-9xl font-bold text-white neon-text hidden">
-                        5
-                    </div>
-                </div>
-
-                <!-- Area Jawaban (Kiri Bawah & Kanan Bawah) -->
-                <div class="flex justify-between w-full pb-4 md:pb-8 pointer-events-auto">
-                    <!-- Box Jawaban Kiri -->
-                    <div id="box-left" class="w-[35vw] h-[30vh] max-w-[300px] max-h-[250px] neon-box-blue rounded-3xl flex items-center justify-center animate-pulse-custom transition-transform">
-                        <span id="ans-left" class="text-6xl md:text-8xl font-bold text-white drop-shadow-lg">A</span>
-                    </div>
-                    
-                    <!-- Box Jawaban Kanan -->
-                    <div id="box-right" class="w-[35vw] h-[30vh] max-w-[300px] max-h-[250px] neon-box-orange rounded-3xl flex items-center justify-center animate-pulse-custom transition-transform">
-                        <span id="ans-right" class="text-6xl md:text-8xl font-bold text-white drop-shadow-lg">B</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Canvas Ekstra untuk Confetti & Flash Effect (Paling Atas) -->
-            <canvas id="fx_canvas" class="absolute top-0 left-0 w-full h-full pointer-events-none z-50"></canvas>
-            
-        </div>
-    </div>
-
-    <!-- GAME OVER SCREEN -->
-    <div id="screen-result" class="screen flex-col items-center justify-center p-4">
-        <div class="glass p-10 rounded-3xl text-center w-full max-w-lg">
-            <h2 class="text-5xl font-bold mb-4 text-green-400 neon-text">Misi Selesai!</h2>
-            <p class="text-xl text-gray-300 mb-6">Kamu telah membuktikan dirimu sebagai Ninja Matematika.</p>
-            
-            <div class="bg-black/30 rounded-2xl p-6 mb-8">
-                <div class="text-sm text-gray-400 uppercase tracking-widest mb-1">Skor Akhir</div>
-                <div id="final-score" class="text-6xl font-bold text-yellow-400">0</div>
-            </div>
-            
-            <div id="save-score-form" class="mb-6 flex flex-col gap-3">
-                <input type="text" id="player-name" placeholder="Masukkan Namamu..." class="w-full bg-slate-800 border border-slate-600 rounded-xl p-3 text-white text-center text-lg" maxlength="15">
-                <button onclick="saveScoreAndReturn()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-xl transition">
-                    Simpan ke Papan Peringkat
-                </button>
-            </div>
-            
-            <button onclick="resetGame()" class="text-gray-400 hover:text-white transition underline">
-                Main Lagi Tanpa Menyimpan
-            </button>
-        </div>
-    </div>
-
 
     <script>
         /**
-         * ==========================================
-         * BAGIAN 1: DATA & STATE GAME
-         * ==========================================
+         * MATH NINJA: MISI BILANGAN BULAT
+         * Game Edukasi Berbasis Motion Detection AI
          */
-        
-        // Kumpulan 20 Soal (Sesuai Permintaan)
-        // Format: { q: String Soal, a: Jawaban Benar, w: Jawaban Salah }
-        const BANK_SOAL = [
-            { q: "-3 + 5 =", a: 2, w: -8 },
-            { q: "4 - 7 =", a: -3, w: 3 },
-            { q: "-2 - 4 =", a: -6, w: 2 },
-            { q: "5 + (-9) =", a: -4, w: 14 },
-            { q: "-8 + (-3) =", a: -11, w: -5 },
-            { q: "10 - (-5) =", a: 15, w: 5 },
-            { q: "-7 - (-2) =", a: -5, w: -9 },
-            { q: "3 x (-4) =", a: -12, w: 12 },
-            { q: "-5 x (-6) =", a: 30, w: -30 },
-            { q: "15 : (-3) =", a: -5, w: 5 },
-            { q: "-24 : (-4) =", a: 6, w: -6 },
-            { q: "(-2 x 3) + 4 =", a: -2, w: -10 },
-            { q: "10 - (2 x -5) =", a: 20, w: 0 },
-            { q: "Suhu awal 5°C, turun 8°C. Suhu?", a: "-3°C", w: "3°C" },
-            { q: "Kedalaman -10m. Naik 4m. Posisi?", a: "-6m", w: "-14m" },
-            { q: "-15 + 20 - 5 =", a: 0, w: -10 },
-            { q: "(-8 : 2) x -3 =", a: 12, w: -12 },
-            { q: "7 + (-3) - (-5) =", a: 9, w: -1 },
-            { q: "-20 : (4 - 9) =", a: 4, w: -4 },
-            { q: "BOSS: -50 + 100 - (-25) =", a: 75, w: 25 }
+
+        // ==========================================
+        // 1. DATA SOAL & KONFIGURASI
+        // ==========================================
+        const questionsList = [
+            { q: "-3 + 5 = ?", a: 2, wrong: -8, desc: "Hitunglah:" },
+            { q: "4 - 7 = ?", a: -3, wrong: 3, desc: "Hitunglah:" },
+            { q: "-2 - 4 = ?", a: -6, wrong: 2, desc: "Hitunglah:" },
+            { q: "5 + (-9) = ?", a: -4, wrong: 14, desc: "Hitunglah:" },
+            { q: "-8 + (-3) = ?", a: -11, wrong: -5, desc: "Hitunglah:" },
+            { q: "10 - (-5) = ?", a: 15, wrong: 5, desc: "Hitunglah:" },
+            { q: "-7 - (-2) = ?", a: -5, wrong: -9, desc: "Hitunglah:" },
+            { q: "3 x (-4) = ?", a: -12, wrong: 12, desc: "Hitunglah:" },
+            { q: "-5 x (-6) = ?", a: 30, wrong: -30, desc: "Hitunglah:" },
+            { q: "15 : (-3) = ?", a: -5, wrong: 5, desc: "Hitunglah:" },
+            { q: "-24 : (-4) = ?", a: 6, wrong: -6, desc: "Hitunglah:" },
+            { q: "(-2 x 3) + 4 = ?", a: -2, wrong: -10, desc: "Campuran:" },
+            { q: "10 - (2 x -5) = ?", a: 20, wrong: 0, desc: "Campuran:" },
+            { q: "Suhu awal 5°C, turun 8°C. Suhu sekarang?", a: "-3°C", wrong: "3°C", desc: "Soal Cerita:" },
+            { q: "Penyelam di -10m. Naik 4m. Posisi?", a: "-6m", wrong: "-14m", desc: "Soal Cerita:" },
+            { q: "-15 + 20 - 5 = ?", a: 0, wrong: -10, desc: "Hitunglah:" },
+            { q: "(-8 : 2) x -3 = ?", a: 12, wrong: -12, desc: "Campuran:" },
+            { q: "7 + (-3) - (-5) = ?", a: 9, wrong: -1, desc: "Campuran:" },
+            { q: "-20 : (4 - 9) = ?", a: 4, wrong: -4, desc: "Campuran:" },
+            { q: "-50 + 100 - (-25) = ?", a: 75, wrong: 25, desc: "🔥 BOSS LEVEL 🔥" }
         ];
 
-        // State/Kondisi Game Saat Ini
-        let state = {
-            score: 0,
-            combo: 0,
-            questionIndex: 0,
-            questions: [], // Akan diisi dari BANK_SOAL
-            currentQ: null,
-            correctBox: 'left', // 'left' atau 'right'
-            isHoveringBox: null, // 'left', 'right', atau null
-            hoverTime: 0, // Waktu hover dalam milidetik
-            lastFrameTime: 0,
-            gameState: 'menu', // menu, playing, paused, result, zigzag_delay
-            poseDetected: false,
-            noPoseFrames: 0
+        let CONFIG = {
+            totalQuestions: 20,
+            hoverTimeRequired: 1500, // milidetik (1.5 detik tahan tangan)
+            pointsCorrect: 15,
+            pointsWrong: -5,
+            comboThreshold: 3 // 3 kali benar beruntun = combo ganda
         };
 
-        // Pengaturan Game (Bisa diubah di Teacher Mode)
-        let settings = {
-            numQuestions: 20,
-            hoverDurationNeeded: 1500, // 1.5 detik
-            isZigZagMode: false,
-            zigzagDelay: 5000 // 5 detik
+        // ==========================================
+        // 2. STATE MANAGEMENT (Status Game)
+        // ==========================================
+        const state = {
+            gameState: 'menu', // menu, playing, gameover
+            currentQuestionIndex: 0,
+            score: 0,
+            streak: 0,
+            gameQuestions: [],
+            
+            // Interaction State (Hitbox)
+            hoveringBox: null, // 'left' atau 'right'
+            hoverStartTime: 0,
+            isProcessingAnswer: false, // cegah deteksi ganda
+            
+            // MediaPipe State
+            isAIReady: false
         };
 
         // DOM Elements
         const DOM = {
-            screens: {
-                menu: document.getElementById('screen-menu'),
-                teacher: document.getElementById('screen-teacher'),
-                leaderboard: document.getElementById('screen-leaderboard'),
-                game: document.getElementById('screen-game'),
-                result: document.getElementById('screen-result')
-            },
-            video: document.getElementById('input_video'),
+            menu: document.getElementById('main-menu'),
+            loading: document.getElementById('loading-ai'),
+            btnStart: document.getElementById('btnStart'),
+            hud: document.getElementById('hud'),
+            board: document.getElementById('question-board'),
+            answersArea: document.getElementById('answers-area'),
+            
+            qDesc: document.getElementById('question-desc'),
+            qText: document.getElementById('question-text'),
+            ansLeft: document.getElementById('ans-text-left'),
+            ansRight: document.getElementById('ans-text-right'),
+            boxLeft: document.getElementById('box-left'),
+            boxRight: document.getElementById('box-right'),
+            
+            scoreDisplay: document.getElementById('score-display'),
+            comboDisplay: document.getElementById('combo-display'),
+            qCurrent: document.getElementById('question-current'),
+            
+            qContainer: document.getElementById('question-container'),
+            feedbackOverlay: document.getElementById('feedback-overlay'),
+            feedbackText: document.getElementById('feedback-text'),
+            
+            video: document.getElementById('video_element'),
             canvasOut: document.getElementById('output_canvas'),
-            canvasFx: document.getElementById('fx_canvas'),
             ctxOut: document.getElementById('output_canvas').getContext('2d'),
-            ctxFx: document.getElementById('fx_canvas').getContext('2d'),
-            hud: {
-                score: document.getElementById('hud-score'),
-                combo: document.getElementById('hud-combo'),
-                qCurrent: document.getElementById('hud-q-current'),
-                qTotal: document.getElementById('hud-q-total')
-            },
-            board: {
-                qText: document.getElementById('question-text'),
-                boxLeft: document.getElementById('box-left'),
-                ansLeft: document.getElementById('ans-left'),
-                boxRight: document.getElementById('box-right'),
-                ansRight: document.getElementById('ans-right')
-            },
-            warningMsg: document.getElementById('warning-msg'),
-            countdownOverlay: document.getElementById('countdown-overlay'),
-            container: document.getElementById('game-container'),
-            loadingMsg: document.getElementById('loading-ai')
+            
+            modalAlert: document.getElementById('modal-alert'),
+            modalTitle: document.getElementById('modal-title'),
+            modalMsg: document.getElementById('modal-msg')
         };
 
-        let camera, pose;
-        
-        /**
-         * ==========================================
-         * BAGIAN 2: AUDIO SYNTHESIZER (TANPA FILE EXTERNAL)
-         * ==========================================
-         */
+        let pose, camera;
+
+        // ==========================================
+        // 3. SISTEM AUDIO (Web Audio API - Offline)
+        // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
-        function playSound(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
+        function playTone(freq, type, duration) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
             
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
             
-            if (type === 'coin') {
-                // Suara sukses (nada naik)
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-                oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 0.2);
-            } else if (type === 'buzzer') {
-                // Suara gagal (nada rendah kasar)
-                oscillator.type = 'sawtooth';
-                oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
-                oscillator.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3);
-                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gainNode.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 0.3);
-            }
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
         }
 
-        /**
-         * ==========================================
-         * BAGIAN 3: SISTEM EFEK VISUAL (PARTIKEL)
-         * ==========================================
-         */
-        let particles = [];
-        let fxActive = false;
+        const SFX = {
+            correct: () => { playTone(600, 'sine', 0.1); setTimeout(() => playTone(800, 'sine', 0.2), 100); },
+            wrong: () => playTone(200, 'sawtooth', 0.3),
+            hover: () => playTone(400, 'triangle', 0.05),
+            start: () => { playTone(400, 'square', 0.1); setTimeout(() => playTone(600, 'square', 0.2), 150); }
+        };
+
+        // ==========================================
+        // 4. LOGIKA GAMEPLAY UTAMA
+        // ==========================================
         
-        function resizeCanvas() {
-            DOM.canvasOut.width = window.innerWidth;
-            DOM.canvasOut.height = window.innerHeight;
-            DOM.canvasFx.width = window.innerWidth;
-            DOM.canvasFx.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-
-        function triggerConfetti() {
-            const colors = ['#4F46E5', '#EC4899', '#10B981', '#FBBF24'];
-            for(let i=0; i<50; i++) {
-                particles.push({
-                    x: window.innerWidth / 2,
-                    y: window.innerHeight / 4, // Mulai dari papan soal
-                    r: Math.random() * 8 + 4, // Ukuran
-                    dx: Math.random() * 10 - 5, // Kecepatan X
-                    dy: Math.random() * -10 - 5, // Kecepatan Y (melompat ke atas dulu)
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    life: 1.0,
-                    decay: Math.random() * 0.02 + 0.01
-                });
-            }
-            if(!fxActive) {
-                fxActive = true;
-                requestAnimationFrame(drawFx);
-            }
-        }
-
-        function drawFx() {
-            if(particles.length === 0) {
-                fxActive = false;
-                DOM.ctxFx.clearRect(0, 0, DOM.canvasFx.width, DOM.canvasFx.height);
-                return;
-            }
-            
-            DOM.ctxFx.clearRect(0, 0, DOM.canvasFx.width, DOM.canvasFx.height);
-            for(let i=particles.length-1; i>=0; i--) {
-                let p = particles[i];
-                // Gravitasi
-                p.dy += 0.5;
-                p.x += p.dx;
-                p.y += p.dy;
-                p.life -= p.decay;
-
-                if(p.life <= 0 || p.y > window.innerHeight) {
-                    particles.splice(i, 1);
-                } else {
-                    DOM.ctxFx.globalAlpha = p.life;
-                    DOM.ctxFx.fillStyle = p.color;
-                    DOM.ctxFx.fillRect(p.x, p.y, p.r, p.r);
-                }
-            }
-            DOM.ctxFx.globalAlpha = 1.0;
-            if(fxActive) requestAnimationFrame(drawFx);
-        }
-
-        function triggerFlash(type) {
-            const overlayLayer = DOM.screens.game;
-            overlayLayer.classList.remove('flash-green', 'flash-red', 'shake');
-            
-            // Force reflow agar animasi bisa dijalankan ulang
-            void overlayLayer.offsetWidth; 
-            
-            if(type === 'success') {
-                overlayLayer.classList.add('flash-green');
-                playSound('coin');
-                triggerConfetti();
-            } else {
-                overlayLayer.classList.add('flash-red', 'shake');
-                playSound('buzzer');
-            }
-        }
-
-        /**
-         * ==========================================
-         * BAGIAN 4: LOGIKA UI & MENU
-         * ==========================================
-         */
-        function showScreen(screenId) {
-            Object.values(DOM.screens).forEach(screen => {
-                screen.classList.remove('active');
-            });
-            document.getElementById(screenId).classList.add('active');
-            
-            if(screenId === 'screen-leaderboard') loadLeaderboard();
-        }
-
-        function promptTeacherMode() {
-            const pin = prompt("Masukkan PIN Guru (Hint: 1234):");
-            if(pin === "1234") {
-                showScreen('screen-teacher');
-            } else {
-                alert("PIN Salah!");
-            }
-        }
-
-        function saveSettings() {
-            settings.numQuestions = parseInt(document.getElementById('setting-questions').value);
-            settings.hoverDurationNeeded = parseFloat(document.getElementById('setting-hover').value) * 1000;
-            settings.isZigZagMode = document.getElementById('setting-zigzag').checked;
-            alert("Pengaturan Disimpan!");
-            showScreen('screen-menu');
-        }
-
-        // Leaderboard logic menggunakan localStorage
-        function loadLeaderboard() {
-            const listObj = document.getElementById('leaderboard-list');
-            let data = JSON.parse(localStorage.getItem('mathNinjaLB')) || [];
-            
-            if(data.length === 0) {
-                listObj.innerHTML = "<p class='text-gray-400 text-center italic'>Belum ada rekor.</p>";
-                return;
-            }
-            
-            // Urutkan berdasarkan skor tertinggi
-            data.sort((a, b) => b.score - a.score);
-            data = data.slice(0, 10); // Top 10
-            
-            listObj.innerHTML = data.map((item, index) => {
-                let badge = "";
-                if(index === 0) badge = "🥇";
-                else if(index === 1) badge = "🥈";
-                else if(index === 2) badge = "🥉";
-                else badge = `<span class="inline-block w-5 text-center text-gray-500">${index+1}</span>`;
-                
-                return `
-                <div class="flex justify-between items-center bg-white/5 p-3 rounded-lg mb-2">
-                    <div class="flex items-center gap-3">
-                        ${badge}
-                        <span class="font-bold text-white">${item.name}</span>
-                    </div>
-                    <span class="font-bold text-yellow-400">${item.score} Pts</span>
-                </div>`;
-            }).join('');
-        }
-
-        function saveScoreAndReturn() {
-            const nameInput = document.getElementById('player-name').value.trim() || "Ninja Misterius";
-            let data = JSON.parse(localStorage.getItem('mathNinjaLB')) || [];
-            data.push({
-                name: nameInput,
-                score: state.score,
-                date: new Date().toLocaleDateString()
-            });
-            localStorage.setItem('mathNinjaLB', JSON.stringify(data));
-            resetGame();
-        }
-
-        /**
-         * ==========================================
-         * BAGIAN 5: LOGIKA PERMAINAN INTI
-         * ==========================================
-         */
-        async function startGamePrecheck() {
-            DOM.loadingMsg.classList.remove('hidden');
-            DOM.loadingMsg.classList.add('flex');
-            
-            // Inisialisasi Audio Context pada interaksi pengguna pertama kali
-            if (audioCtx.state === 'suspended') {
-                await audioCtx.resume();
-            }
-
-            if(!pose) {
-                await initAI();
-            } else {
-                startActualGame();
-            }
-        }
-
-        function startActualGame() {
-            DOM.loadingMsg.classList.add('hidden');
-            showScreen('screen-game');
-            resizeCanvas();
-            
-            // Reset State
+        function initGame() {
+            // Ambil soal sesuai jumlah config
+            state.gameQuestions = [...questionsList].slice(0, CONFIG.totalQuestions);
+            state.currentQuestionIndex = 0;
             state.score = 0;
-            state.combo = 0;
-            state.questionIndex = 0;
+            state.streak = 0;
             state.gameState = 'playing';
             
-            // Siapkan Soal
-            let soalAcak = [...BANK_SOAL].sort(() => 0.5 - Math.random());
-            state.questions = soalAcak.slice(0, settings.numQuestions);
-            
-            DOM.hud.qTotal.innerText = settings.numQuestions;
             updateHUD();
-            loadQuestion();
+            DOM.menu.classList.add('hidden');
+            DOM.hud.classList.remove('hidden');
+            DOM.board.classList.remove('hidden');
+            DOM.answersArea.classList.remove('hidden');
+            DOM.answersArea.classList.add('flex');
             
-            // Mulai Kamera
-            camera.start();
-        }
-
-        function resetGame() {
-            state.gameState = 'menu';
-            if(camera) camera.stop();
-            showScreen('screen-menu');
+            SFX.start();
+            loadQuestion();
         }
 
         function loadQuestion() {
-            if(state.questionIndex >= state.questions.length) {
-                endGame();
-                return;
-            }
-
-            state.currentQ = state.questions[state.questionIndex];
-            DOM.hud.qCurrent.innerText = state.questionIndex + 1;
-            DOM.board.qText.innerText = state.currentQ.q;
+            state.isProcessingAnswer = false;
+            state.hoveringBox = null;
             
-            // Acak posisi jawaban benar (kiri atau kanan)
-            if(Math.random() > 0.5) {
-                state.correctBox = 'left';
-                DOM.board.ansLeft.innerText = state.currentQ.a;
-                DOM.board.ansRight.innerText = state.currentQ.w;
+            const q = state.gameQuestions[state.currentQuestionIndex];
+            DOM.qDesc.textContent = q.desc;
+            DOM.qText.textContent = q.q;
+            
+            DOM.qContainer.className = "glass-panel w-full p-6 sm:p-10 rounded-3xl text-center border-4 border-blue-500 anim-pulse";
+            DOM.feedbackOverlay.style.opacity = '0';
+            
+            // Acak posisi jawaban
+            const isLeftCorrect = Math.random() > 0.5;
+            state.currentCorrectBox = isLeftCorrect ? 'left' : 'right';
+            
+            if(isLeftCorrect) {
+                DOM.ansLeft.textContent = q.a;
+                DOM.ansRight.textContent = q.wrong;
             } else {
-                state.correctBox = 'right';
-                DOM.board.ansRight.innerText = state.currentQ.a;
-                DOM.board.ansLeft.innerText = state.currentQ.w;
+                DOM.ansLeft.textContent = q.wrong;
+                DOM.ansRight.textContent = q.a;
             }
             
-            // Reset interaksi box
-            state.isHoveringBox = null;
-            state.hoverTime = 0;
-            resetBoxStyles();
-            
-            // Tambahkan animasi masuk (scale in)
-            DOM.board.qText.parentElement.style.transform = "scale(0.8)";
-            setTimeout(() => {
-                DOM.board.qText.parentElement.style.transform = "scale(1)";
-            }, 50);
+            DOM.qCurrent.textContent = state.currentQuestionIndex + 1;
         }
 
-        function processAnswer(selectedSide) {
-            state.gameState = 'paused'; // Hentikan interaksi sementara
+        function checkAnswer(selectedBox) {
+            if(state.isProcessingAnswer) return;
+            state.isProcessingAnswer = true;
             
-            const isCorrect = (selectedSide === state.correctBox);
+            const isCorrect = (selectedBox === state.currentCorrectBox);
+            
+            // Hentikan animasi pulse soal
+            DOM.qContainer.classList.remove('anim-pulse');
             
             if(isCorrect) {
-                state.combo++;
-                let pointsEarned = 15;
+                // BENAR
+                SFX.correct();
+                state.streak++;
+                let pts = CONFIG.pointsCorrect;
                 
-                if(state.combo >= 3) {
-                    pointsEarned = 30; // Double point combo
-                    DOM.hud.combo.classList.remove('opacity-0');
-                    DOM.hud.score.classList.add('on-fire');
-                    DOM.board.qText.innerText = "Tepat Sekali! 💥";
-                } else {
-                    DOM.board.qText.innerText = "Benar! ✅";
+                if(state.streak >= CONFIG.comboThreshold) {
+                    pts *= 2; // Combo ganda
+                    DOM.comboDisplay.classList.remove('opacity-0');
+                    DOM.comboDisplay.textContent = `🔥 COMBO x${state.streak}! (+${pts})`;
                 }
-                state.score += pointsEarned;
-                triggerFlash('success');
+                state.score += pts;
                 
+                // Visuals
+                DOM.qContainer.classList.add('anim-success');
+                DOM.feedbackText.textContent = "Tepat Sekali! 💥";
+                DOM.feedbackText.className = "text-5xl md:text-7xl font-bold text-green-400 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]";
+                DOM.feedbackOverlay.style.opacity = '1';
+                
+                // Panggil confetti
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42']
+                });
+
             } else {
-                state.combo = 0;
-                state.score = Math.max(0, state.score - 5); // Tidak bisa minus
-                DOM.hud.combo.classList.add('opacity-0');
-                DOM.hud.score.classList.remove('on-fire');
-                DOM.board.qText.innerText = "Coba Lagi! ❌";
-                triggerFlash('fail');
+                // SALAH
+                SFX.wrong();
+                state.streak = 0;
+                state.score += CONFIG.pointsWrong;
+                DOM.comboDisplay.classList.add('opacity-0');
+                
+                // Visuals
+                DOM.qContainer.classList.add('anim-shake');
+                DOM.feedbackText.textContent = "Coba Lagi! ❌";
+                DOM.feedbackText.className = "text-5xl md:text-7xl font-bold text-red-400 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]";
+                DOM.feedbackOverlay.style.opacity = '1';
             }
             
             updateHUD();
             
-            // Highlight box yang benar
-            if(state.correctBox === 'left') {
-                DOM.board.boxLeft.classList.replace('neon-box-blue', 'bg-green-500');
-                DOM.board.boxRight.classList.replace('neon-box-orange', 'bg-red-500');
-            } else {
-                DOM.board.boxRight.classList.replace('neon-box-orange', 'bg-green-500');
-                DOM.board.boxLeft.classList.replace('neon-box-blue', 'bg-red-500');
-            }
-            DOM.board.boxLeft.classList.remove('animate-pulse-custom');
-            DOM.board.boxRight.classList.remove('animate-pulse-custom');
-
-            // Lanjut ke soal berikutnya
+            // Lanjut soal atau selesai
             setTimeout(() => {
-                state.questionIndex++;
-                if(settings.isZigZagMode && state.questionIndex < state.questions.length) {
-                    startZigZagDelay();
+                state.currentQuestionIndex++;
+                if(state.currentQuestionIndex < state.gameQuestions.length) {
+                    loadQuestion();
                 } else {
-                    state.gameState = 'playing';
-                    loadQuestion();
+                    endGame();
                 }
-            }, 2000); // Jeda 2 detik melihat hasil
-        }
-
-        function startZigZagDelay() {
-            state.gameState = 'zigzag_delay';
-            DOM.countdownOverlay.classList.remove('hidden');
-            DOM.board.qText.parentElement.style.opacity = '0';
-            DOM.board.boxLeft.style.opacity = '0';
-            DOM.board.boxRight.style.opacity = '0';
-            
-            let timeLeft = settings.zigzagDelay / 1000;
-            DOM.countdownOverlay.innerText = timeLeft;
-            
-            let interval = setInterval(() => {
-                timeLeft--;
-                DOM.countdownOverlay.innerText = timeLeft;
-                if(timeLeft <= 0) {
-                    clearInterval(interval);
-                    DOM.countdownOverlay.classList.add('hidden');
-                    DOM.board.qText.parentElement.style.opacity = '1';
-                    DOM.board.boxLeft.style.opacity = '1';
-                    DOM.board.boxRight.style.opacity = '1';
-                    state.gameState = 'playing';
-                    loadQuestion();
-                }
-            }, 1000);
+            }, 2000); // Tunggu 2 detik baca feedback
         }
 
         function updateHUD() {
-            DOM.hud.score.innerText = state.score;
-        }
-
-        function resetBoxStyles() {
-            DOM.board.boxLeft.className = "w-[35vw] h-[30vh] max-w-[300px] max-h-[250px] neon-box-blue rounded-3xl flex items-center justify-center animate-pulse-custom transition-transform";
-            DOM.board.boxRight.className = "w-[35vw] h-[30vh] max-w-[300px] max-h-[250px] neon-box-orange rounded-3xl flex items-center justify-center animate-pulse-custom transition-transform";
+            DOM.scoreDisplay.textContent = state.score;
         }
 
         function endGame() {
-            state.gameState = 'result';
-            if(camera) camera.stop();
-            document.getElementById('final-score').innerText = state.score;
-            showScreen('screen-result');
+            state.gameState = 'gameover';
+            DOM.board.classList.add('hidden');
+            DOM.answersArea.classList.remove('flex');
+            DOM.answersArea.classList.add('hidden');
+            DOM.hud.classList.add('hidden');
+            
+            DOM.menu.classList.remove('hidden');
+            
+            // Ubah tampilan menu jadi layar GameOver
+            DOM.menu.innerHTML = `
+                <div class="glass-panel p-10 rounded-3xl text-center max-w-lg w-[90%]">
+                    <h1 class="text-5xl font-bold text-yellow-400 mb-2">MISI SELESAI!</h1>
+                    <p class="text-xl text-gray-300 mb-6">Kamu telah menaklukkan bilangan bulat!</p>
+                    
+                    <div class="bg-black/30 rounded-2xl p-6 mb-8">
+                        <span class="block text-gray-400 text-sm mb-1">TOTAL SKOR</span>
+                        <span class="block text-6xl font-bold text-white mb-4">${state.score}</span>
+                        <span class="text-lg text-emerald-400">🔥 Combo Tertinggi Tercapai!</span>
+                    </div>
+                    
+                    <button onclick="location.reload()" class="interactive-btn py-4 px-8 bg-blue-600 rounded-2xl font-bold text-xl w-full">
+                        Main Lagi 🔄
+                    </button>
+                </div>
+            `;
+            confetti({ particleCount: 200, spread: 100, origin: { y: 0.3 } });
         }
 
-        /**
-         * ==========================================
-         * BAGIAN 6: AI VISION (MEDIAPIPE POSE)
-         * ==========================================
-         */
+        function showAlert(title, msg) {
+            DOM.modalTitle.textContent = title;
+            DOM.modalMsg.textContent = msg;
+            DOM.modalAlert.classList.remove('hidden');
+        }
+        document.getElementById('btn-close-modal').addEventListener('click', () => {
+            DOM.modalAlert.classList.add('hidden');
+        });
+
+        // ==========================================
+        // 5. SISTEM AI & KAMERA (MediaPipe)
+        // ==========================================
+        
+        // Sesuaikan ukuran canvas internal dengan layar
+        function resizeCanvas() {
+            DOM.canvasOut.width = window.innerWidth;
+            DOM.canvasOut.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
         async function initAI() {
-            if (typeof window.Pose === 'undefined') {
-                alert("Gagal memuat sistem AI. Pastikan koneksi internet stabil atau matikan AdBlocker sementara, lalu muat ulang halaman.");
-                resetGame();
-                return;
-            }
+            try {
+                DOM.btnStart.classList.add('hidden');
+                DOM.loading.classList.remove('hidden');
+                DOM.loading.classList.add('flex');
+                
+                // Pastikan class global MediaPipe tersedia
+                if(typeof window.Pose === 'undefined') {
+                    throw new Error("Library AI gagal dimuat. Pastikan koneksi internet stabil atau matikan AdBlocker sementara.");
+                }
 
-            // Pengecekan Akses Kamera (Mencegah Layar Hitam di HTTP)
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                alert("Akses kamera ditolak oleh browser! Pastikan URL situs Anda menggunakan HTTPS (https://) agar browser mengizinkan penggunaan webcam.");
-                resetGame();
-                return;
-            }
+                // Inisialisasi Pose AI
+                pose = new window.Pose({
+                    locateFile: (file) => {
+                        return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
+                    }
+                });
+                
+                // KONFIGURASI PENTING: selfieMode: true
+                // Ini secara otomatis membalikkan gambar dan koordinat kerangka layaknya cermin!
+                pose.setOptions({
+                    modelComplexity: 1, // Keseimbangan kecepatan & akurasi
+                    smoothLandmarks: true,
+                    enableSegmentation: false,
+                    minDetectionConfidence: 0.6,
+                    minTrackingConfidence: 0.6,
+                    selfieMode: true 
+                });
+                
+                pose.onResults(onPoseResults);
+                
+                // Muat model AI ke memori browser terlebih dahulu
+                await pose.initialize();
 
-            // Inisialisasi Model Pose
-            pose = new window.Pose({locateFile: (file) => {
-                return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
-            }});
-            
-            pose.setOptions({
-                modelComplexity: 1, // 0: cepat, 1: seimbang, 2: akurat
-                smoothLandmarks: true,
-                enableSegmentation: false,
-                minDetectionConfidence: 0.5,
-                minTrackingConfidence: 0.5
-            });
-            
-            pose.onResults(onPoseResults);
-            
-            // Inisialisasi model MediaPipe Pose terlebih dahulu dengan cara yang aman
-            await pose.initialize();
-            
-            camera = new window.Camera(DOM.video, {
-                onFrame: async () => {
-                    // Hindari unhandled rejection jika frame tidak terbaca dengan try-catch
-                    try {
-                        if (state.gameState === 'playing') {
+                // Akses Kamera Web
+                camera = new window.Camera(DOM.video, {
+                    onFrame: async () => {
+                        if (state.gameState !== 'gameover') {
                             await pose.send({image: DOM.video});
                         }
-                    } catch (error) {
-                        console.warn("Pose error pada frame ini (diabaikan):", error);
-                    }
-                },
-                width: 1280,
-                height: 720
-            });
-            
-            // Langsung masuk ke game karena inisialisasi model sudah selesai di atas
-            startActualGame();
+                    },
+                    width: 1280,
+                    height: 720
+                });
+                
+                await camera.start();
+                
+                // Siap bermain
+                state.isAIReady = true;
+                initGame();
+
+            } catch (error) {
+                console.error(error);
+                DOM.loading.classList.add('hidden');
+                DOM.btnStart.classList.remove('hidden');
+                
+                // Deteksi jika masalah karena HTTP (Bukan HTTPS)
+                if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                    showAlert("Kamera Diblokir!", "Situs web memerlukan koneksi HTTPS yang aman untuk mengakses kamera. Ubah URL browser Anda dari http:// menjadi https://");
+                } else {
+                    showAlert("Gagal Memulai AI", error.message || "Tolong izinkan akses kamera pada browser Anda untuk memainkan game ini.");
+                }
+            }
         }
 
+        document.getElementById('btn-start').addEventListener('click', () => {
+            // Mainkan dummy sound agar AudioContext diaktifkan oleh interaksi user (Syarat Browser)
+            audioCtx.resume();
+            initAI();
+        });
+
+        // ==========================================
+        // 6. RENDER & DETEKSI FISIK WAKTU NYATA
+        // ==========================================
+        
         function onPoseResults(results) {
+            // Jangan render jika belum masuk mode main
             if(state.gameState !== 'playing') return;
 
             const ctx = DOM.ctxOut;
-            const canvasW = DOM.canvasOut.width;
-            const canvasH = DOM.canvasOut.height;
+            const w = DOM.canvasOut.width;
+            const h = DOM.canvasOut.height;
             const now = performance.now();
-            const dt = now - state.lastFrameTime;
-            state.lastFrameTime = now;
 
-            // 1. Gambar Background Video (Efek Cermin/Flip)
             ctx.save();
-            ctx.clearRect(0, 0, canvasW, canvasH);
-            ctx.translate(canvasW, 0); // Geser origin ke kanan
-            ctx.scale(-1, 1); // Flip Horizontal
-            ctx.drawImage(results.image, 0, 0, canvasW, canvasH);
-            ctx.restore();
+            ctx.clearRect(0, 0, w, h);
+            
+            // 1. Gambar Background Video
+            // Karena selfieMode = true, gambar results.image sudah dicerminkan secara otomatis
+            ctx.drawImage(results.image, 0, 0, w, h);
 
-            // 2. Deteksi Landmark
+            // 2. Analisis Titik Tubuh (Landmarks)
             if (results.poseLandmarks) {
-                state.noPoseFrames = 0;
-                if(!state.poseDetected) {
-                    state.poseDetected = true;
-                    DOM.warningMsg.classList.add('hidden');
+                // Gambar garis kerangka neon
+                window.drawConnectors(ctx, results.poseLandmarks, window.POSE_CONNECTIONS,
+                               {color: '#00FF00', lineWidth: 2, opacity: 0.5});
+                window.drawLandmarks(ctx, results.poseLandmarks,
+                               {color: '#00BFFF', lineWidth: 1, radius: 3});
+
+                // Ambil titik pergelangan tangan kiri (15) dan kanan (16)
+                const leftWrist = results.poseLandmarks[15];
+                const rightWrist = results.poseLandmarks[16];
+
+                // Cek interaksi tangan dengan kotak jawaban
+                let touchedBox = null;
+                
+                // Periksa tangan kanan (di layar, karena mirror, tangan kanan pemain akan muncul di kanan layar)
+                if(checkHitbox(rightWrist, w, h, ctx)) {
+                    touchedBox = checkHitbox(rightWrist, w, h, ctx);
+                } 
+                // Periksa tangan kiri
+                else if (checkHitbox(leftWrist, w, h, ctx)) {
+                    touchedBox = checkHitbox(leftWrist, w, h, ctx);
                 }
 
-                // Gambar Skeleton (Neon style)
-                drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {color: '#10B981', lineWidth: 4});
-                drawLandmarks(ctx, results.poseLandmarks, {color: '#4F46E5', lineWidth: 2, radius: 4});
+                // Logika Hover (Progress Bar)
+                if (touchedBox && !state.isProcessingAnswer) {
+                    if (state.hoveringBox !== touchedBox) {
+                        // Mulai sentuh kotak baru
+                        state.hoveringBox = touchedBox;
+                        state.hoverStartTime = now;
+                        SFX.hover();
+                    } else {
+                        // Sedang menahan di kotak yang sama
+                        const elapsed = now - state.hoverStartTime;
+                        const progress = Math.min(elapsed / CONFIG.hoverTimeRequired, 1);
+                        
+                        // Gambar progress circle di layar (tengah bawah)
+                        drawProgress(ctx, w/2, h - 100, progress, touchedBox);
 
-                // Ambil koordinat Pergelangan Tangan (15: Kiri kamera/Kanan Pemain, 16: Kanan kamera/Kiri Pemain)
-                // Karena video di-flip, kita harus mapping ulang koordinat X.
-                // MediaPipe mengembalikan X dari 0 (kiri gambar asli) ke 1 (kanan).
-                // Setelah di-flip di UI, 0 menjadi kanan layar, 1 menjadi kiri layar.
-                const leftWrist = results.poseLandmarks[15]; // Tangan Kiri di gambar asli (Kanan pemain)
-                const rightWrist = results.poseLandmarks[16]; // Tangan Kanan di gambar asli (Kiri pemain)
-
-                // Cek interaksi menggunakan kedua tangan
-                checkWristInteraction(leftWrist, ctx, canvasW, canvasH, dt);
-                checkWristInteraction(rightWrist, ctx, canvasW, canvasH, dt);
-
-                // Jika tidak ada tangan yang hover
-                if (!isPointInAnyBox(leftWrist, canvasW, canvasH) && !isPointInAnyBox(rightWrist, canvasW, canvasH)) {
-                    state.isHoveringBox = null;
-                    state.hoverTime = 0;
-                    DOM.board.boxLeft.style.transform = 'scale(1)';
-                    DOM.board.boxRight.style.transform = 'scale(1)';
-                }
-
-            } else {
-                state.noPoseFrames++;
-                if(state.noPoseFrames > 15 && state.poseDetected) {
-                    state.poseDetected = false;
-                    DOM.warningMsg.classList.remove('hidden');
-                }
-            }
-        }
-
-        function checkWristInteraction(wrist, ctx, w, h, dt) {
-            if (wrist.visibility < 0.5) return; // Abaikan jika tertutup/tidak yakin
-
-            // Transformasi koordinat ke layar yang di-flip
-            const screenX = (1 - wrist.x) * w; 
-            const screenY = wrist.y * h;
-
-            // Gambar indikator tangan berpeluang
-            ctx.beginPath();
-            ctx.arc(screenX, screenY, 15, 0, 2 * Math.PI);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.fill();
-
-            // Dapatkan bounding box dari elemen HTML Box Jawaban
-            const rectLeft = DOM.board.boxLeft.getBoundingClientRect();
-            const rectRight = DOM.board.boxRight.getBoundingClientRect();
-
-            let hoveredBox = null;
-            let currentRect = null;
-
-            if (screenX >= rectLeft.left && screenX <= rectLeft.right && screenY >= rectLeft.top && screenY <= rectLeft.bottom) {
-                hoveredBox = 'left';
-                currentRect = rectLeft;
-            } else if (screenX >= rectRight.left && screenX <= rectRight.right && screenY >= rectRight.top && screenY <= rectRight.bottom) {
-                hoveredBox = 'right';
-                currentRect = rectRight;
-            }
-
-            if (hoveredBox) {
-                if (state.isHoveringBox === hoveredBox) {
-                    state.hoverTime += dt;
-                    
-                    // Efek UI saat di-hover (Mengecil sedikit)
-                    document.getElementById(`box-${hoveredBox}`).style.transform = 'scale(0.95)';
-
-                    // Gambar Progress Ring di sekitar tangan
-                    const progress = Math.min(state.hoverTime / settings.hoverDurationNeeded, 1);
-                    ctx.beginPath();
-                    ctx.arc(screenX, screenY, 25, -Math.PI / 2, (-Math.PI / 2) + (progress * 2 * Math.PI));
-                    ctx.strokeStyle = '#FBBF24'; // Kuning
-                    ctx.lineWidth = 6;
-                    ctx.stroke();
-
-                    if (state.hoverTime >= settings.hoverDurationNeeded) {
-                        processAnswer(hoveredBox);
+                        if (progress >= 1) {
+                            // Waktu hover tercapai -> KUNCI JAWABAN
+                            checkAnswer(touchedBox);
+                        }
                     }
                 } else {
-                    // Baru mulai hover box ini
-                    state.isHoveringBox = hoveredBox;
-                    state.hoverTime = 0;
+                    // Tangan keluar kotak
+                    state.hoveringBox = null;
                 }
+            } else {
+                // Tidak ada tubuh terdeteksi
+                state.hoveringBox = null;
             }
+
+            ctx.restore();
         }
 
-        function isPointInAnyBox(wrist, w, h) {
-             if (!wrist || wrist.visibility < 0.5) return false;
-             const screenX = (1 - wrist.x) * w; 
-             const screenY = wrist.y * h;
-             const rectLeft = DOM.board.boxLeft.getBoundingClientRect();
-             const rectRight = DOM.board.boxRight.getBoundingClientRect();
-             
-             return (screenX >= rectLeft.left && screenX <= rectLeft.right && screenY >= rectLeft.top && screenY <= rectLeft.bottom) ||
-                    (screenX >= rectRight.left && screenX <= rectRight.right && screenY >= rectRight.top && screenY <= rectRight.bottom);
+        // Fungsi untuk mengecek tabrakan antara koordinat titik AI dengan elemen HTML
+        function checkHitbox(landmark, canvasW, canvasH, ctx) {
+            if (!landmark || landmark.visibility < 0.5) return null; // Abaikan jika tangan disembunyikan/tidak yakin
+
+            // Kordinat MediaPipe adalah persentase (0 sampai 1)
+            // Karena selfieMode: true, koordinat X sudah sesuai dengan letak di layar secara fisik
+            const pointX = landmark.x * canvasW;
+            const pointY = landmark.y * canvasH;
+
+            // Gambar indikator neon di pergelangan tangan
+            ctx.beginPath();
+            ctx.arc(pointX, pointY, 15, 0, 2 * Math.PI);
+            ctx.fillStyle = "rgba(255, 255, 0, 0.5)";
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "yellow";
+            ctx.stroke();
+
+            // Cek posisi kotak Kiri
+            const rectL = DOM.boxLeft.getBoundingClientRect();
+            if (pointX >= rectL.left && pointX <= rectL.right &&
+                pointY >= rectL.top && pointY <= rectL.bottom) {
+                return 'left';
+            }
+
+            // Cek posisi kotak Kanan
+            const rectR = DOM.boxRight.getBoundingClientRect();
+            if (pointX >= rectR.left && pointX <= rectR.right &&
+                pointY >= rectR.top && pointY <= rectR.bottom) {
+                return 'right';
+            }
+
+            return null;
         }
+
+        // Fungsi menggambar indikator loading bulat saat memilih jawaban
+        function drawProgress(ctx, x, y, progress, boxName) {
+            const radius = 40;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(x, y, radius, -Math.PI / 2, (-Math.PI / 2) + (2 * Math.PI * progress));
+            ctx.lineWidth = 10;
+            ctx.strokeStyle = boxName === 'left' ? "#ef4444" : "#22c55e"; // merah atau hijau
+            ctx.stroke();
+            
+            ctx.fillStyle = "white";
+            ctx.font = "bold 20px Fredoka";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(`${Math.round(progress * 100)}%`, x, y);
+        }
+
+        // Dummy buttons alert (Papan Peringkat & Mode Guru)
+        document.getElementById('btn-leaderboard').addEventListener('click', () => {
+            showAlert("Papan Peringkat", "Fitur Leaderboard sedang dalam pengembangan. Kumpulkan skor tertinggimu terlebih dahulu!");
+        });
+        document.getElementById('btn-teacher').addEventListener('click', () => {
+            showAlert("Mode Guru Terkunci", "Silakan masukkan PIN untuk mengatur waktu tunda (delay) dan daftar pertanyaan custom.");
+        });
 
     </script>
 </body>
