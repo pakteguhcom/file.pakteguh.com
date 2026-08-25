@@ -125,7 +125,6 @@
             position: relative;
             width: 100vw;
             height: 100vh;
-            display: none; /* Sembunyikan awalnya */
         }
         #output_canvas {
             position: absolute;
@@ -819,6 +818,13 @@
         async function initAI() {
             if (typeof window.Pose === 'undefined') {
                 alert("Gagal memuat sistem AI. Pastikan koneksi internet stabil atau matikan AdBlocker sementara, lalu muat ulang halaman.");
+                resetGame();
+                return;
+            }
+
+            // Pengecekan Akses Kamera (Mencegah Layar Hitam di HTTP)
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Akses kamera ditolak oleh browser! Pastikan URL situs Anda menggunakan HTTPS (https://) agar browser mengizinkan penggunaan webcam.");
                 resetGame();
                 return;
             }
