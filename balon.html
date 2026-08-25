@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Game Operasi Bilangan Bulat Interaktif</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- MediaPipe Hands & Camera Utils libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            font-family: 'Kanit', 'Poppins', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+        /* Custom Glassmorphism UI */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s infinite alternate;
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+            100% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.9); }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white w-screen h-screen overflow-hidden flex flex-col justify-center items-center relative">
+
+    <!-- Hidden / Mirrored Webcam Feed -->
+    <video id="webcam" class="absolute inset-0 w-full h-full object-cover transform -scale-x-100 z-0 opacity-80" playsinline></video>
+
+    <!-- Main Dynamic AR Interaction Canvas -->
+    <canvas id="arCanvas" class="absolute inset-0 w-full h-full z-10 cursor-pointer"></canvas>
+
+    <!-- Top Interactive HUD -->
+    <header class="absolute top-3 left-4 right-4 z-20 flex flex-wrap justify-between items-center gap-2 pointer-events-none">
+        <!-- Title & Instruction -->
+        <div class="glass-panel px-4 py-2.5 rounded-2xl flex items-center gap-3 pointer-events-auto shadow-lg">
+            <div class="bg-blue-500/20 text-blue-400 p-2.5 rounded-xl border border-blue-500/30">
+                <i class="fa-solid fa-calculator text-2xl md:text-3xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg md:text-2xl font-bold text-amber-300 tracking-wide flex items-center gap-2">
+                    <span id="levelBadge" class="bg-amber-500/30 text-amber-300 text-xs px-2.5 py-0.5 rounded-full border border-amber-400/40">Level 1</span>
+                    <span id="levelTitleText">Penjumlahan & Pengurangan</span>
+                </h1>
+                <p class="text-xs md:text-sm text-slate-300">
+                    <span class="text-cyan-400 font-semibold">Petunjuk:</span> Tarik gelembung <b class="text-yellow-300">SOAL</b> ke dalam kotak <b class="text-emerald-400">JAWABAN</b> yang pas!
+                </p>
+            </div>
+        </div>
+
+        <!-- Score, Timer & Hand Tracking Status -->
+        <div class="flex items-center gap-2 md:gap-3 pointer-events-auto">
+            <!-- Timer Badge -->
+            <div class="glass-panel px-3.5 py-2 rounded-2xl flex items-center gap-2">
+                <i class="fa-solid fa-stopwatch text-cyan-400 text-lg"></i>
+                <span id="timerText" class="text-xl md:text-2xl font-black text-cyan-300 min-w-[2.5rem] text-center">00:00</span>
+            </div>
+
+            <!-- Score Badge -->
+            <div class="glass-panel px-3.5 py-2 rounded-2xl flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-amber-400 text-lg"></i>
+                <div class="flex flex-col text-right">
+                    <span class="text-[10px] text-slate-300 leading-none">SKOR</span>
+                    <span id="scoreText" class="text-xl md:text-2xl font-black text-amber-400 min-w-[2.5rem]">0</span>
+                </div>
+            </div>
+
+            <!-- AI Hand Tracking Indicator -->
+            <div id="statusBadge" class="glass-panel px-3 py-2 rounded-2xl flex items-center gap-2 border-amber-500/40">
+                <span id="statusDot" class="w-3 h-3 rounded-full bg-amber-400 animate-ping"></span>
+                <span id="statusText" class="text-xs font-semibold text-amber-300 hidden sm:inline">Mencari tangan...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Start Game Modal Overlay -->
+    <div id="startModal" class="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-panel max-w-xl w-full p-6 md:p-8 rounded-3xl text-center border-blue-500/30 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-36 h-36 bg-blue-500/20 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-10 -left-10 w-36 h-36 bg-amber-500/20 rounded-full blur-2xl"></div>
+            
+            <div class="w-20 h-20 mx-auto bg-gradient-to-tr from-blue-600 to-indigo-400 rounded-3xl flex items-center justify-center shadow-lg mb-4 text-white text-4xl">
+                <i class="fa-solid fa-brain animate-pulse"></i>
+            </div>
+
+            <h2 class="text-2xl md:text-3xl font-extrabold text-amber-300 mb-2">AR Math: Operasi Bilangan Bulat</h2>
+            <p class="text-sm md:text-base text-slate-200 mb-4 leading-relaxed">
+                Asah kemampuan matematika kamu lewat kamera AR! Cocokkan gelembung <span class="text-yellow-300 font-bold">SOAL</span> bilangan bulat (positif & negatif) dengan kotak <span class="text-emerald-400 font-bold">JAWABAN</span> yang benar.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6 text-left text-xs">
+                <div class="bg-slate-900/70 p-3 rounded-2xl border border-white/10">
+                    <div class="font-bold text-blue-400 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-hand-pointer"></i> Kontrol Kamera AR
+                    </div>
+                    <p class="text-slate-300">Gunakan telunjuk untuk mengarahkan kursor & <b>cubit jari (jempol + telunjuk)</b> untuk menjepit gelembung soal.</p>
+                </div>
+                <div class="bg-slate-900/70 p-3 rounded-2xl border border-white/10">
+                    <div class="font-bold text-cyan-400 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group"></i> 4 Level Bertingkat
+                    </div>
+                    <p class="text-slate-300">1. Penjumlahan/Pengurangan<br>2. Perkalian/Pembagian<br>3. Campuran<br>4. Tantangan Pakar</p>
+                </div>
+            </div>
+
+            <!-- Start Game Button -->
+            <button id="startBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-500 hover:from-blue-500 hover:to-teal-400 text-white font-extrabold text-lg shadow-xl pulse-glow transition-all duration-300 transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-play text-xl"></i>
+                <span>Mulai Permainan Level 1</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Level Complete Modal Overlay -->
+    <div id="levelCompleteModal" class="hidden absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-slate-950/85 backdrop-blur-lg">
+        <div class="glass-panel max-w-md w-full p-8 rounded-3xl text-center border-emerald-500/40 shadow-2xl relative">
+            <div class="text-6xl mb-3 animate-bounce">🌟</div>
+            <h2 class="text-3xl font-extrabold text-amber-300 mb-1">Level Selesai!</h2>
+            <p id="levelCompleteDesc" class="text-sm text-slate-300 mb-4">Kamu telah menyelesaikan tantangan operasi matematika level ini!</p>
+            
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="bg-slate-900/80 p-3 rounded-2xl border border-emerald-500/30">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-widest block">SKOR LEVEL</span>
+                    <span id="levelScoreText" class="text-2xl font-black text-amber-400">+100</span>
+                </div>
+                <div class="bg-slate-900/80 p-3 rounded-2xl border border-emerald-500/30">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-widest block">WAKTU</span>
+                    <span id="levelTimeText" class="text-2xl font-black text-cyan-400">00:25</span>
+                </div>
+            </div>
+
+            <button id="nextLevelBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold text-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2">
+                <span>Lanjut ke Level Berikutnya</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Final Game Victory Modal Overlay -->
+    <div id="victoryModal" class="hidden absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-slate-950/90 backdrop-blur-xl">
+        <div class="glass-panel max-w-md w-full p-8 rounded-3xl text-center border-amber-400/50 shadow-2xl relative">
+            <div class="text-7xl mb-3 animate-bounce">🏆</div>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-amber-300 mb-2">Pakar Matematika!</h2>
+            <p class="text-emerald-400 font-semibold text-sm mb-4">Luar biasa! Kamu telah menuntaskan seluruh level operasi bilangan bulat dengan sangat mahir.</p>
+            
+            <div class="bg-slate-900/90 py-4 px-6 rounded-2xl border border-amber-500/40 mb-6">
+                <span class="text-xs text-slate-400 uppercase tracking-widest">TOTAL SKOR AKHIR</span>
+                <p id="finalTotalScore" class="text-5xl font-black text-amber-400 mt-1">0</p>
+            </div>
+
+            <button id="restartGameBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>Main Ulang Dari Level 1</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* --- GAME LEVELS DATA CONFIGURATION --- */
+        // Math levels: Each level has problems and answer options
+        const GAME_LEVELS = [
+            {
+                id: 1,
+                title: "Penjumlahan & Pengurangan",
+                subtitle: "Level 1: Operasi Bilangan Bulat Dasar",
+                items: [
+                    { id: 101, expression: "-5 + 8", answer: 3 },
+                    { id: 102, expression: "7 - 12", answer: -5 },
+                    { id: 103, expression: "-4 - 6", answer: -10 },
+                    { id: 104, expression: "15 + (-9)", answer: 6 },
+                    { id: 105, expression: "-11 + 11", answer: 0 }
+                ]
+            },
+            {
+                id: 2,
+                title: "Perkalian & Pembagian",
+                subtitle: "Level 2: Perkalian & Pembagian Negatif",
+                items: [
+                    { id: 201, expression: "-4 × 3", answer: -12 },
+                    { id: 202, expression: "-6 × (-5)", answer: 30 },
+                    { id: 203, expression: "24 ÷ (-4)", answer: -6 },
+                    { id: 204, expression: "-36 ÷ (-9)", answer: 4 },
+                    { id: 205, expression: "8 × (-2)", answer: -16 }
+                ]
+            },
+            {
+                id: 3,
+                title: "Operasi Campuran",
+                subtitle: "Level 3: Kombinasi Operasi Bilangan",
+                items: [
+                    { id: 301, expression: "(-2 × 4) + 10", answer: 2 },
+                    { id: 302, expression: "15 - (3 × -4)", answer: 27 },
+                    { id: 303, expression: "(-20 ÷ 5) - 7", answer: -11 },
+                    { id: 304, expression: "(12 + -4) × -2", answer: -16 },
+                    { id: 305, expression: "-8 + (18 ÷ -3)", answer: -14 },
+                    { id: 306, expression: "(-5 × -3) - 20", answer: -5 }
+                ]
+            },
+            {
+                id: 4,
+                title: "Tantangan Pakar",
+                subtitle: "Level 4: Operasi Kecepatan & Kompleks",
+                items: [
+                    { id: 401, expression: "(-8 × -4) ÷ -2", answer: -16 },
+                    { id: 402, expression: "-25 + (6 × -3)", answer: -43 },
+                    { id: 403, expression: "(50 ÷ -5) + 18", answer: 8 },
+                    { id: 404, expression: "(-7 - 8) × -3", answer: 45 },
+                    { id: 405, expression: "100 ÷ (-10 + 5)", answer: -20 },
+                    { id: 406, expression: "(-3)³ + 15", answer: -12 }
+                ]
+            }
+        ];
+
+        /* --- AUDIO SYNTHESIZER (WEB AUDIO API) --- */
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+            }
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+            playGrab() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(350, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(700, this.ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.08);
+            }
+            playMatch() {
+                if (!this.ctx) return;
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, index) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + index * 0.07);
+                    gain.gain.setValueAtTime(0.25, this.ctx.currentTime + index * 0.07);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + index * 0.07 + 0.22);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(this.ctx.currentTime + index * 0.07);
+                    osc.stop(this.ctx.currentTime + index * 0.07 + 0.22);
+                });
+            }
+            playWrong() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(110, this.ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.2);
+            }
+            playLevelUp() {
+                if (!this.ctx) return;
+                const notes = [440, 554.37, 659.25, 880, 1108.73];
+                notes.forEach((freq, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + i * 0.09);
+                    gain.gain.setValueAtTime(0.25, this.ctx.currentTime + i * 0.09);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.09 + 0.35);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(this.ctx.currentTime + i * 0.09);
+                    osc.stop(this.ctx.currentTime + i * 0.09 + 0.35);
+                });
+            }
+        }
+        const sfx = new SoundFX();
+
+        /* --- GLOBAL DOM & CANVAS ELEMENTS --- */
+        const videoElement = document.getElementById('webcam');
+        const canvasElement = document.getElementById('arCanvas');
+        const ctx = canvasElement.getContext('2d');
+
+        const scoreText = document.getElementById('scoreText');
+        const timerText = document.getElementById('timerText');
+        const levelBadge = document.getElementById('levelBadge');
+        const levelTitleText = document.getElementById('levelTitleText');
+        
+        const statusBadge = document.getElementById('statusBadge');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        
+        const startModal = document.getElementById('startModal');
+        const startBtn = document.getElementById('startBtn');
+        const levelCompleteModal = document.getElementById('levelCompleteModal');
+        const levelScoreText = document.getElementById('levelScoreText');
+        const levelTimeText = document.getElementById('levelTimeText');
+        const nextLevelBtn = document.getElementById('nextLevelBtn');
+        const victoryModal = document.getElementById('victoryModal');
+        const finalTotalScore = document.getElementById('finalTotalScore');
+        const restartGameBtn = document.getElementById('restartGameBtn');
+
+        /* --- STATE VARIABLES --- */
+        let gameStarted = false;
+        let currentLevelIdx = 0;
+        let totalScore = 0;
+        let levelScore = 0;
+        let startTime = 0;
+        let timerInterval = null;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+
+        // Interaction Cursor State
+        let cursor = {
+            x: width / 2,
+            y: height / 2,
+            isPinching: false,
+            wasPinching: false,
+            state: 'normal', // 'normal', 'hover', 'grab', 'miss'
+            grabbedBubble: null
+        };
+
+        let handLandmarks = null;
+        let lastHandTime = 0;
+        let mouseActive = false;
+
+        // Data Arrays
+        let targetSlots = [];
+        let bubbles = [];
+        let particles = [];
+
+        function updateCanvasSize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvasElement.width = width;
+            canvasElement.height = height;
+            if (gameStarted) {
+                repositionTargetSlots();
+            }
+        }
+        window.addEventListener('resize', updateCanvasSize);
+
+        /* --- TARGET SLOTS & BUBBLE INITIALIZATION --- */
+        function loadCurrentLevel() {
+            const levelData = GAME_LEVELS[currentLevelIdx];
+            levelBadge.textContent = `Level ${levelData.id}`;
+            levelTitleText.textContent = levelData.title;
+
+            levelScore = 0;
+            repositionTargetSlots();
+
+            // Create floating bubbles for Math Expressions (SOAL)
+            const marginX = width * 0.18;
+            const marginY = height * 0.32;
+
+            // Shuffle array order so floating circles aren't aligned strictly in order
+            const itemsCopy = [...levelData.items].sort(() => Math.random() - 0.5);
+
+            bubbles = itemsCopy.map((item, index) => {
+                return {
+                    id: item.id,
+                    expression: item.expression,
+                    answer: item.answer,
+                    x: marginX + Math.random() * (width - marginX * 2),
+                    y: marginY + Math.random() * (height - marginY * 2.2),
+                    radius: Math.min(width, height) * 0.065 + 18,
+                    vx: (Math.random() - 0.5) * 1.8,
+                    vy: (Math.random() - 0.5) * 1.8,
+                    isGrabbed: false,
+                    isPlaced: false,
+                    hue: (index * 55 + currentLevelIdx * 70) % 360
+                };
+            });
+
+            // Timer start
+            startTime = Date.now();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimerDisplay, 1000);
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            if (!gameStarted) return;
+            const elapsedSec = Math.floor((Date.now() - startTime) / 1000);
+            const mins = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+            const secs = String(elapsedSec % 60).padStart(2, '0');
+            timerText.textContent = `${mins}:${secs}`;
+        }
+
+        function repositionTargetSlots() {
+            targetSlots = [];
+            const levelData = GAME_LEVELS[currentLevelIdx];
+            const items = levelData.items;
+            const count = items.length;
+
+            const slotWidth = Math.min(width * 0.14, 115);
+            const slotHeight = Math.min(height * 0.12, 85);
+
+            // Row splits if more than 5
+            if (count <= 5) {
+                // Single top row
+                const topY = Math.max(height * 0.13, 85);
+                items.forEach((item, i) => {
+                    const totalW = count * slotWidth;
+                    const spacing = (width - totalW) / (count + 1);
+                    const x = spacing + i * (slotWidth + spacing);
+                    targetSlots.push({
+                        id: item.id,
+                        answer: item.answer,
+                        x: x,
+                        y: topY,
+                        w: slotWidth,
+                        h: slotHeight,
+                        isFilled: false,
+                        filledExpression: ""
+                    });
+                });
+            } else {
+                // Split into Top & Bottom rows
+                const topCount = Math.ceil(count / 2);
+                const bottomCount = count - topCount;
+                
+                const topY = Math.max(height * 0.13, 85);
+                const bottomY = height - slotHeight - 20;
+
+                // Top row items
+                for (let i = 0; i < topCount; i++) {
+                    const item = items[i];
+                    const totalW = topCount * slotWidth;
+                    const spacing = (width - totalW) / (topCount + 1);
+                    const x = spacing + i * (slotWidth + spacing);
+                    targetSlots.push({
+                        id: item.id,
+                        answer: item.answer,
+                        x: x,
+                        y: topY,
+                        w: slotWidth,
+                        h: slotHeight,
+                        isFilled: false,
+                        filledExpression: ""
+                    });
+                }
+
+                // Bottom row items
+                for (let i = 0; i < bottomCount; i++) {
+                    const item = items[topCount + i];
+                    const totalW = bottomCount * slotWidth;
+                    const spacing = (width - totalW) / (bottomCount + 1);
+                    const x = spacing + i * (slotWidth + spacing);
+                    targetSlots.push({
+                        id: item.id,
+                        answer: item.answer,
+                        x: x,
+                        y: bottomY,
+                        w: slotWidth,
+                        h: slotHeight,
+                        isFilled: false,
+                        filledExpression: ""
+                    });
+                }
+            }
+        }
+
+        /* --- MEDIAPIPE HAND TRACKING PIPELINE --- */
+        const hands = new Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+        });
+
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.65,
+            minTrackingConfidence: 0.65
+        });
+
+        hands.onResults(onHandResults);
+
+        function onHandResults(results) {
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                handLandmarks = results.multiHandLandmarks[0];
+                lastHandTime = Date.now();
+                mouseActive = false;
+
+                // Update Hand Tracking Indicator
+                statusDot.className = "w-3 h-3 rounded-full bg-emerald-400 pulse-glow";
+                statusText.textContent = "Tangan Terdeteksi";
+                statusText.className = "text-xs font-semibold text-emerald-400 hidden sm:inline";
+
+                // Index Finger Tip (Landmark 8) & Thumb Tip (Landmark 4)
+                const indexTip = handLandmarks[8];
+                const thumbTip = handLandmarks[4];
+
+                // Note: Webcam video is horizontally flipped (Mirrored)
+                const newX = (1 - indexTip.x) * width;
+                const newY = indexTip.y * height;
+
+                // Smooth Cursor Tracking (Exponential Moving Average)
+                cursor.x += (newX - cursor.x) * 0.45;
+                cursor.y += (newY - cursor.y) * 0.45;
+
+                // Distance calculation for Pinch Gesture
+                const thumbX = (1 - thumbTip.x) * width;
+                const thumbY = thumbTip.y * height;
+                const dx = thumbX - cursor.x;
+                const dy = thumbY - cursor.y;
+                const distance = Math.hypot(dx, dy);
+
+                // Pinch Threshold (~48px distance)
+                const pinchThreshold = 48;
+                cursor.isPinching = distance < pinchThreshold;
+            } else {
+                handLandmarks = null;
+                if (Date.now() - lastHandTime > 1200 && !mouseActive) {
+                    statusDot.className = "w-3 h-3 rounded-full bg-amber-400 animate-ping";
+                    statusText.textContent = "Mencari tangan...";
+                    statusText.className = "text-xs font-semibold text-amber-300 hidden sm:inline";
+                }
+            }
+        }
+
+        // Initialize Camera
+        const camera = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({ image: videoElement });
+            },
+            width: 1280,
+            height: 720
+        });
+        camera.start();
+
+        /* --- MOUSE & TOUCH FALLBACK CONTROLS --- */
+        window.addEventListener('mousemove', (e) => {
+            if (!handLandmarks) {
+                mouseActive = true;
+                cursor.x = e.clientX;
+                cursor.y = e.clientY;
+                statusDot.className = "w-3 h-3 rounded-full bg-cyan-400";
+                statusText.textContent = "Mode Mouse";
+                statusText.className = "text-xs font-semibold text-cyan-300 hidden sm:inline";
+            }
+        });
+
+        window.addEventListener('mousedown', () => {
+            if (!handLandmarks) cursor.isPinching = true;
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (!handLandmarks) cursor.isPinching = false;
+        });
+
+        // Touch Listeners
+        window.addEventListener('touchmove', (e) => {
+            if (!handLandmarks && e.touches.length > 0) {
+                mouseActive = true;
+                cursor.x = e.touches[0].clientX;
+                cursor.y = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchstart', (e) => {
+            if (!handLandmarks && e.touches.length > 0) {
+                cursor.x = e.touches[0].clientX;
+                cursor.y = e.touches[0].clientY;
+                cursor.isPinching = true;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', () => {
+            if (!handLandmarks) cursor.isPinching = false;
+        });
+
+        // UI Buttons Handlers
+        startBtn.addEventListener('click', startGame);
+        nextLevelBtn.addEventListener('click', proceedToNextLevel);
+        restartGameBtn.addEventListener('click', restartFromLevelOne);
+
+        function startGame() {
+            sfx.init();
+            currentLevelIdx = 0;
+            totalScore = 0;
+            scoreText.textContent = '0';
+            startModal.classList.add('hidden');
+            gameStarted = true;
+            loadCurrentLevel();
+        }
+
+        function proceedToNextLevel() {
+            levelCompleteModal.classList.add('hidden');
+            currentLevelIdx++;
+            if (currentLevelIdx < GAME_LEVELS.length) {
+                gameStarted = true;
+                loadCurrentLevel();
+            } else {
+                // Game victory!
+                showVictoryScreen();
+            }
+        }
+
+        function restartFromLevelOne() {
+            victoryModal.classList.add('hidden');
+            currentLevelIdx = 0;
+            totalScore = 0;
+            scoreText.textContent = '0';
+            gameStarted = true;
+            loadCurrentLevel();
+        }
+
+        function showVictoryScreen() {
+            gameStarted = false;
+            clearInterval(timerInterval);
+            sfx.playLevelUp();
+            finalTotalScore.textContent = totalScore;
+            createBurstParticles(width / 2, height / 2, '#f59e0b', 50);
+            victoryModal.classList.remove('hidden');
+        }
+
+        /* --- PARTICLE SYSTEM --- */
+        function createBurstParticles(x, y, color, count = 25) {
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 2 + Math.random() * 6;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: 3 + Math.random() * 5,
+                    color: color,
+                    alpha: 1,
+                    decay: 0.015 + Math.random() * 0.02
+                });
+            }
+        }
+
+        /* --- MAIN ANIMATION LOOP (requestAnimationFrame) --- */
+        function drawLoop() {
+            // 1. Clear Canvas
+            ctx.clearRect(0, 0, width, height);
+
+            if (gameStarted) {
+                // 2. Update Bubble Physics & Grab States
+                updateGameLogic();
+
+                // 3. Render Answer Target Boxes (Kotak Jawaban)
+                drawTargetSlots();
+
+                // 4. Render Floating Math Question Bubbles (Lingkaran Soal)
+                drawBubbles();
+
+                // 5. Render Particle FX
+                drawParticles();
+            }
+
+            // 6. Render Hand Landmark Overlay (if detected)
+            if (handLandmarks) {
+                drawHandOverlay(handLandmarks);
+            }
+
+            // 7. Render AR Visual Cursor & Feedback Status
+            drawCursorFeedback();
+
+            // Check Level Complete Condition
+            if (gameStarted && targetSlots.length > 0 && targetSlots.every(s => s.isFilled)) {
+                gameStarted = false;
+                clearInterval(timerInterval);
+                const timeSecs = Math.floor((Date.now() - startTime) / 1000);
+                
+                // Bonus score calculation
+                const timeBonus = Math.max(50 - timeSecs, 10) * 2;
+                const levelTotal = levelScore + timeBonus;
+                totalScore += levelTotal;
+                scoreText.textContent = totalScore;
+
+                sfx.playLevelUp();
+                createBurstParticles(width / 2, height / 2, '#10b981', 35);
+
+                levelScoreText.textContent = `+${levelTotal}`;
+                levelTimeText.textContent = timerText.textContent;
+                
+                setTimeout(() => {
+                    levelCompleteModal.classList.remove('hidden');
+                }, 600);
+            }
+
+            requestAnimationFrame(drawLoop);
+        }
+
+        /* --- GAME LOGIC & INTERACTION MATRIX --- */
+        function updateGameLogic() {
+            const isPinchStarted = cursor.isPinching && !cursor.wasPinching;
+            const isPinchReleased = !cursor.isPinching && cursor.wasPinching;
+
+            // Check hovered unplaced question bubble
+            let hoveredBubble = null;
+            for (let b of bubbles) {
+                if (b.isPlaced) continue;
+                const dist = Math.hypot(cursor.x - b.x, cursor.y - b.y);
+                if (dist < b.radius + 12) {
+                    hoveredBubble = b;
+                    break;
+                }
+            }
+
+            // Pinch Action: Grab Question Bubble
+            if (isPinchStarted) {
+                if (hoveredBubble && !cursor.grabbedBubble) {
+                    cursor.grabbedBubble = hoveredBubble;
+                    hoveredBubble.isGrabbed = true;
+                    sfx.playGrab();
+                    cursor.state = 'grab';
+                } else if (!hoveredBubble) {
+                    cursor.state = 'miss';
+                }
+            }
+
+            // Update Dragged Bubble Position
+            if (cursor.grabbedBubble && cursor.isPinching) {
+                cursor.grabbedBubble.x += (cursor.x - cursor.grabbedBubble.x) * 0.6;
+                cursor.grabbedBubble.y += (cursor.y - cursor.grabbedBubble.y) * 0.6;
+                cursor.state = 'grab';
+            }
+
+            // Release Action: Drop & Target Slot Matching
+            if (isPinchReleased && cursor.grabbedBubble) {
+                const b = cursor.grabbedBubble;
+                b.isGrabbed = false;
+
+                // Check collision with matching slot (Kotak Jawaban)
+                let matchedSlot = null;
+                for (let slot of targetSlots) {
+                    if (slot.isFilled) continue;
+                    // Check if center of bubble is inside box bounds
+                    if (b.x >= slot.x && b.x <= slot.x + slot.w &&
+                        b.y >= slot.y && b.y <= slot.y + slot.h) {
+                        if (slot.id === b.id) {
+                            matchedSlot = slot;
+                            break;
+                        } else {
+                            // Dropped on WRONG answer box
+                            sfx.playWrong();
+                            createBurstParticles(b.x, b.y, '#ef4444', 12);
+                        }
+                    }
+                }
+
+                if (matchedSlot) {
+                    // SUCCESSFUL MATCH!
+                    matchedSlot.isFilled = true;
+                    matchedSlot.filledExpression = b.expression;
+                    b.isPlaced = true;
+                    b.x = matchedSlot.x + matchedSlot.w / 2;
+                    b.y = matchedSlot.y + matchedSlot.h / 2;
+                    
+                    levelScore += 50;
+                    scoreText.textContent = totalScore + levelScore;
+
+                    sfx.playMatch();
+                    createBurstParticles(b.x, b.y, '#10b981', 25);
+                } else {
+                    // Soft bounce back velocity
+                    b.vx = (Math.random() - 0.5) * 3;
+                    b.vy = (Math.random() - 0.5) * 3;
+                }
+
+                cursor.grabbedBubble = null;
+                cursor.state = 'normal';
+            }
+
+            // Update Cursor State when idle
+            if (!cursor.isPinching && !cursor.grabbedBubble) {
+                cursor.state = hoveredBubble ? 'hover' : 'normal';
+            }
+
+            // Floating Physics for Unplaced Bubbles
+            bubbles.forEach(b => {
+                if (b.isPlaced || b.isGrabbed) return;
+
+                b.x += b.vx;
+                b.y += b.vy;
+
+                // Canvas boundaries bounce
+                const topLimit = height * 0.22;
+                const bottomLimit = height * 0.85;
+                if (b.x - b.radius < 20 || b.x + b.radius > width - 20) b.vx *= -1;
+                if (b.y - b.radius < topLimit || b.y + b.radius > bottomLimit) b.vy *= -1;
+            });
+
+            cursor.wasPinching = cursor.isPinching;
+        }
+
+        /* --- CANVAS RENDERING FUNCTIONS --- */
+        function drawTargetSlots() {
+            targetSlots.forEach(slot => {
+                ctx.save();
+                
+                if (slot.isFilled) {
+                    // Filled Matching Slot Style (Green Glow)
+                    ctx.fillStyle = 'rgba(16, 185, 129, 0.3)';
+                    ctx.strokeStyle = '#34d399';
+                    ctx.lineWidth = 3;
+                } else {
+                    // Empty Answer Box Target Style
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.65)';
+                    ctx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+                    ctx.lineWidth = 2.5;
+                    ctx.setLineDash([6, 6]);
+                }
+
+                // Rounded Rect Slot
+                drawRoundedRect(ctx, slot.x, slot.y, slot.w, slot.h, 16);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.restore();
+                ctx.save();
+
+                if (slot.isFilled) {
+                    // Display matched solved equation
+                    ctx.fillStyle = '#34d399';
+                    ctx.font = `bold ${Math.floor(slot.h * 0.28)}px Poppins, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(slot.filledExpression, slot.x + slot.w / 2, slot.y + slot.h * 0.35);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = `black ${Math.floor(slot.h * 0.4)}px Poppins, sans-serif`;
+                    ctx.fillText(`= ${slot.answer}`, slot.x + slot.w / 2, slot.y + slot.h * 0.7);
+                } else {
+                    // Display Answer Target Box Label
+                    ctx.fillStyle = '#fcd34d';
+                    ctx.font = `bold ${Math.floor(slot.h * 0.18)}px Poppins, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'top';
+                    ctx.fillText('JAWABAN', slot.x + slot.w / 2, slot.y + 8);
+
+                    // Display Answer Value
+                    ctx.fillStyle = '#38bdf8';
+                    ctx.font = `extrabold ${Math.floor(slot.h * 0.45)}px Poppins, sans-serif`;
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(slot.answer, slot.x + slot.w / 2, slot.y + slot.h * 0.6);
+                }
+                
+                ctx.restore();
+            });
+        }
+
+        function drawBubbles() {
+            bubbles.forEach(b => {
+                if (b.isPlaced) return;
+
+                ctx.save();
+
+                // 2.5D Glass Sphere Floating Bubble for Math Expression (SOAL)
+                const grad = ctx.createRadialGradient(
+                    b.x - b.radius * 0.3, b.y - b.radius * 0.3, b.radius * 0.1,
+                    b.x, b.y, b.radius
+                );
+                grad.addColorStop(0, `hsla(${b.hue}, 90%, 80%, 0.95)`);
+                grad.addColorStop(0.7, `hsla(${b.hue}, 85%, 50%, 0.75)`);
+                grad.addColorStop(1, `hsla(${b.hue}, 90%, 30%, 0.85)`);
+
+                // Glow Effect
+                ctx.shadowColor = b.isGrabbed ? '#f59e0b' : `hsla(${b.hue}, 85%, 50%, 0.6)`;
+                ctx.shadowBlur = b.isGrabbed ? 28 : 14;
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // White Glass Outline
+                ctx.strokeStyle = b.isGrabbed ? '#f59e0b' : 'rgba(255, 255, 255, 0.7)';
+                ctx.lineWidth = b.isGrabbed ? 4 : 2;
+                ctx.stroke();
+
+                // Inner Glass Highlight
+                ctx.beginPath();
+                ctx.arc(b.x - b.radius * 0.35, b.y - b.radius * 0.35, b.radius * 0.25, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+                ctx.fill();
+
+                // "SOAL" Tag Text
+                ctx.shadowBlur = 0;
+                const tagSize = Math.floor(b.radius * 0.22);
+                ctx.font = `bold ${tagSize}px Poppins, sans-serif`;
+                ctx.fillStyle = '#fde047';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('SOAL', b.x, b.y - b.radius * 0.48);
+
+                // Math Expression Text inside Bubble
+                const mathSize = Math.floor(b.radius * 0.42);
+                ctx.font = `black ${mathSize}px Poppins, sans-serif`;
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(b.expression, b.x, b.y + b.radius * 0.08);
+
+                ctx.restore();
+            });
+        }
+
+        function drawParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= p.decay;
+
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function drawHandOverlay(landmarks) {
+            ctx.save();
+            const connections = [
+                [0,1],[1,2],[2,3],[3,4],        // Thumb
+                [0,5],[5,6],[6,7],[7,8],        // Index
+                [5,9],[9,10],[10,11],[11,12],   // Middle
+                [9,13],[13,14],[14,15],[15,16], // Ring
+                [13,17],[17,18],[18,19],[19,20],[0,17] // Pinky
+            ];
+
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+            ctx.lineWidth = 2.5;
+
+            connections.forEach(([i, j]) => {
+                const pt1 = landmarks[i];
+                const pt2 = landmarks[j];
+                ctx.beginPath();
+                ctx.moveTo((1 - pt1.x) * width, pt1.y * height);
+                ctx.lineTo((1 - pt2.x) * width, pt2.y * height);
+                ctx.stroke();
+            });
+
+            // Joint Nodes
+            landmarks.forEach((pt, idx) => {
+                const x = (1 - pt.x) * width;
+                const y = pt.y * height;
+                ctx.fillStyle = (idx === 8 || idx === 4) ? '#f59e0b' : '#38bdf8';
+                ctx.beginPath();
+                ctx.arc(x, y, (idx === 8 || idx === 4) ? 6 : 3.5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            ctx.restore();
+        }
+
+        /* --- CURSOR VISUAL FEEDBACK STATES --- */
+        function drawCursorFeedback() {
+            ctx.save();
+
+            let cursorColor = '#38bdf8'; // Normal: Cyan
+            let radius = 18;
+            let isDashed = false;
+
+            if (cursor.state === 'hover') {
+                cursorColor = '#facc15'; // Hovering: Yellow
+                radius = 24;
+                isDashed = true;
+            } else if (cursor.state === 'grab') {
+                cursorColor = '#10b981'; // Grabbed: Emerald Green
+                radius = 20;
+            } else if (cursor.state === 'miss') {
+                cursorColor = '#ef4444'; // Pinch Miss: Red
+                radius = 16;
+            }
+
+            // Outer Pulsing Cursor Ring
+            ctx.strokeStyle = cursorColor;
+            ctx.lineWidth = 3;
+            if (isDashed) ctx.setLineDash([6, 6]);
+
+            ctx.beginPath();
+            ctx.arc(cursor.x, cursor.y, radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Inner Center Pointer
+            ctx.fillStyle = cursorColor;
+            ctx.beginPath();
+            ctx.arc(cursor.x, cursor.y, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // Helper Utility: Canvas Rounded Rectangle
+        function drawRoundedRect(context, x, y, w, h, r) {
+            context.beginPath();
+            context.moveTo(x + r, y);
+            context.arcTo(x + w, y, x + w, y + h, r);
+            context.arcTo(x + w, y + h, x, y + h, r);
+            context.arcTo(x, y + h, x, y, r);
+            context.arcTo(x, y, x + w, y, r);
+            context.closePath();
+        }
+
+        window.onload = () => {
+            updateCanvasSize();
+            requestAnimationFrame(drawLoop);
+        };
+    </script>
+</body>
+</html>
