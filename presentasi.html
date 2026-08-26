@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentasi Digitalisasi Adiwiyata - Kontrol Gestur</title>
+    <!-- Tailwind CSS untuk styling cepat dan modern -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- MediaPipe Hands & Camera Utils CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f766e, #0369a1); /* Emerald to Light Blue gradient */
+            color: #ffffff;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+        }
+
+        /* Slide Transitions */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease-in-out, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: translateY(20px) scale(0.98);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            z-index: 10;
+        }
+
+        /* Virtual Cursor Styles */
+        #virtual-cursor {
+            position: fixed;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: rgba(16, 185, 129, 0.8); /* Emerald green */
+            border: 2px solid white;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.8);
+            pointer-events: none; /* Let clicks pass through if needed normally */
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.1s, height 0.1s, background-color 0.1s;
+            display: none; /* Hidden until hand detected */
+        }
+
+        /* Cursor state when pinching */
+        #virtual-cursor.pinching {
+            width: 16px;
+            height: 16px;
+            background-color: rgba(239, 68, 68, 0.9); /* Red when pinching */
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.9);
+        }
+
+        /* Webcam feedback window */
+        #camera-feed-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 240px;
+            height: 180px;
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 1000;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+        
+        #camera-feed-container:hover {
+            transform: scale(1.05);
+        }
+
+        #input_video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Mirror image */
+        }
+        
+        #output_canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scaleX(-1);
+            pointer-events: none;
+        }
+
+        /* Navigation Buttons */
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-btn:hover, .nav-btn.hovered-by-cursor {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .nav-btn:active, .nav-btn.clicked-by-cursor {
+            background: rgba(16, 185, 129, 0.6);
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        #prev-btn { left: 20px; }
+        #next-btn { right: 20px; }
+
+        /* AI Button */
+        #ai-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            z-index: 100;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        #ai-btn:hover, #ai-btn.hovered-by-cursor {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+        }
+        
+        #ai-btn.clicked-by-cursor {
+            transform: scale(0.95);
+        }
+
+        /* Slide Indicators */
+        .indicators {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .indicator.active {
+            background: white;
+            transform: scale(1.3);
+        }
+
+        /* Modal AI */
+        #ai-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        #ai-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Utilities */
+        .text-emerald { color: #34d399; }
+        .bg-emerald-light { background-color: rgba(16, 185, 129, 0.2); }
+        .hover-target { /* Class to mark elements interactable by virtual cursor */ }
+        
+        /* Custom Scrollbar for timeline */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+    </style>
+</head>
+<body>
+
+    <!-- Elemen Kursor Virtual -->
+    <div id="virtual-cursor"></div>
+
+    <!-- Kontainer Presentasi -->
+    <div id="presentation-container" class="relative w-full h-screen">
+
+        <!-- Slide 1: Cover -->
+        <div class="slide active" id="slide-1">
+            <div class="glass-panel p-12 max-w-4xl w-full text-center flex flex-col items-center justify-center relative overflow-hidden">
+                <!-- Dekorasi -->
+                <div class="absolute -top-20 -left-20 w-64 h-64 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+                <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+                
+                <i class="fa-solid fa-leaf text-6xl text-emerald-400 mb-6 drop-shadow-lg"></i>
+                <h1 class="text-5xl md:text-6xl font-bold mb-4 leading-tight">Digitalisasi Tata Kelola <br><span class="text-emerald-300">Sekolah Adiwiyata</span></h1>
+                <div class="h-1 w-24 bg-gradient-to-r from-emerald-400 to-blue-500 rounded-full my-6"></div>
+                <p class="text-2xl font-light">Oleh: <span class="font-semibold text-white">Teguh Wiryanto, S.Pd.</span></p>
+                
+                <div class="mt-12 text-sm text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-hand-pointer animate-pulse"></i>
+                    <p>Gunakan panah, atau <strong>cubit (pinch) di udara</strong> untuk lanjut</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Profil Narasumber -->
+        <div class="slide" id="slide-2">
+            <div class="glass-panel p-10 max-w-6xl w-full flex flex-col md:flex-row gap-10 h-[85vh]">
+                <!-- Kolom Kiri: Foto & Info -->
+                <div class="md:w-1/3 flex flex-col items-center border-r border-white/20 pr-6">
+                    <div class="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-emerald-400 shadow-xl mb-6 relative bg-white">
+                        <img src="foto%20pak%20teguh.png" alt="Foto Pak Teguh" class="w-full h-full object-cover object-top" onerror="this.src='https://placehold.co/300x300/2E8B57/FFFFFF?text=Foto+Pak+Teguh'">
+                    </div>
+                    <h2 class="text-3xl font-bold mb-2 text-center text-emerald-300">Teguh Wiryanto, S.Pd.</h2>
+                    <p class="text-lg bg-emerald-light px-4 py-1 rounded-full mb-6 text-center">Pendidik & Inovator Digital</p>
+                    
+                    <div class="w-full space-y-4 text-sm">
+                        <div class="flex items-start gap-3">
+                            <i class="fa-solid fa-building text-emerald-400 mt-1 w-5"></i>
+                            <div>
+                                <p class="text-gray-400 text-xs uppercase tracking-wider">Unit Kerja</p>
+                                <p class="font-medium">SMPN 4 Cipeundeuy</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class="fa-solid fa-map-location-dot text-emerald-400 mt-1 w-5"></i>
+                            <div>
+                                <p class="text-gray-400 text-xs uppercase tracking-wider">Alamat</p>
+                                <p>CT Bojong Asri No.5 Bojonghaleuang, Saguling</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-phone text-emerald-400 w-5"></i>
+                            <p>085226447000</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-envelope text-emerald-400 w-5"></i>
+                            <p>admin@pakteguh.com</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Kolom Kanan: Pengalaman -->
+                <div class="md:w-2/3 flex flex-col h-full">
+                    <h3 class="text-2xl font-semibold mb-6 flex items-center gap-3 border-b border-white/20 pb-3">
+                        <i class="fa-solid fa-award text-yellow-400"></i> Pengalaman & Prestasi
+                    </h3>
+                    <div class="overflow-y-auto pr-4 space-y-4 flex-1 pb-4">
+                        <!-- Timeline Items -->
+                        <div class="glass-card p-4 flex items-center gap-4 hover:bg-white/10 transition">
+                            <div class="bg-emerald-500 text-white font-bold px-3 py-1 rounded-lg text-sm min-w-[70px] text-center shadow-lg">2024</div>
+                            <div>
+                                <h4 class="font-bold text-lg">Pengajar Praktik Angkatan 11</h4>
+                                <p class="text-sm text-gray-300">Kementerian Pendidikan dan Kebudayaan</p>
+                            </div>
+                        </div>
+                        <div class="glass-card p-4 flex items-center gap-4 hover:bg-white/10 transition">
+                            <div class="bg-emerald-500 text-white font-bold px-3 py-1 rounded-lg text-sm min-w-[70px] text-center shadow-lg">2024</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-emerald-200">Awardee Microcredential CS50x</h4>
+                                <p class="text-sm text-gray-300">Harvard University</p>
+                            </div>
+                        </div>
+                        <div class="glass-card p-4 flex items-center gap-4 hover:bg-white/10 transition">
+                            <div class="bg-blue-500 text-white font-bold px-3 py-1 rounded-lg text-sm min-w-[70px] text-center shadow-lg">2023</div>
+                            <div>
+                                <h4 class="font-bold text-lg">Guru Penggerak Angkatan 7</h4>
+                                <p class="text-sm text-gray-300">Program Pendidikan Guru Penggerak</p>
+                            </div>
+                        </div>
+                        <div class="glass-card p-4 flex items-center gap-4 hover:bg-white/10 transition">
+                            <div class="bg-red-500 text-white font-bold px-3 py-1 rounded-lg text-sm min-w-[70px] text-center shadow-lg">2021</div>
+                            <div>
+                                <h4 class="font-bold text-lg">Google Master Trainer</h4>
+                                <p class="text-sm text-gray-300">Google for Education</p>
+                            </div>
+                        </div>
+                        <div class="glass-card p-4 flex items-center gap-4 hover:bg-white/10 transition">
+                            <div class="bg-orange-500 text-white font-bold px-3 py-1 rounded-lg text-sm min-w-[70px] text-center shadow-lg">2018</div>
+                            <div>
+                                <h4 class="font-bold text-lg">Office 365 Trainer</h4>
+                                <p class="text-sm text-gray-300">Microsoft Education</p>
+                            </div>
+                        </div>
+                        <div class="glass-card p-4 flex items-center gap-4 hover:bg-white/10 transition">
+                            <div class="bg-gray-600 text-white font-bold px-3 py-1 rounded-lg text-sm min-w-[70px] text-center shadow-lg">2017</div>
+                            <div>
+                                <h4 class="font-bold text-lg">Guru Garis Depan</h4>
+                                <p class="text-sm text-gray-300">Kalimantan Barat</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Pengenalan SIMALA -->
+        <div class="slide" id="slide-3">
+            <div class="glass-panel p-10 max-w-6xl w-full h-[85vh] flex flex-col justify-between">
+                <div>
+                    <h2 class="text-4xl font-bold mb-2 text-emerald-300 flex items-center gap-4">
+                        <i class="fa-solid fa-leaf"></i> Pengenalan SIMALA
+                    </h2>
+                    <p class="text-xl text-gray-200 mb-8 border-b border-white/20 pb-4">Sistem Informasi Manajemen dan Laporan Adiwiyata</p>
+                </div>
+                
+                <div class="flex flex-col md:flex-row gap-8 flex-1">
+                    <div class="md:w-1/2 flex flex-col justify-center">
+                        <p class="text-lg leading-relaxed mb-6 text-justify">
+                            <span class="font-bold text-emerald-400 text-xl">SIMALA</span> adalah aplikasi web inovatif yang membantu sekolah merencanakan, melaksanakan, memantau, dan melaporkan seluruh kegiatan <strong>Gerakan Peduli dan Berbudaya Lingkungan Hidup di Sekolah (GPBLHS)</strong>.
+                        </p>
+                        <div class="glass-card p-5 border-l-4 border-l-emerald-400">
+                            <p class="text-md italic">
+                                "Seluruh dokumen Adiwiyata yang sebelumnya tersebar dalam berkas terpisah kini terhimpun dalam satu basis data terpusat yang dapat diakses dari komputer maupun telepon genggam."
+                            </p>
+                        </div>
+                        
+                        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <!-- Kredensial Card -->
+                            <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 backdrop-blur-md">
+                                <h4 class="text-emerald-400 font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-link"></i> Akses Utama</h4>
+                                <ul class="text-sm space-y-2 font-mono">
+                                    <li><span class="text-gray-400">Web:</span> simala.smpn1saguling.sch.id</li>
+                                    <li><span class="text-gray-400">User:</span> admin@smpn1saguling.sch.id</li>
+                                    <li><span class="text-gray-400">Pass:</span> @Pakteguh.com</li>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 backdrop-blur-md">
+                                <h4 class="text-blue-400 font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-book"></i> Akses Modul</h4>
+                                <ul class="text-sm space-y-2 font-mono">
+                                    <li><span class="text-gray-400">Web:</span> modul.smpn1saguling.sch.id</li>
+                                    <li><span class="text-gray-400">Fungsi:</span> Modul Pembelajaran</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="md:w-1/2 flex items-center justify-center">
+                        <div class="w-full h-64 md:h-full bg-black/40 rounded-2xl border border-white/10 flex items-center justify-center relative overflow-hidden group shadow-2xl">
+                             <img src="simala%20saguling.jpg" alt="Screenshot SIMALA" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition duration-500 transform group-hover:scale-105" onerror="this.src='https://placehold.co/800x600/0f766e/ffffff?text=Screenshot+Dashboard+SIMALA'">
+                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                 <p class="font-bold text-lg">Tampilan Dashboard SIMALA</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: SITEGUH -->
+        <div class="slide" id="slide-4">
+             <div class="glass-panel p-10 max-w-6xl w-full h-[85vh] flex flex-col justify-between">
+                <div>
+                    <div class="inline-block px-3 py-1 bg-blue-600 rounded-full text-xs font-bold mb-3 tracking-widest uppercase shadow-lg">Bonus App</div>
+                    <h2 class="text-4xl font-bold mb-2 text-blue-300 flex items-center gap-4">
+                        <i class="fa-solid fa-cubes"></i> Ekosistem Digital: SITEGUH
+                    </h2>
+                    <p class="text-xl text-gray-200 mb-8 border-b border-white/20 pb-4">Sistem Informasi Terpadu Guru Hebat</p>
+                </div>
+                
+                <div class="flex flex-col md:flex-row-reverse gap-8 flex-1">
+                    <div class="md:w-1/2 flex flex-col justify-center">
+                        <p class="text-lg leading-relaxed mb-6">
+                            <span class="font-bold text-blue-400 text-xl">SITEGUH</span> adalah aplikasi PWA berbasis web untuk sekolah Indonesia yang mengintegrasikan berbagai kebutuhan administrasi guru dalam satu genggaman.
+                        </p>
+                        
+                        <!-- Fitur Grid -->
+                        <div class="grid grid-cols-2 gap-3 mb-6 text-sm">
+                            <div class="glass-card p-3 flex items-center gap-3"><i class="fa-solid fa-location-dot text-red-400 text-xl"></i> Absensi Selfie GPS</div>
+                            <div class="glass-card p-3 flex items-center gap-3"><i class="fa-solid fa-book-journal-whills text-blue-400 text-xl"></i> Jurnal Harian</div>
+                            <div class="glass-card p-3 flex items-center gap-3"><i class="fa-solid fa-calendar-days text-purple-400 text-xl"></i> Jadwal Mengajar</div>
+                            <div class="glass-card p-3 flex items-center gap-3"><i class="fa-solid fa-chart-line text-green-400 text-xl"></i> Penilaian Siswa</div>
+                        </div>
+                        
+                        <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 backdrop-blur-md">
+                            <h4 class="text-blue-400 font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-key"></i> Informasi Akses</h4>
+                            <ul class="text-sm space-y-2 font-mono">
+                                <li><span class="text-gray-400 w-16 inline-block">URL Web:</span> siteguh.smpn1saguling.sch.id</li>
+                                <li><span class="text-gray-400 w-16 inline-block">Username:</span> admin@smpn1saguling.sch.id</li>
+                                <li><span class="text-gray-400 w-16 inline-block">Password:</span> @Pakteguh.com</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="md:w-1/2 flex items-center justify-center">
+                        <div class="w-full h-64 md:h-full bg-black/40 rounded-2xl border border-white/10 flex items-center justify-center relative overflow-hidden group shadow-2xl">
+                             <img src="siteguh%20saguling.jpg" alt="Screenshot SITEGUH" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition duration-500 transform group-hover:scale-105" onerror="this.src='https://placehold.co/800x600/0369a1/ffffff?text=Aplikasi+SITEGUH'">
+                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                 <p class="font-bold text-lg">Antarmuka SITEGUH</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Web Sekolah & Penutup -->
+        <div class="slide" id="slide-5">
+             <div class="glass-panel p-10 max-w-4xl w-full text-center relative overflow-hidden">
+                <!-- Dekorasi -->
+                <div class="absolute inset-0 bg-cover bg-center opacity-20 filter blur-sm" style="background-image: url('website%20smpn%201%20saguling.jpg');"></div>
+                <div class="absolute inset-0 bg-gradient-to-b from-gray-900/80 to-emerald-900/80"></div>
+                
+                <div class="relative z-10">
+                    <div class="inline-block px-3 py-1 bg-purple-600 rounded-full text-xs font-bold mb-6 tracking-widest uppercase shadow-lg">Portal Informasi Terpadu</div>
+                    <h2 class="text-5xl font-bold mb-4 text-white">Website SMPN 1 Saguling</h2>
+                    <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">Etalase digital sekolah yang menyajikan informasi publik, berita terkini, dan galeri kegiatan secara profesional.</p>
+                    
+                    <div class="bg-black/50 p-6 rounded-2xl border border-white/20 backdrop-blur-md inline-block text-left mb-12 shadow-2xl mx-auto">
+                        <ul class="text-md space-y-3 font-mono">
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-globe text-blue-400 w-5"></i> www.smpn1saguling.sch.id</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-user text-emerald-400 w-5"></i> smpn1saguling@pakteguh.com</li>
+                            <li class="flex items-center gap-3"><i class="fa-solid fa-lock text-red-400 w-5"></i> @Pakteguh.com</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="h-px w-full bg-gradient-to-r from-transparent via-white/50 to-transparent mb-10"></div>
+                    
+                    <h1 class="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400 mb-6">TERIMA KASIH</h1>
+                    <p class="text-gray-300 mb-8">Mari wujudkan digitalisasi sekolah yang ramah lingkungan.</p>
+                    
+                    <button class="hover-target glass-card px-8 py-3 text-lg font-bold hover:bg-emerald-500 transition-colors border-emerald-400 text-emerald-300 hover:text-white rounded-full mx-auto flex items-center gap-2" onclick="goToSlide(0)">
+                        <i class="fa-solid fa-rotate-left"></i> Mulai Ulang
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigasi -->
+    <div id="prev-btn" class="nav-btn hover-target" onclick="prevSlide()" title="Slide Sebelumnya"><i class="fa-solid fa-chevron-left"></i></div>
+    <div id="next-btn" class="nav-btn hover-target" onclick="nextSlide()" title="Slide Berikutnya"><i class="fa-solid fa-chevron-right"></i></div>
+
+    <!-- Indikator Slide -->
+    <div class="indicators" id="slide-indicators">
+        <!-- Akan diisi via JS -->
+    </div>
+
+    <!-- Tombol AI -->
+    <button id="ai-btn" class="hover-target" onclick="openAIModal()">
+        <i class="fa-solid fa-robot"></i> Tanya AI
+    </button>
+
+    <!-- Modal AI -->
+    <div id="ai-modal">
+        <div class="glass-panel p-6 max-w-md w-full relative">
+            <button class="absolute top-4 right-4 text-gray-400 hover:text-white hover-target w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10" onclick="closeAIModal()">
+                <i class="fa-solid fa-times text-xl"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-4 flex items-center gap-2 text-blue-300">
+                <i class="fa-solid fa-sparkles"></i> Asisten AI
+            </h3>
+            <p class="text-sm text-gray-300 mb-4">Fitur ini siap dihubungkan dengan API LLM (seperti OpenAI GPT atau Gemini). Saat ini berjalan dalam mode demonstrasi.</p>
+            
+            <div class="bg-black/30 rounded-lg p-3 h-40 overflow-y-auto mb-4 font-mono text-sm border border-white/10" id="ai-chat-box">
+                <div class="text-emerald-400 mb-2">> Halo! Saya asisten AI untuk presentasi Pak Teguh. Ada yang ingin ditanyakan tentang SIMALA atau SITEGUH?</div>
+            </div>
+            
+            <div class="flex gap-2">
+                <input type="text" id="ai-input" placeholder="Ketik pertanyaan..." class="flex-1 bg-black/40 border border-white/20 rounded-lg px-4 py-2 text-white outline-none focus:border-blue-400">
+                <button class="hover-target bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-bold transition" onclick="sendAIMessage()">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Komponen Video Kamera untuk MediaPipe -->
+    <div id="camera-feed-container">
+        <!-- Video disembunyikan tapi diperlukan oleh MediaPipe -->
+        <video id="input_video" class="hidden" autoplay playsinline></video>
+        <!-- Canvas untuk menggambar skeleton tangan -->
+        <canvas id="output_canvas"></canvas>
+        <div class="absolute bottom-1 left-1 right-1 bg-black/60 rounded px-2 py-1 text-xs text-center border border-white/20 backdrop-blur-sm pointer-events-none">
+            <i class="fa-solid fa-hand text-emerald-400"></i> Kamera Aktif
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. MANAJEMEN SLIDE PRESENTASI
+        // ==========================================
+        const slides = document.querySelectorAll('.slide');
+        const indicatorsContainer = document.getElementById('slide-indicators');
+        let currentSlide = 0;
+        let isTransitioning = false;
+
+        // Inisialisasi indikator
+        slides.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('indicator', 'hover-target');
+            if (index === 0) dot.classList.add('active');
+            dot.onclick = () => goToSlide(index);
+            indicatorsContainer.appendChild(dot);
+        });
+        const indicators = document.querySelectorAll('.indicator');
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                indicators[index].classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                    indicators[index].classList.add('active');
+                }
+            });
+        }
+
+        function nextSlide() {
+            if (isTransitioning) return;
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlides();
+                cooldownTransition();
+            }
+        }
+
+        function prevSlide() {
+            if (isTransitioning) return;
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlides();
+                cooldownTransition();
+            }
+        }
+
+        function goToSlide(index) {
+            if (isTransitioning || index === currentSlide) return;
+            currentSlide = index;
+            updateSlides();
+            cooldownTransition();
+        }
+
+        function cooldownTransition() {
+            isTransitioning = true;
+            setTimeout(() => { isTransitioning = false; }, 1000); // Mencegah pindah slide terlalu cepat beruntun
+        }
+
+        // Navigasi Keyboard
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft' || e.key === 'PageUp') prevSlide();
+        });
+
+
+        // ==========================================
+        // 2. MODAL AI
+        // ==========================================
+        const aiModal = document.getElementById('ai-modal');
+        const aiInput = document.getElementById('ai-input');
+        const aiChatBox = document.getElementById('ai-chat-box');
+
+        function openAIModal() { aiModal.classList.add('active'); aiInput.focus(); }
+        function closeAIModal() { aiModal.classList.remove('active'); }
+
+        function sendAIMessage() {
+            const text = aiInput.value.trim();
+            if(!text) return;
+            
+            // Tampilkan pesan user
+            aiChatBox.innerHTML += `<div class="text-white mb-2 text-right opacity-80">${text}</div>`;
+            aiInput.value = '';
+            aiChatBox.scrollTop = aiChatBox.scrollHeight;
+
+            // TODO UNTUK DEVELOPER:
+            // Di sinilah Anda bisa melakukan `fetch()` ke API endpoint seperti OpenAI / Gemini API.
+            // Contoh payload: { model: "gpt-3.5-turbo", messages: [{role: "user", content: text}] }
+            // headers: { "Authorization": `Bearer YOUR_API_KEY` }
+
+            // Simulasi respon loading
+            const loadingId = "load-" + Date.now();
+            aiChatBox.innerHTML += `<div id="${loadingId}" class="text-gray-400 mb-2 italic">Mengetik...</div>`;
+            aiChatBox.scrollTop = aiChatBox.scrollHeight;
+
+            setTimeout(() => {
+                document.getElementById(loadingId).remove();
+                let reply = "Maaf, API LLM belum dihubungkan. Namun, untuk SIMALA, Anda bisa cek slide ke-3, dan SITEGUH di slide ke-4.";
+                if(text.toLowerCase().includes('teguh')) reply = "Pak Teguh Wiryanto adalah narasumber kita, beliau adalah inovator digital dan Guru Penggerak.";
+                
+                aiChatBox.innerHTML += `<div class="text-emerald-400 mb-2">> ${reply}</div>`;
+                aiChatBox.scrollTop = aiChatBox.scrollHeight;
+            }, 1000);
+        }
+        
+        aiInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') sendAIMessage();
+        });
+
+        // ==========================================
+        // 3. COMPUTER VISION (HAND GESTURE MEDIA PIPE)
+        // ==========================================
+        const videoElement = document.getElementById('input_video');
+        const canvasElement = document.getElementById('output_canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+        const virtualCursor = document.getElementById('virtual-cursor');
+
+        // State gestur
+        let isPinching = false;
+        let lastPinchTime = 0;
+        let cursorX = window.innerWidth / 2;
+        let cursorY = window.innerHeight / 2;
+
+        // Inisialisasi MediaPipe Hands
+        const hands = new Hands({
+            locateFile: (file) => {
+                return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+            }
+        });
+
+        hands.setOptions({
+            maxNumHands: 1, // Fokus pada 1 tangan untuk kursor
+            modelComplexity: 1,
+            minDetectionConfidence: 0.7,
+            minTrackingConfidence: 0.7
+        });
+
+        hands.onResults(onResults);
+
+        // Memulai Kamera
+        const camera = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({image: videoElement});
+            },
+            width: 640,
+            height: 480
+        });
+        
+        // Coba nyalakan kamera
+        camera.start().catch(err => {
+            console.error("Gagal mengakses kamera:", err);
+            document.getElementById('camera-feed-container').innerHTML = 
+                '<div class="flex items-center justify-center h-full text-xs text-red-400 bg-black p-4 text-center">Gagal akses kamera. Pastikan izin diberikan.</div>';
+        });
+
+        function onResults(results) {
+            // Update ukuran canvas sesuai video
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+            // Jika tangan terdeteksi
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                
+                // Gambar rangka tangan di canvas kecil
+                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#00FF00', lineWidth: 2});
+                drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 1, radius: 2});
+
+                // Tampilkan kursor virtual
+                virtualCursor.style.display = 'block';
+
+                // --- LOGIKA KURSOR & CUBITAN (PINCH) ---
+                
+                // Dapatkan titik Ujung Telunjuk (Index Finger Tip = landmark 8)
+                const indexTip = landmarks[8];
+                // Dapatkan titik Ujung Ibu Jari (Thumb Tip = landmark 4)
+                const thumbTip = landmarks[4];
+
+                // 1. MENGGERAKKAN KURSOR
+                // Menggunakan titik tengah antara jempol dan telunjuk sebagai posisi kursor
+                // Perlu membalik koordinat X karena video dimirror (1 - x)
+                const midX = 1 - ((indexTip.x + thumbTip.x) / 2); 
+                const midY = (indexTip.y + thumbTip.y) / 2;
+
+                // Mapping koordinat kamera (0-1) ke koordinat layar sebenarnya (pixel)
+                // Menggunakan smoothing sederhana (interpolasi) agar kursor tidak terlalu bergetar
+                const targetX = midX * window.innerWidth;
+                const targetY = midY * window.innerHeight;
+                
+                cursorX += (targetX - cursorX) * 0.3; // LERP (Linear Interpolation) factor 0.3
+                cursorY += (targetY - cursorY) * 0.3;
+
+                virtualCursor.style.left = `${cursorX}px`;
+                virtualCursor.style.top = `${cursorY}px`;
+
+                // 2. DETEKSI CUBITAN (PINCH TO CLICK)
+                // Menghitung jarak euclidean antara telunjuk dan ibu jari
+                // Rumus: √((x2 - x1)² + (y2 - y1)²)
+                const distance = Math.hypot(
+                    indexTip.x - thumbTip.x, 
+                    indexTip.y - thumbTip.y
+                );
+
+                // Threshold jarak (semakin kecil nilainya, semakin rapat jarinya harus bertemu)
+                const pinchThreshold = 0.05; 
+
+                if (distance < pinchThreshold) {
+                    if (!isPinching) {
+                        isPinching = true;
+                        virtualCursor.classList.add('pinching');
+                        handleVirtualClick(cursorX, cursorY);
+                    }
+                } else {
+                    if (isPinching) {
+                        isPinching = false;
+                        virtualCursor.classList.remove('pinching');
+                        removeHoverStates();
+                    }
+                }
+                
+                // Update hover status jika tidak sedang mencubit
+                if(!isPinching) {
+                    checkHoverStates(cursorX, cursorY);
+                }
+
+            } else {
+                // Sembunyikan kursor jika tangan hilang
+                virtualCursor.style.display = 'none';
+                removeHoverStates();
+            }
+            canvasCtx.restore();
+        }
+
+        // Elemen-elemen yang bisa berinteraksi dengan kursor virtual
+        const interactableElements = document.querySelectorAll('.hover-target, .nav-btn, button, .indicator');
+        
+        function getElementAtVirtualCursor(x, y) {
+            // Sembunyikan kursor sebentar agar document.elementFromPoint tidak mendeteksi kursor itu sendiri
+            virtualCursor.style.display = 'none';
+            const element = document.elementFromPoint(x, y);
+            virtualCursor.style.display = 'block';
+            return element;
+        }
+
+        function checkHoverStates(x, y) {
+            removeHoverStates();
+            const elementUnderCursor = getElementAtVirtualCursor(x, y);
+            
+            if (elementUnderCursor) {
+                // Cek apakah elemen atau parentnya punya class hover-target
+                const interactable = elementUnderCursor.closest('.hover-target') || 
+                                     elementUnderCursor.closest('.nav-btn') || 
+                                     elementUnderCursor.closest('button');
+                
+                if (interactable) {
+                    interactable.classList.add('hovered-by-cursor');
+                }
+            }
+        }
+
+        function removeHoverStates() {
+            document.querySelectorAll('.hovered-by-cursor').forEach(el => {
+                el.classList.remove('hovered-by-cursor');
+            });
+            document.querySelectorAll('.clicked-by-cursor').forEach(el => {
+                el.classList.remove('clicked-by-cursor');
+            });
+        }
+
+        function handleVirtualClick(x, y) {
+            const now = Date.now();
+            // Debounce klik (cegah klik dobel yang tidak disengaja dalam 500ms)
+            if (now - lastPinchTime < 500) return; 
+            lastPinchTime = now;
+
+            const elementUnderCursor = getElementAtVirtualCursor(x, y);
+            
+            if (elementUnderCursor) {
+                const interactable = elementUnderCursor.closest('.hover-target') || 
+                                     elementUnderCursor.closest('.nav-btn') || 
+                                     elementUnderCursor.closest('button') ||
+                                     elementUnderCursor.closest('.indicator');
+                
+                if (interactable) {
+                    // Beri efek visual klik
+                    interactable.classList.add('clicked-by-cursor');
+                    
+                    // Simulasikan klik
+                    interactable.click();
+                    
+                    setTimeout(() => {
+                        interactable.classList.remove('clicked-by-cursor');
+                    }, 200);
+                    return; // Klik berhasil pada UI
+                }
+            }
+
+            // Jika mencubit di area kosong (bukan UI button), default ke Next Slide
+            // Hanya jalan jika modal AI tidak terbuka
+            if(!aiModal.classList.contains('active')) {
+                // Deteksi di area kanan layar = next, kiri = prev
+                if(x > window.innerWidth / 2) {
+                     nextSlide();
+                } else {
+                     prevSlide();
+                }
+                
+                // Efek gelombang/ripple saat klik di udara
+                createRipple(x, y);
+            }
+        }
+
+        function createRipple(x, y) {
+            const ripple = document.createElement('div');
+            ripple.style.position = 'fixed';
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            ripple.style.width = '10px';
+            ripple.style.height = '10px';
+            ripple.style.border = '2px solid rgba(16, 185, 129, 0.8)';
+            ripple.style.borderRadius = '50%';
+            ripple.style.transform = 'translate(-50%, -50%)';
+            ripple.style.zIndex = '9998';
+            ripple.style.pointerEvents = 'none';
+            ripple.style.transition = 'all 0.5s ease-out';
+            document.body.appendChild(ripple);
+
+            setTimeout(() => {
+                ripple.style.width = '100px';
+                ripple.style.height = '100px';
+                ripple.style.opacity = '0';
+            }, 10);
+
+            setTimeout(() => { ripple.remove(); }, 500);
+        }
+
+    </script>
+</body>
+</html>
