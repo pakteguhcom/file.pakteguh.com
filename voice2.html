@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Burst AR - Active & Passive Voice</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Inter:wght@400;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- MediaPipe Hands -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            cyan: '#00f3ff',
+                            pink: '#ff00ea',
+                            amber: '#ffb700',
+                            green: '#00ff66'
+                        }
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: 1, textShadow: '0 0 10px #00f3ff, 0 0 20px #00f3ff' },
+                            '50%': { opacity: .7, textShadow: '0 0 5px #00f3ff' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050510;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            margin: 0;
+            overflow: hidden;
+            touch-action: none; /* Prevent scroll on touch */
+        }
+        
+        .glass-panel {
+            background: rgba(10, 15, 30, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+        }
+
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-3px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        /* Video feed style */
+        #video-bg {
+            transform: scaleX(-1); /* Mirror */
+            opacity: 0.3;
+            filter: grayscale(100%) sepia(50%) hue-rotate(150deg);
+        }
+
+        /* Custom Scrollbar for level select */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.5); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 243, 255, 0.8); }
+    </style>
+</head>
+
+<body class="text-white h-screen w-screen flex items-center justify-center p-2 lg:p-4">
+
+    <!-- Main 16:9 Container -->
+    <div id="game-container" class="relative w-full max-w-[1280px] aspect-video bg-gray-900 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,243,255,0.2)] border border-cyan-500/30 ring-1 ring-white/10">
+        
+        <!-- Webcam Background -->
+        <video id="video-bg" class="absolute inset-0 w-full h-full object-cover hidden md:block" autoplay playsinline></video>
+        
+        <!-- Game Canvas -->
+        <canvas id="game-canvas" class="absolute inset-0 w-full h-full z-10 cursor-crosshair"></canvas>
+
+        <!-- HUD (Top Bar) -->
+        <div id="hud" class="absolute top-0 left-0 w-full p-4 flex justify-between items-start z-20 hidden pointer-events-none">
+            <!-- Left: Level & Score -->
+            <div class="flex flex-col gap-2">
+                <div class="glass-panel px-4 py-2 rounded-xl flex items-center gap-3">
+                    <span id="hud-level" class="font-orbitron text-neon-cyan font-bold text-lg">LVL 1</span>
+                    <div class="w-px h-6 bg-cyan-500/30"></div>
+                    <span class="font-fredoka text-gray-300">Skor:</span>
+                    <span id="hud-score" class="font-orbitron text-2xl font-bold text-white">0</span>
+                </div>
+                <!-- Combo Badge -->
+                <div id="hud-combo" class="hidden glass-panel px-3 py-1 rounded-lg border-neon-amber text-neon-amber font-orbitron font-bold text-sm transform transition-transform animate-pulse">
+                    🔥 COMBO x2
+                </div>
+            </div>
+
+            <!-- Center: Target Mission -->
+            <div class="glass-panel px-6 py-3 rounded-2xl border-neon-pink/50 flex flex-col items-center">
+                <span class="font-inter text-xs text-neon-pink uppercase tracking-widest mb-1">Target Operasi</span>
+                <span id="hud-target-text" class="font-orbitron font-bold text-xl text-white animate-pulse-glow">Cari: ACTIVE VOICE</span>
+            </div>
+
+            <!-- Right: Progress, Timer, Controls -->
+            <div class="flex flex-col gap-2 items-end pointer-events-auto">
+                <div class="glass-panel px-4 py-2 rounded-xl flex items-center gap-4">
+                    <div class="flex flex-col items-center">
+                        <span class="font-inter text-[10px] text-gray-400">TARGET</span>
+                        <span id="hud-progress" class="font-orbitron text-neon-green font-bold">0/10</span>
+                    </div>
+                    <div class="w-px h-6 bg-cyan-500/30"></div>
+                    <div class="flex flex-col items-center">
+                        <span class="font-inter text-[10px] text-gray-400">WAKTU</span>
+                        <span id="hud-timer" class="font-orbitron text-neon-amber font-bold text-xl">60</span>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button id="btn-input-mode" class="glass-panel p-2 rounded-lg hover:bg-white/10 transition group relative">
+                        <span id="icon-mouse">🖱️</span>
+                        <span id="icon-hand" class="hidden">✋</span>
+                        <div class="absolute -bottom-8 right-0 w-max hidden group-hover:block bg-black/80 text-xs px-2 py-1 rounded">Switch Input (M)</div>
+                    </button>
+                    <button id="btn-pause" class="glass-panel p-2 rounded-lg hover:bg-white/10 transition text-white">
+                        ⏸️
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- OVERLAYS (z-30 to z-50) -->
+        
+        <!-- Main Menu -->
+        <div id="screen-main" class="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
+            <h1 class="font-orbitron text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-white to-neon-pink mb-2 text-center drop-shadow-[0_0_20px_rgba(0,243,255,0.5)] animate-float">
+                VOICE BURST AR
+            </h1>
+            <p class="font-inter text-gray-300 text-lg mb-8 tracking-wider text-center">Master Active & Passive Voice Sentences</p>
+            
+            <div id="camera-status" class="mb-6 font-inter text-sm flex items-center gap-2 text-neon-amber">
+                <span class="animate-spin">⏳</span> Inisialisasi AI Engine...
+            </div>
+
+            <div class="flex flex-col gap-4 w-64">
+                <button id="btn-play" class="glass-panel py-3 px-6 rounded-xl font-orbitron font-bold text-xl text-neon-cyan hover:bg-neon-cyan/20 transition-all hover:scale-105 border-neon-cyan">
+                    PILIH LEVEL
+                </button>
+                <button id="btn-tutorial" class="glass-panel py-3 px-6 rounded-xl font-inter font-semibold text-white hover:bg-white/10 transition-all">
+                    CARA BERMAIN
+                </button>
+            </div>
+        </div>
+
+        <!-- Level Select Modal -->
+        <div id="screen-levels" class="absolute inset-0 z-50 hidden flex-col items-center justify-center bg-black/80 backdrop-blur-md p-6">
+            <div class="w-full max-w-4xl glass-panel p-6 rounded-3xl relative flex flex-col h-[80%]">
+                <button id="btn-close-levels" class="absolute top-4 right-6 text-gray-400 hover:text-white text-2xl font-bold">✕</button>
+                <h2 class="font-orbitron text-3xl font-bold text-neon-cyan mb-6 text-center">PILIH LEVEL</h2>
+                
+                <div id="level-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 overflow-y-auto pb-4 flex-grow content-start">
+                    <!-- Levels injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tutorial Modal -->
+        <div id="screen-tutorial" class="absolute inset-0 z-50 hidden flex-col items-center justify-center bg-black/80 backdrop-blur-md p-6">
+            <div class="w-full max-w-2xl glass-panel p-8 rounded-3xl relative text-center">
+                <button id="btn-close-tutorial" class="absolute top-4 right-6 text-gray-400 hover:text-white text-2xl font-bold">✕</button>
+                <h2 class="font-orbitron text-3xl font-bold text-neon-pink mb-6">CARA BERMAIN</h2>
+                
+                <div class="text-left font-inter text-gray-200 space-y-4 mb-8">
+                    <p>🎯 <strong>Misi:</strong> Letuskan balon yang berisi kalimat sesuai dengan Target (Active atau Passive Voice).</p>
+                    <p>✋ <strong>Kontrol AR:</strong> Gunakan kamera. Arahkan <strong>Ujung Jari Telunjuk</strong> Anda sebagai laser untuk meletuskan balon.</p>
+                    <p>🖱️ <strong>Kontrol Mouse:</strong> Klik tombol Switch (atau tekan 'M') untuk bermain dengan mouse/layar sentuh.</p>
+                    <p>🔥 <strong>Skor & Combo:</strong> Benar = +10. Berturut-turut benar meningkatkan multiplier combo! Salah letuskan balon = -5 Poin dan layar bergetar.</p>
+                </div>
+                <button id="btn-tutorial-ok" class="bg-neon-pink/20 border border-neon-pink text-neon-pink py-2 px-8 rounded-full font-bold hover:bg-neon-pink hover:text-white transition">PAHAM</button>
+            </div>
+        </div>
+
+        <!-- Pause Menu -->
+        <div id="screen-pause" class="absolute inset-0 z-50 hidden flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
+            <h2 class="font-orbitron text-4xl font-bold text-white mb-8 tracking-widest">PAUSED</h2>
+            <div class="flex flex-col gap-4 w-64">
+                <button id="btn-resume" class="glass-panel py-3 rounded-xl font-bold text-neon-green hover:bg-neon-green/20 transition">LANJUTKAN</button>
+                <button id="btn-restart-pause" class="glass-panel py-3 rounded-xl font-bold text-neon-amber hover:bg-neon-amber/20 transition">ULANGI LEVEL</button>
+                <button id="btn-quit-pause" class="glass-panel py-3 rounded-xl font-bold text-neon-pink hover:bg-neon-pink/20 transition">MENU UTAMA</button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="screen-result" class="absolute inset-0 z-50 hidden flex-col items-center justify-center bg-black/80 backdrop-blur-md">
+            <div class="glass-panel p-8 rounded-3xl text-center max-w-lg w-full transform scale-95 transition-transform duration-300" id="result-panel">
+                <h2 id="result-title" class="font-orbitron text-5xl font-black mb-2 text-neon-cyan">LEVEL LULUS!</h2>
+                <div id="result-stars" class="text-5xl tracking-widest mb-6 drop-shadow-[0_0_10px_rgba(255,183,0,0.8)]">⭐⭐⭐</div>
+                
+                <div class="bg-black/40 rounded-xl p-4 mb-6 text-left font-inter space-y-2 border border-white/10">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Skor Akhir:</span>
+                        <span id="result-score" class="font-orbitron font-bold text-xl text-white">150</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Combo Tertinggi:</span>
+                        <span id="result-combo" class="font-bold text-neon-amber">x4</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Sisa Waktu:</span>
+                        <span id="result-time" class="font-bold text-white">12s</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-center gap-3">
+                    <button id="btn-result-menu" class="glass-panel p-3 rounded-xl hover:bg-white/10 transition" title="Menu Utama">🏠</button>
+                    <button id="btn-result-levels" class="glass-panel p-3 rounded-xl hover:bg-white/10 transition" title="Pilih Level">📋</button>
+                    <button id="btn-result-restart" class="glass-panel p-3 px-6 rounded-xl font-bold text-white hover:bg-white/10 transition flex items-center gap-2">🔄 ULANGI</button>
+                    <button id="btn-result-next" class="bg-neon-cyan/20 border border-neon-cyan text-neon-cyan p-3 px-6 rounded-xl font-bold hover:bg-neon-cyan hover:text-black transition flex items-center gap-2 hidden">LANJUT ▶️</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA & CONFIGURATION ---
+        const SENTENCES = {
+            active: [
+                "He eats an apple.", "The dog chased the cat.", "She is writing a letter.",
+                "They built a house.", "I will clean the room.", "He has finished work.",
+                "The chef cooks the meal.", "We are watching a movie.", "She took the keys.",
+                "Birds build nests.", "The teacher explains it.", "I drink water.",
+                "They will win the game.", "He drives a fast car.", "She sang a song."
+            ],
+            passive: [
+                "An apple is eaten by him.", "The cat was chased by the dog.", "A letter is being written.",
+                "A house was built.", "The room will be cleaned.", "The work has been finished.",
+                "The meal is cooked by the chef.", "A movie is being watched.", "The keys were taken.",
+                "Nests are built by birds.", "It is explained by her.", "Water is drunk by me.",
+                "The game will be won.", "A fast car is driven.", "A song was sung."
+            ]
+        };
+
+        const LEVELS = [
+            { id: 1, title: "Dasar: Active", target: "active", targetText: "Kalimat ACTIVE", time: 60, goal: 8, speedMulti: 1 },
+            { id: 2, title: "Dasar: Passive", target: "passive", targetText: "Kalimat PASSIVE", time: 60, goal: 8, speedMulti: 1 },
+            { id: 3, title: "Menengah: Active", target: "active", targetText: "Kalimat ACTIVE", time: 50, goal: 10, speedMulti: 1.2 },
+            { id: 4, title: "Menengah: Passive", target: "passive", targetText: "Kalimat PASSIVE", time: 50, goal: 10, speedMulti: 1.2 },
+            { id: 5, title: "Cepat: Active", target: "active", targetText: "Kalimat ACTIVE", time: 45, goal: 12, speedMulti: 1.5 },
+            { id: 6, title: "Cepat: Passive", target: "passive", targetText: "Kalimat PASSIVE", time: 45, goal: 12, speedMulti: 1.5 },
+            { id: 7, title: "Kilat: Campuran", target: "active", targetText: "Kalimat ACTIVE", time: 40, goal: 15, speedMulti: 2 },
+            { id: 8, title: "Grand Master", target: "passive", targetText: "Kalimat PASSIVE", time: 40, goal: 15, speedMulti: 2.2 }
+        ];
+
+        let saveScore = JSON.parse(localStorage.getItem('voiceBurstData')) || {};
+        // unlock level 1 default (pastikan selalu terbuka apapun cache-nya)
+        if (!saveScore[1]) saveScore[1] = { stars: 0, unlocked: true };
+
+        function saveProgress() {
+            localStorage.setItem('voiceBurstData', JSON.stringify(saveScore));
+        }
+
+        // --- AUDIO SYNTHESIZER ---
+        let audioCtx = null;
+        
+        const Synth = {
+            init: () => {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+            },
+            playTone: (freq, type, duration, vol=0.1) => {
+                if(!audioCtx) return;
+                if(audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            },
+            pop: () => {
+                Synth.playTone(600, 'sine', 0.1, 0.2);
+                setTimeout(() => Synth.playTone(800, 'sine', 0.15, 0.2), 50);
+            },
+            error: () => {
+                Synth.playTone(150, 'sawtooth', 0.3, 0.3);
+                setTimeout(() => Synth.playTone(100, 'sawtooth', 0.3, 0.3), 100);
+            },
+            combo: (level) => {
+                const baseFreq = 400 + (level * 100);
+                Synth.playTone(baseFreq, 'square', 0.1, 0.1);
+                setTimeout(() => Synth.playTone(baseFreq * 1.5, 'square', 0.2, 0.1), 100);
+            },
+            victory: () => {
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                    setTimeout(() => Synth.playTone(freq, 'sine', 0.3, 0.2), i * 150);
+                });
+            }
+        };
+
+        // --- STATE VARIABLES ---
+        let gameState = 'menu'; // menu, playing, paused, result
+        let currentLevel = null;
+        let score = 0;
+        let combo = 0;
+        let maxCombo = 0;
+        let targetCount = 0;
+        let timeLeft = 0;
+        let timerInterval = null;
+        let inputMode = 'mouse'; // 'mouse' or 'ai'
+        
+        let balloons = [];
+        let particles = [];
+        let floatTexts = [];
+        let cursor = { x: -100, y: -100, active: false }; // active means popping
+
+        // --- CANVAS SETUP ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('game-container');
+
+        function resizeCanvas() {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // --- DOM ELEMENTS ---
+        const DOM = {
+            container: document.getElementById('game-container'),
+            hud: document.getElementById('hud'),
+            hudLevel: document.getElementById('hud-level'),
+            hudScore: document.getElementById('hud-score'),
+            hudCombo: document.getElementById('hud-combo'),
+            hudTarget: document.getElementById('hud-target-text'),
+            hudProgress: document.getElementById('hud-progress'),
+            hudTimer: document.getElementById('hud-timer'),
+            
+            screens: {
+                main: document.getElementById('screen-main'),
+                levels: document.getElementById('screen-levels'),
+                tutorial: document.getElementById('screen-tutorial'),
+                pause: document.getElementById('screen-pause'),
+                result: document.getElementById('screen-result')
+            },
+            
+            camStatus: document.getElementById('camera-status'),
+            btnPlay: document.getElementById('btn-play')
+        };
+
+        function showScreen(screenName) {
+            // Bersihkan semua inline style agar class 'hidden' (display: none) dari Tailwind bekerja
+            Object.values(DOM.screens).forEach(s => {
+                s.classList.add('hidden');
+                s.style.display = ''; 
+            });
+            
+            if(screenName === 'hud') {
+                DOM.hud.classList.remove('hidden');
+            } else if (DOM.screens[screenName]) {
+                DOM.screens[screenName].classList.remove('hidden');
+                DOM.screens[screenName].style.display = 'flex';
+                DOM.hud.classList.add('hidden');
+            }
+        }
+
+        class Balloon {
+            constructor(levelData) {
+                this.radius = 60 + Math.random() * 20;
+                // Make it wide enough for text
+                this.width = 180; 
+                this.height = 80;
+                this.x = Math.random() * (canvas.width - this.width) + this.width/2;
+                this.y = canvas.height + this.height + Math.random() * 100;
+                
+                // 50/50 chance for target vs non-target
+                const isTarget = Math.random() > 0.5;
+                const pool = isTarget ? SENTENCES[levelData.target] : SENTENCES[levelData.target === 'active' ? 'passive' : 'active'];
+                this.text = pool[Math.floor(Math.random() * pool.length)];
+                this.type = isTarget ? levelData.target : (levelData.target === 'active' ? 'passive' : 'active');
+                
+                this.speed = (1.5 + Math.random() * 1.5) * levelData.speedMulti;
+                this.swaySpeed = 0.02 + Math.random() * 0.03;
+                this.swayAmount = 1 + Math.random() * 2;
+                this.seed = Math.random() * 100;
+                
+                // Colors (Neon palette)
+                const colors = [
+                    {b: '#ff00ea', t: '#fff'}, // Pink
+                    {b: '#00f3ff', t: '#fff'}, // Cyan
+                    {b: '#ffb700', t: '#000'}, // Amber
+                    {b: '#00ff66', t: '#000'}  // Green
+                ];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.markedForDeletion = false;
+            }
+
+            update() {
+                this.y -= this.speed;
+                this.x += Math.sin(this.seed) * this.swayAmount;
+                this.seed += this.swaySpeed;
+                if (this.y + this.height < 0) this.markedForDeletion = true;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                // String
+                ctx.beginPath();
+                ctx.moveTo(0, this.height/2);
+                ctx.quadraticCurveTo(
+                    Math.sin(this.seed*2) * 10, this.height/2 + 30,
+                    Math.sin(this.seed) * 15, this.height/2 + 60
+                );
+                ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Bubble/Balloon (Rounded Rectangle)
+                ctx.beginPath();
+                ctx.roundRect(-this.width/2, -this.height/2, this.width, this.height, 20);
+                
+                // Glassmorphism effect
+                ctx.fillStyle = 'rgba(20, 20, 30, 0.8)';
+                ctx.fill();
+                
+                // Neon Border
+                ctx.strokeStyle = this.color.b;
+                ctx.lineWidth = 3;
+                ctx.shadowColor = this.color.b;
+                ctx.shadowBlur = 15;
+                ctx.stroke();
+                ctx.shadowBlur = 0; // reset
+                
+                // Text
+                ctx.fillStyle = 'white'; //this.color.t;
+                ctx.font = '14px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // Simple word wrap
+                const words = this.text.split(' ');
+                let line = '';
+                let yPos = -8;
+                for(let n = 0; n < words.length; n++) {
+                    let testLine = line + words[n] + ' ';
+                    let metrics = ctx.measureText(testLine);
+                    if (metrics.width > this.width - 20 && n > 0) {
+                        ctx.fillText(line, 0, yPos);
+                        line = words[n] + ' ';
+                        yPos += 20;
+                    } else {
+                        line = testLine;
+                    }
+                }
+                ctx.fillText(line, 0, yPos);
+                
+                ctx.restore();
+            }
+
+            checkHit(cx, cy) {
+                // Simple AABB bounding box collision for rounded rect
+                return (cx > this.x - this.width/2 && cx < this.x + this.width/2 &&
+                        cy > this.y - this.height/2 && cy < this.y + this.height/2);
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y;
+                this.color = color;
+                this.size = Math.random() * 5 + 2;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.05 + 0.02;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class FloatText {
+            constructor(x, y, text, color) {
+                this.x = x; this.y = y;
+                this.text = text; this.color = color;
+                this.life = 1.0;
+                this.vy = -2;
+            }
+            update() {
+                this.y += this.vy;
+                this.life -= 0.02;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.font = 'bold 24px Fredoka';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 10;
+                ctx.fillText(this.text, this.x, this.y);
+                ctx.restore();
+            }
+        }
+
+        function spawnBalloon() {
+            if (gameState !== 'playing') return;
+            if (balloons.length < 5 + (currentLevel.id)) {
+                balloons.push(new Balloon(currentLevel));
+            }
+            let spawnRate = 1500 - (currentLevel.id * 100);
+            setTimeout(spawnBalloon, spawnRate + Math.random() * 500);
+        }
+
+        function createExplosion(x, y, color) {
+            for(let i=0; i<15; i++) particles.push(new Particle(x, y, color));
+        }
+
+        function triggerShake() {
+            DOM.container.classList.remove('shake');
+            void DOM.container.offsetWidth; // trigger reflow
+            DOM.container.classList.add('shake');
+        }
+
+        function handlePop(balloon) {
+            createExplosion(balloon.x, balloon.y, balloon.color.b);
+            
+            if (balloon.type === currentLevel.target) {
+                // CORRECT
+                combo++;
+                if (combo > maxCombo) maxCombo = combo;
+                
+                let multi = 1;
+                if (combo >= 5) multi = 3;
+                else if (combo >= 3) multi = 2;
+
+                const points = 10 * multi;
+                score += points;
+                targetCount++;
+                
+                Synth.pop();
+                if (multi > 1) Synth.combo(multi);
+                
+                floatTexts.push(new FloatText(balloon.x, balloon.y, `+${points}`, '#00ff66'));
+                updateHUD();
+                
+                if (targetCount >= currentLevel.goal) {
+                    endLevel(true);
+                }
+            } else {
+                // WRONG
+                combo = 0;
+                score = Math.max(0, score - 5);
+                Synth.error();
+                triggerShake();
+                floatTexts.push(new FloatText(balloon.x, balloon.y, '-5 ❌', '#ff00ea'));
+                updateHUD();
+            }
+        }
+
+        function updateHUD() {
+            DOM.hudScore.innerText = score;
+            DOM.hudProgress.innerText = `${targetCount}/${currentLevel.goal}`;
+            
+            if (combo >= 3) {
+                DOM.hudCombo.classList.remove('hidden');
+                DOM.hudCombo.innerText = `🔥 COMBO x${combo >= 5 ? 3 : 2}`;
+            } else {
+                DOM.hudCombo.classList.add('hidden');
+            }
+        }
+
+        function updateTimer() {
+            if (gameState !== 'playing') return;
+            timeLeft--;
+            DOM.hudTimer.innerText = timeLeft;
+            if (timeLeft <= 0) {
+                endLevel(false);
+            }
+        }
+
+        function gameLoop() {
+            if (gameState !== 'playing') {
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Update & Draw Balloons
+            for (let i = balloons.length - 1; i >= 0; i--) {
+                let b = balloons[i];
+                b.update();
+                b.draw(ctx);
+                
+                // Check interaction
+                if (cursor.active && b.checkHit(cursor.x, cursor.y)) {
+                    handlePop(b);
+                    b.markedForDeletion = true;
+                    cursor.active = false; // Reset to require new click/gesture if mouse
+                }
+                
+                if (b.markedForDeletion) balloons.splice(i, 1);
+            }
+
+            // Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.update();
+                p.draw(ctx);
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            // Texts
+            for (let i = floatTexts.length - 1; i >= 0; i--) {
+                let t = floatTexts[i];
+                t.update();
+                t.draw(ctx);
+                if (t.life <= 0) floatTexts.splice(i, 1);
+            }
+
+            // Draw AR Cursor (if tracking)
+            if (inputMode === 'ai' && cursor.x > 0) {
+                ctx.beginPath();
+                ctx.arc(cursor.x, cursor.y, 15, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(0, 243, 255, 0.4)';
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#00f3ff';
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.arc(cursor.x, cursor.y, 5, 0, Math.PI*2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+        requestAnimationFrame(gameLoop);
+
+        function startLevel(levelId) {
+            currentLevel = LEVELS.find(l => l.id === levelId);
+            score = 0;
+            combo = 0;
+            maxCombo = 0;
+            targetCount = 0;
+            timeLeft = currentLevel.time;
+            balloons = [];
+            particles = [];
+            floatTexts = [];
+            
+            DOM.hudLevel.innerText = `LVL ${currentLevel.id}`;
+            DOM.hudTarget.innerText = `Cari: ${currentLevel.targetText}`;
+            DOM.hudTimer.innerText = timeLeft;
+            updateHUD();
+            
+            gameState = 'playing';
+            showScreen('hud');
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            setTimeout(spawnBalloon, 1000);
+        }
+
+        function endLevel(win) {
+            gameState = 'result';
+            clearInterval(timerInterval);
+            showScreen('result');
+            
+            const pnl = document.getElementById('result-panel');
+            pnl.classList.remove('border-neon-cyan', 'border-neon-pink', 'shadow-[0_0_30px_#00f3ff]', 'shadow-[0_0_30px_#ff00ea]');
+            
+            if (win) {
+                Synth.victory();
+                document.getElementById('result-title').innerText = "LEVEL SELESAI!";
+                document.getElementById('result-title').classList.replace('text-neon-pink', 'text-neon-cyan');
+                pnl.classList.add('border-neon-cyan', 'shadow-[0_0_30px_rgba(0,243,255,0.4)]');
+                
+                let stars = 1;
+                if (timeLeft >= currentLevel.time * 0.4) stars = 3;
+                else if (timeLeft >= currentLevel.time * 0.15) stars = 2;
+                
+                document.getElementById('result-stars').innerText = '⭐'.repeat(stars) + '🌑'.repeat(3-stars);
+                
+                // Save progress
+                if(!saveScore[currentLevel.id] || saveScore[currentLevel.id].stars < stars) {
+                    saveScore[currentLevel.id] = { stars: stars, unlocked: true };
+                }
+                // Unlock next
+                if (currentLevel.id < LEVELS.length) {
+                    if(!saveScore[currentLevel.id + 1]) {
+                        saveScore[currentLevel.id + 1] = { stars: 0, unlocked: true };
+                    }
+                    document.getElementById('btn-result-next').classList.remove('hidden');
+                } else {
+                    document.getElementById('btn-result-next').classList.add('hidden');
+                }
+                saveProgress();
+                generateLevelGrid();
+                
+            } else {
+                Synth.error();
+                document.getElementById('result-title').innerText = "WAKTU HABIS!";
+                document.getElementById('result-title').classList.replace('text-neon-cyan', 'text-neon-pink');
+                document.getElementById('result-stars').innerText = '❌❌❌';
+                pnl.classList.add('border-neon-pink', 'shadow-[0_0_30px_rgba(255,0,234,0.4)]');
+                document.getElementById('btn-result-next').classList.add('hidden');
+            }
+            
+            document.getElementById('result-score').innerText = score;
+            document.getElementById('result-combo').innerText = `x${maxCombo}`;
+            document.getElementById('result-time').innerText = `${timeLeft}s`;
+        }
+
+        // --- UI & NAVIGATION LOGIC ---
+        function generateLevelGrid() {
+            const grid = document.getElementById('level-grid');
+            grid.innerHTML = '';
+            LEVELS.forEach(lvl => {
+                const data = saveScore[lvl.id];
+                const isUnlocked = !!data;
+                const stars = isUnlocked ? data.stars : 0;
+                
+                const btn = document.createElement('button');
+                btn.className = `p-4 rounded-2xl flex flex-col items-center justify-center gap-2 border-2 transition-all ${isUnlocked ? 'border-neon-cyan/50 bg-cyan-900/20 hover:bg-cyan-900/40 hover:scale-105 cursor-pointer' : 'border-gray-700 bg-gray-800/50 opacity-50 cursor-not-allowed'}`;
+                
+                btn.innerHTML = `
+                    <span class="font-orbitron font-bold text-xl ${isUnlocked ? 'text-white' : 'text-gray-500'}">LVL ${lvl.id}</span>
+                    <span class="font-inter text-xs text-center ${isUnlocked ? 'text-cyan-200' : 'text-gray-600'} h-8">${lvl.title}</span>
+                    <div class="text-sm tracking-widest drop-shadow-md">
+                        ${isUnlocked ? ('⭐'.repeat(stars) + '🌑'.repeat(3-stars)) : '🔒'}
+                    </div>
+                `;
+                
+                if (isUnlocked) {
+                    btn.onclick = () => {
+                        startLevel(lvl.id);
+                    };
+                }
+                grid.appendChild(btn);
+            });
+        }
+
+        // Button Listeners
+        DOM.btnPlay.onclick = () => { Synth.init(); generateLevelGrid(); showScreen('levels'); };
+        document.getElementById('btn-tutorial').onclick = () => showScreen('tutorial');
+        document.getElementById('btn-close-tutorial').onclick = () => showScreen('main');
+        document.getElementById('btn-tutorial-ok').onclick = () => showScreen('main');
+        document.getElementById('btn-close-levels').onclick = () => showScreen('main');
+        
+        document.getElementById('btn-pause').onclick = () => {
+            if(gameState === 'playing') {
+                gameState = 'paused';
+                clearInterval(timerInterval);
+                DOM.screens.pause.classList.remove('hidden');
+                DOM.screens.pause.style.display = 'flex';
+            }
+        };
+        document.getElementById('btn-resume').onclick = () => {
+            gameState = 'playing';
+            DOM.screens.pause.classList.add('hidden');
+            timerInterval = setInterval(updateTimer, 1000);
+        };
+        document.getElementById('btn-restart-pause').onclick = () => {
+            DOM.screens.pause.classList.add('hidden');
+            startLevel(currentLevel.id);
+        };
+        document.getElementById('btn-quit-pause').onclick = () => {
+            DOM.screens.pause.classList.add('hidden');
+            gameState = 'menu';
+            showScreen('main');
+        };
+
+        document.getElementById('btn-result-menu').onclick = () => { gameState = 'menu'; showScreen('main'); };
+        document.getElementById('btn-result-levels').onclick = () => { gameState = 'menu'; generateLevelGrid(); showScreen('levels'); };
+        document.getElementById('btn-result-restart').onclick = () => startLevel(currentLevel.id);
+        document.getElementById('btn-result-next').onclick = () => startLevel(currentLevel.id + 1);
+
+        
+        // Input Switcher
+        document.getElementById('btn-input-mode').onclick = toggleInputMode;
+        window.addEventListener('keydown', (e) => {
+            if(e.key.toLowerCase() === 'm') toggleInputMode();
+        });
+
+        function toggleInputMode() {
+            if (inputMode === 'mouse') {
+                inputMode = 'ai';
+                document.getElementById('icon-mouse').classList.add('hidden');
+                document.getElementById('icon-hand').classList.remove('hidden');
+                if(!cameraStarted) initCamera();
+            } else {
+                inputMode = 'mouse';
+                document.getElementById('icon-mouse').classList.remove('hidden');
+                document.getElementById('icon-hand').classList.add('hidden');
+                cursor.x = -100; cursor.y = -100;
+            }
+        }
+
+        // Mouse/Touch Input
+        function handleInput(e) {
+            if (inputMode !== 'mouse' || gameState !== 'playing') return;
+            // Handle touch vs mouse
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            const rect = canvas.getBoundingClientRect();
+            // Calculate scale based on actual canvas size vs internal resolution
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            cursor.x = (clientX - rect.left) * scaleX;
+            cursor.y = (clientY - rect.top) * scaleY;
+            cursor.active = true;
+
+            // Reset after a tiny delay so it doesn't auto-pop multiple
+            setTimeout(() => cursor.active = false, 50);
+        }
+
+        canvas.addEventListener('mousedown', handleInput);
+        canvas.addEventListener('touchstart', handleInput, {passive: true});
+
+        // MediaPipe Integration
+        let cameraStarted = false;
+        const videoElement = document.getElementById('video-bg');
+        
+        async function initCamera() {
+            if (cameraStarted) return;
+            try {
+                if (typeof Hands === 'undefined' || typeof Camera === 'undefined') {
+                    throw new Error("Library AI tidak dapat dimuat karena koneksi atau terblokir.");
+                }
+
+                // Initialize MediaPipe Hands
+                const hands = new Hands({locateFile: (file) => {
+                    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+                }});
+                
+                hands.setOptions({
+                    maxNumHands: 1,
+                    modelComplexity: 1,
+                    minDetectionConfidence: 0.6,
+                    minTrackingConfidence: 0.6
+                });
+                
+                hands.onResults(onResults);
+                
+                const camera = new Camera(videoElement, {
+                    onFrame: async () => {
+                        await hands.send({image: videoElement});
+                    },
+                    width: 640,
+                    height: 480
+                });
+                
+                await camera.start();
+                cameraStarted = true;
+                
+                // Update UI
+                DOM.camStatus.innerHTML = '✅ AI Engine Siap (Kamera Aktif)';
+                DOM.camStatus.classList.replace('text-neon-amber', 'text-neon-green');
+
+            } catch (error) {
+                console.error("Camera error:", error);
+                DOM.camStatus.innerHTML = '❌ Kamera gagal/diblokir. Menggunakan Mode Mouse.';
+                DOM.camStatus.classList.replace('text-neon-amber', 'text-neon-pink');
+                
+                // Fallback otomatis ke mouse
+                inputMode = 'mouse';
+                document.getElementById('icon-mouse').classList.remove('hidden');
+                document.getElementById('icon-hand').classList.add('hidden');
+            }
+        }
+
+        function onResults(results) {
+            if (gameState !== 'playing' || inputMode !== 'ai') return;
+            
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                // Index finger tip is landmark 8
+                const indexTip = landmarks[8];
+                
+                // Map normalized coordinates (0-1) to canvas size
+                // Note: video is mirrored horizontally, so we invert X
+                cursor.x = (1 - indexTip.x) * canvas.width;
+                cursor.y = indexTip.y * canvas.height;
+                cursor.active = true; // continuous pop check in AI mode
+            } else {
+                cursor.active = false;
+                cursor.x = -100;
+            }
+        }
+
+        // Start initialization automatically in background
+        window.addEventListener('load', () => {
+            initCamera();
+        });
+
+    </script>
+</body>
+</html>
