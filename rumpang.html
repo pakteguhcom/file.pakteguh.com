@@ -395,6 +395,7 @@
         let questionIndex = 0;
         let currentQuestion = null;
         let nextQuestionTimeout = null;
+        let spawnTimeout = null;
         
         let orbs = [];
         let particles = [];
@@ -600,7 +601,8 @@
                 orbs.push(new DataOrb(currentLevel, currentQuestion.answer));
             }
             let rate = currentLevel.spawnRate + (Math.random() * 500);
-            setTimeout(spawnOrb, rate);
+            clearTimeout(spawnTimeout);
+            spawnTimeout = setTimeout(spawnOrb, rate);
         }
 
         function createExplosion(x, y, color) {
@@ -655,6 +657,10 @@
             // Clear current orbs to force new answer spawns
             orbs = []; 
             gameState = 'playing';
+
+            // Restart siklus gelembung setelah jeda transisi
+            clearTimeout(spawnTimeout);
+            spawnTimeout = setTimeout(spawnOrb, 500);
         }
 
         function handlePop(orb) {
@@ -668,12 +674,12 @@
                 Synth.correct();
                 floatTexts.push(new FloatText(orb.x, orb.y, `+${currentLevel.points} 🎯`, '#00FF9D'));
                 DOM.stats.score.innerText = score.toString().padStart(3, '0');
-                
-                // Animation fill blank
-                gameState = 'transitioning'; // pause gameplay briefly
-                orbs = []; // clear screen
-                const blank = document.getElementById('blank-spot');
-                if(blank) {
+            
+            // Animation fill blank
+            gameState = 'transitioning'; // pause gameplay briefly
+            orbs.forEach(o => o.markedForDeletion = true); // clear screen safely
+            const blank = document.getElementById('blank-spot');
+            if(blank) {
                     blank.innerText = orb.text;
                     blank.classList.remove('text-holo-cyan', 'border-holo-cyan', 'bg-holo-cyan/10', 'animate-pulse');
                     blank.classList.add('text-holo-emerald', 'border-holo-emerald', 'bg-holo-emerald/20', 'shadow-[0_0_15px_#00FF9D]');
@@ -719,6 +725,8 @@
             // Draw Entities
             for (let i = orbs.length - 1; i >= 0; i--) {
                 let o = orbs[i];
+                if (!o) continue; // Prevent undefined errors
+
                 if(gameState === 'playing') o.update();
                 o.draw(ctx);
                 
@@ -787,7 +795,8 @@
             clearInterval(timerInterval);
             timerInterval = setInterval(updateTimer, 1000);
             
-            setTimeout(spawnOrb, 1000);
+            clearTimeout(spawnTimeout);
+            spawnTimeout = setTimeout(spawnOrb, 1000);
         }
 
         function endLevel(win) {
@@ -926,6 +935,10 @@
             gameState = 'playing'; // might overwrite transitioning, but acceptable
             DOM.screens.pause.classList.add('hidden');
             timerInterval = setInterval(updateTimer, 1000);
+
+            // Restart gelembung setelah pause
+            clearTimeout(spawnTimeout);
+            spawnOrb();
         };
         document.getElementById('btn-restart-pause').onclick = () => {
             DOM.screens.pause.classList.add('hidden');
