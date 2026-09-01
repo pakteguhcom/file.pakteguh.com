@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HoloWord AR: Health & Sickness</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- MediaPipe Hands -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        outfit: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        holo: {
+                            cyan: '#00F0FF',
+                            purple: '#8A2BE2',
+                            emerald: '#00FF9D',
+                            dark: '#0B0F19',
+                            panel: 'rgba(11, 15, 25, 0.75)'
+                        }
+                    },
+                    animation: {
+                        'glow-pulse': 'glowPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 4s ease-in-out infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                    },
+                    keyframes: {
+                        glowPulse: {
+                            '0%, 100%': { opacity: 1, filter: 'drop-shadow(0 0 15px #00F0FF)' },
+                            '50%': { opacity: .6, filter: 'drop-shadow(0 0 5px #00F0FF)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #05070A;
+            /* Advanced Tech Grid Background */
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.1), transparent 60%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            margin: 0;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+        }
+        
+        .glass-panel {
+            background: rgba(11, 15, 25, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 240, 255, 0.05);
+        }
+
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-4px, 0, 0); }
+            20%, 80% { transform: translate3d(5px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-7px, 0, 0); }
+            40%, 60% { transform: translate3d(7px, 0, 0); }
+        }
+
+        #video-bg {
+            transform: scaleX(-1);
+            opacity: 0.25;
+            filter: contrast(120%) saturate(80%) hue-rotate(180deg) brightness(80%);
+            mix-blend-mode: luminosity;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.4); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.8); }
+
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+
+<body class="text-white h-screen w-screen flex items-center justify-center p-0 md:p-4 font-outfit">
+
+    <!-- Main 16:9 Container -->
+    <div id="game-container" class="relative w-full h-full md:max-w-[1280px] md:max-h-[720px] md:aspect-video bg-[#0B0F19] md:rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(0,240,255,0.15)] border-0 md:border md:border-holo-cyan/30">
+        
+        <!-- Webcam Background -->
+        <video id="video-bg" class="absolute inset-0 w-full h-full object-cover hidden md:block" autoplay playsinline></video>
+        
+        <!-- Game Canvas -->
+        <canvas id="game-canvas" class="absolute inset-0 w-full h-full z-10 cursor-crosshair"></canvas>
+
+        <!-- HUD (Always on top during gameplay) -->
+        <div id="hud" class="absolute inset-0 w-full h-full pointer-events-none hidden z-20 flex flex-col justify-between">
+            
+            <!-- Top Bar -->
+            <div class="p-4 md:p-6 flex justify-between items-start w-full">
+                <!-- Left: Stats -->
+                <div class="flex flex-col gap-3">
+                    <div class="glass-panel px-5 py-2.5 rounded-2xl flex items-center gap-4">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-holo-cyan uppercase tracking-widest font-mono">Level</span>
+                            <span id="hud-level" class="font-bold text-xl leading-none">1</span>
+                        </div>
+                        <div class="w-px h-8 bg-holo-cyan/20"></div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-holo-emerald uppercase tracking-widest font-mono">Score</span>
+                            <span id="hud-score" class="font-bold text-xl leading-none text-holo-emerald">000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Time & Controls -->
+                <div class="flex gap-3 items-start pointer-events-auto">
+                    <div class="glass-panel px-5 py-2.5 rounded-2xl flex flex-col items-end">
+                        <span class="text-[10px] text-holo-cyan uppercase tracking-widest font-mono">Time Remaining</span>
+                        <span id="hud-timer" class="font-bold text-2xl leading-none text-white font-mono">00:00</span>
+                    </div>
+                    <button id="btn-input-mode" class="glass-panel p-3 rounded-2xl hover:bg-white/10 transition-all border-holo-purple/30 text-holo-purple hover:text-white group relative">
+                        <svg id="icon-mouse" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                        <svg id="icon-hand" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"></path></svg>
+                    </button>
+                    <button id="btn-pause" class="glass-panel p-3 rounded-2xl hover:bg-white/10 transition-all border-holo-cyan/30 text-holo-cyan hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom: Dialogue Question Box -->
+            <div class="p-4 md:p-8 w-full flex justify-center pb-8 md:pb-12">
+                <div class="glass-panel w-full max-w-3xl p-6 rounded-3xl border-t-2 border-holo-cyan shadow-[0_0_40px_rgba(0,240,255,0.15)] relative overflow-hidden">
+                    <!-- Progress Bar -->
+                    <div class="absolute top-0 left-0 h-1 bg-holo-cyan/20 w-full">
+                        <div id="hud-progress-bar" class="h-full bg-holo-cyan transition-all duration-300 shadow-[0_0_10px_#00F0FF]" style="width: 16%;"></div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mb-2">
+                        <span id="hud-dialog-context" class="font-mono text-xs text-holo-purple tracking-widest uppercase">Dialog 1</span>
+                        <span id="hud-question-counter" class="font-mono text-xs text-gray-400">1 / 6</span>
+                    </div>
+                    
+                    <div class="flex gap-4 items-start">
+                        <!-- Speaker Avatar -->
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-holo-cyan to-holo-purple p-[2px] flex-shrink-0">
+                            <div class="w-full h-full rounded-full bg-holo-dark flex items-center justify-center font-bold text-lg" id="hud-speaker-initial">S</div>
+                        </div>
+                        <!-- Question Text -->
+                        <div class="flex-grow pt-1">
+                            <p class="text-sm text-gray-400 font-mono mb-1" id="hud-speaker-name">Sari</p>
+                            <p class="text-2xl md:text-3xl font-medium leading-relaxed" id="hud-question-text">
+                                You look pale, Budi. Are you <span class="inline-block min-w-[120px] text-center border-b-2 border-holo-cyan text-holo-cyan px-2 pb-1 bg-holo-cyan/10 rounded-t-lg mx-1 animate-pulse">______</span> ?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OVERLAYS (z-30 to z-50) -->
+        
+        <!-- Main Menu -->
+        <div id="screen-main" class="absolute inset-0 z-40 flex flex-col items-center justify-center bg-[#0B0F19]/80 backdrop-blur-md">
+            <!-- Decorative Tech Circle -->
+            <div class="absolute w-[600px] h-[600px] border border-holo-cyan/10 rounded-full animate-spin-slow pointer-events-none"></div>
+            <div class="absolute w-[400px] h-[400px] border border-holo-purple/20 rounded-full animate-spin-slow pointer-events-none" style="animation-direction: reverse;"></div>
+
+            <div class="glass-panel p-10 rounded-3xl flex flex-col items-center max-w-lg w-full relative z-10 border-t-2 border-t-holo-cyan">
+                <div class="text-xs font-mono tracking-[0.3em] text-holo-cyan mb-2">LKPD INTERACTIVE SIMULATION</div>
+                <h1 class="font-outfit text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-holo-cyan via-white to-holo-purple mb-4 text-center drop-shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+                    HoloWord AR
+                </h1>
+                <p class="text-gray-300 text-center mb-8 font-light leading-relaxed">Fill in the blanks to complete the health dialogues. Pop the correct holographic data node using your finger or mouse.</p>
+                
+                <div id="camera-status" class="mb-8 font-mono text-xs flex items-center gap-3 text-holo-purple bg-holo-purple/10 px-4 py-2 rounded-full border border-holo-purple/30">
+                    <span class="animate-spin text-lg">⚙</span> System Initialization...
+                </div>
+
+                <div class="flex flex-col gap-4 w-full">
+                    <button id="btn-play" class="w-full bg-gradient-to-r from-holo-cyan to-[#0099ff] text-black py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] hover:scale-[1.02] transition-all duration-300 uppercase tracking-widest">
+                        Initialize Mission
+                    </button>
+                    <button id="btn-tutorial" class="w-full glass-panel py-4 rounded-xl font-bold text-white hover:bg-white/10 transition-all uppercase tracking-widest text-sm">
+                        Operating Manual
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Level Select Modal -->
+        <div id="screen-levels" class="absolute inset-0 z-50 hidden flex-col items-center justify-center bg-[#0B0F19]/90 backdrop-blur-xl p-6">
+            <div class="w-full max-w-4xl glass-panel p-8 md:p-10 rounded-3xl relative flex flex-col h-[85%] border-t-2 border-t-holo-purple">
+                <button id="btn-close-levels" class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-gray-400 hover:text-white transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                
+                <div class="text-center mb-10">
+                    <h2 class="font-outfit text-3xl md:text-4xl font-black text-white tracking-wide">SELECT SIMULATION</h2>
+                    <p class="font-mono text-sm text-holo-purple mt-2 uppercase tracking-widest">Database: Health & Sickness</p>
+                </div>
+                
+                <div id="level-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-y-auto pb-4 flex-grow content-start custom-scrollbar pr-2">
+                    <!-- Levels injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tutorial Modal -->
+        <div id="screen-tutorial" class="absolute inset-0 z-50 hidden flex-col items-center justify-center bg-[#0B0F19]/90 backdrop-blur-xl p-6">
+            <div class="w-full max-w-2xl glass-panel p-8 md:p-10 rounded-3xl relative border-t-2 border-t-holo-emerald">
+                <button id="btn-close-tutorial" class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-gray-400 hover:text-white transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <h2 class="font-outfit text-3xl font-black text-holo-emerald mb-8 text-center uppercase tracking-wide">Operating Manual</h2>
+                
+                <div class="space-y-6 text-gray-300 font-light mb-10">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-holo-cyan/20 text-holo-cyan flex items-center justify-center flex-shrink-0 font-bold">1</div>
+                        <p class="pt-2">Read the dialogue at the bottom of the screen. Identify the missing word.</p>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-holo-purple/20 text-holo-purple flex items-center justify-center flex-shrink-0 font-bold">2</div>
+                        <p class="pt-2">Holographic data nodes containing words will float upwards.</p>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-holo-emerald/20 text-holo-emerald flex items-center justify-center flex-shrink-0 font-bold">3</div>
+                        <p class="pt-2">Use your <strong>Index Finger</strong> (AR Mode) or <strong>Mouse/Touch</strong> to pop the node with the correct answer.</p>
+                    </div>
+                    <div class="bg-red-500/10 border border-red-500/30 p-4 rounded-xl flex items-center gap-4 text-red-200 text-sm">
+                        <span class="text-2xl">⚠</span> Popping the wrong word will deduct points and trigger a system error!
+                    </div>
+                </div>
+                <button id="btn-tutorial-ok" class="w-full bg-holo-emerald/20 border border-holo-emerald text-holo-emerald py-3 rounded-xl font-bold hover:bg-holo-emerald hover:text-black transition-all uppercase tracking-widest">Acknowledge</button>
+            </div>
+        </div>
+
+        <!-- Pause Menu -->
+        <div id="screen-pause" class="absolute inset-0 z-50 hidden flex-col items-center justify-center bg-[#0B0F19]/80 backdrop-blur-lg">
+            <h2 class="font-outfit text-5xl font-black text-white mb-2 tracking-widest">SYSTEM PAUSED</h2>
+            <p class="font-mono text-holo-cyan mb-10 tracking-widest uppercase">Simulation on Standby</p>
+            <div class="flex flex-col gap-4 w-72">
+                <button id="btn-resume" class="glass-panel py-4 rounded-xl font-bold text-holo-emerald hover:bg-holo-emerald/20 transition-all border-holo-emerald/50 uppercase tracking-wider">Resume</button>
+                <button id="btn-restart-pause" class="glass-panel py-4 rounded-xl font-bold text-white hover:bg-white/10 transition-all uppercase tracking-wider">Restart Protocol</button>
+                <button id="btn-quit-pause" class="glass-panel py-4 rounded-xl font-bold text-red-400 hover:bg-red-400/20 transition-all border-red-400/30 uppercase tracking-wider">Abort Mission</button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="screen-result" class="absolute inset-0 z-50 hidden flex-col items-center justify-center bg-[#0B0F19]/90 backdrop-blur-xl">
+            <div class="glass-panel p-10 rounded-3xl text-center max-w-lg w-full transform scale-95 transition-transform duration-500 border-t-2" id="result-panel">
+                
+                <div class="font-mono text-sm tracking-widest uppercase mb-2" id="result-subtitle">Simulation Status</div>
+                <h2 id="result-title" class="font-outfit text-5xl font-black mb-6">MISSION ACCOMPLISHED</h2>
+                
+                <!-- Stars -->
+                <div class="flex justify-center gap-4 mb-8" id="result-stars-container">
+                    <!-- Stars injected via JS -->
+                </div>
+                
+                <!-- Stats Board -->
+                <div class="bg-black/40 rounded-2xl p-5 mb-8 text-left font-mono text-sm space-y-3 border border-white/5">
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                        <span class="text-gray-400 uppercase">Final Score</span>
+                        <span id="result-score" class="font-bold text-2xl text-holo-cyan">000</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                        <span class="text-gray-400 uppercase">Accuracy</span>
+                        <span id="result-accuracy" class="font-bold text-lg text-white">100%</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 uppercase">Time Bonus</span>
+                        <span id="result-time" class="font-bold text-lg text-holo-emerald">+ 0s</span>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="btn-result-menu" class="glass-panel p-3 rounded-xl hover:bg-white/10 transition flex items-center justify-center gap-2 text-sm uppercase tracking-wider text-gray-300">
+                        Main Menu
+                    </button>
+                    <button id="btn-result-restart" class="glass-panel p-3 rounded-xl hover:bg-white/10 transition flex items-center justify-center gap-2 text-sm uppercase tracking-wider text-white">
+                        Restart
+                    </button>
+                    <button id="btn-result-next" class="col-span-2 bg-gradient-to-r from-holo-cyan to-holo-purple text-white p-4 rounded-xl font-bold hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all uppercase tracking-widest mt-2 hidden">
+                        Next Simulation ▶
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA (LKPD CONTENT) ---
+        const ALL_WORDS = ["Sick", "Headache", "Okay", "Stomachache", "Matter", "Fever"];
+        
+        // Exact content from the worksheet
+        const WORKSHEET_DATA = [
+            { id: 1, context: "Dialog 1", speaker: "Sari", text: "You look pale, Budi. Are you [BLANK]?", answer: "Okay" },
+            { id: 2, context: "Dialog 1", speaker: "Budi", text: "No, I am not. I am [BLANK].", answer: "Sick" },
+            { id: 3, context: "Dialog 1", speaker: "Sari", text: "What is the [BLANK] with you?", answer: "Matter" },
+            { id: 4, context: "Dialog 1", speaker: "Budi", text: "My body is very hot. I think I have a [BLANK].", answer: "Fever" },
+            { id: 5, context: "Dialog 2", speaker: "Rio", text: "No, Sir. I am not feeling well. I have a [BLANK].", answer: "Headache" },
+            { id: 6, context: "Dialog 3", speaker: "Lani", text: "I ate too much spicy food. Now, I have a bad [BLANK].", answer: "Stomachache" }
+        ];
+
+        const LEVELS = [
+            { id: 1, title: "Beginner Operation", time: 90, speed: 1.0, spawnRate: 1500, points: 10 },
+            { id: 2, title: "Advanced Protocol", time: 60, speed: 1.5, spawnRate: 1200, points: 15 },
+            { id: 3, title: "Expert Simulation", time: 45, speed: 2.0, spawnRate: 900, points: 20 }
+        ];
+
+        let saveScore = JSON.parse(localStorage.getItem('holoWordData')) || {};
+        if (!saveScore[1]) saveScore[1] = { stars: 0, unlocked: true };
+
+        function saveProgress() {
+            localStorage.setItem('holoWordData', JSON.stringify(saveScore));
+        }
+
+        // --- AUDIO SYNTHESIZER ---
+        let audioCtx = null;
+        const Synth = {
+            init: () => {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+            },
+            playTone: (freq, type, duration, vol=0.1) => {
+                if(!audioCtx || audioCtx.state !== 'running') return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            },
+            correct: () => {
+                Synth.playTone(600, 'sine', 0.1, 0.2);
+                setTimeout(() => Synth.playTone(800, 'sine', 0.2, 0.2), 50);
+            },
+            error: () => {
+                Synth.playTone(150, 'sawtooth', 0.3, 0.3);
+                setTimeout(() => Synth.playTone(100, 'sawtooth', 0.4, 0.3), 100);
+            },
+            pop: () => {
+                Synth.playTone(400, 'sine', 0.1, 0.1);
+            },
+            victory: () => {
+                [440, 554.37, 659.25, 880].forEach((freq, i) => {
+                    setTimeout(() => Synth.playTone(freq, 'square', 0.4, 0.1), i * 150);
+                });
+            }
+        };
+
+        // --- STATE VARIABLES ---
+        let gameState = 'menu'; // menu, playing, paused, result, transitioning
+        let currentLevel = null;
+        let score = 0;
+        let totalHits = 0;
+        let correctHits = 0;
+        let timeLeft = 0;
+        let timerInterval = null;
+        let inputMode = 'mouse';
+        
+        let questionIndex = 0;
+        let currentQuestion = null;
+        let nextQuestionTimeout = null;
+        
+        let orbs = [];
+        let particles = [];
+        let floatTexts = [];
+        let cursor = { x: -100, y: -100, active: false };
+
+        // --- CANVAS SETUP ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('game-container');
+
+        function resizeCanvas() {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // --- DOM CONTROLLERS ---
+        const DOM = {
+            container: document.getElementById('game-container'),
+            hud: document.getElementById('hud'),
+            screens: {
+                main: document.getElementById('screen-main'),
+                levels: document.getElementById('screen-levels'),
+                tutorial: document.getElementById('screen-tutorial'),
+                pause: document.getElementById('screen-pause'),
+                result: document.getElementById('screen-result')
+            },
+            hudQ: {
+                context: document.getElementById('hud-dialog-context'),
+                counter: document.getElementById('hud-question-counter'),
+                speakerInit: document.getElementById('hud-speaker-initial'),
+                speakerName: document.getElementById('hud-speaker-name'),
+                text: document.getElementById('hud-question-text'),
+                progress: document.getElementById('hud-progress-bar')
+            },
+            stats: {
+                level: document.getElementById('hud-level'),
+                score: document.getElementById('hud-score'),
+                timer: document.getElementById('hud-timer')
+            },
+            camStatus: document.getElementById('camera-status')
+        };
+
+        function showScreen(screenName) {
+            Object.values(DOM.screens).forEach(s => {
+                s.classList.add('hidden');
+                s.style.display = ''; 
+            });
+            
+            if(screenName === 'hud') {
+                DOM.hud.classList.remove('hidden');
+            } else if (DOM.screens[screenName]) {
+                DOM.screens[screenName].classList.remove('hidden');
+                DOM.screens[screenName].style.display = 'flex';
+                DOM.hud.classList.add('hidden');
+            }
+        }
+
+        // --- GAME ENTITIES ---
+        class DataOrb {
+            constructor(levelData, targetWord) {
+                this.radius = window.innerWidth < 768 ? 40 : 50; 
+                this.x = Math.random() * (canvas.width - this.radius*4) + this.radius*2;
+                this.y = canvas.height + this.radius + Math.random() * 100;
+                
+                // Spawn logic: 35% chance to spawn the correct answer, otherwise random distractor
+                const isTarget = Math.random() < 0.35;
+                if (isTarget) {
+                    this.text = targetWord;
+                } else {
+                    let distractors = ALL_WORDS.filter(w => w !== targetWord);
+                    this.text = distractors[Math.floor(Math.random() * distractors.length)];
+                }
+                
+                this.speed = (1.5 + Math.random() * 1.5) * levelData.speed;
+                this.swaySpeed = 0.015 + Math.random() * 0.02;
+                this.swayAmount = 1 + Math.random() * 1.5;
+                this.seed = Math.random() * 100;
+                
+                // Colors palette
+                const colors = ['#00F0FF', '#8A2BE2', '#00FF9D'];
+                this.baseColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                this.markedForDeletion = false;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotSpeed = (Math.random() - 0.5) * 0.05;
+            }
+
+            update() {
+                this.y -= this.speed;
+                this.x += Math.sin(this.seed) * this.swayAmount;
+                this.seed += this.swaySpeed;
+                this.rotation += this.rotSpeed;
+                if (this.y + this.radius < 0) this.markedForDeletion = true;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                // Outer Hex/Tech Ring
+                ctx.rotate(this.rotation);
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius + 10, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(255,255,255,0.1)`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius + 10, 0, Math.PI / 2);
+                ctx.strokeStyle = this.baseColor;
+                ctx.lineWidth = 3;
+                ctx.shadowColor = this.baseColor;
+                ctx.shadowBlur = 10;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                ctx.rotate(-this.rotation); // reset rotation for text
+
+                // Core Orb
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(11, 15, 25, 0.85)';
+                ctx.fill();
+                ctx.strokeStyle = this.baseColor;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Text
+                ctx.fillStyle = 'white';
+                ctx.font = `bold ${window.innerWidth < 768 ? 12 : 14}px JetBrains Mono`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.text.toUpperCase(), 0, 0);
+                
+                ctx.restore();
+            }
+
+            checkHit(cx, cy) {
+                const dist = Math.hypot(cx - this.x, cy - this.y);
+                return dist < this.radius + 10; // slightly larger hit area
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y;
+                this.color = color;
+                this.size = Math.random() * 4 + 2;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 6 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.05 + 0.02;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.rect(this.x, this.y, this.size, this.size); // square particles for tech feel
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class FloatText {
+            constructor(x, y, text, color) {
+                this.x = x; this.y = y;
+                this.text = text; this.color = color;
+                this.life = 1.0;
+                this.vy = -1.5;
+            }
+            update() {
+                this.y += this.vy;
+                this.life -= 0.015;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.font = 'bold 20px JetBrains Mono';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 10;
+                ctx.fillText(this.text, this.x, this.y);
+                ctx.restore();
+            }
+        }
+
+        function spawnOrb() {
+            if (gameState !== 'playing') return;
+            if (currentQuestion && orbs.length < 6) {
+                orbs.push(new DataOrb(currentLevel, currentQuestion.answer));
+            }
+            let rate = currentLevel.spawnRate + (Math.random() * 500);
+            setTimeout(spawnOrb, rate);
+        }
+
+        function createExplosion(x, y, color) {
+            for(let i=0; i<20; i++) particles.push(new Particle(x, y, color));
+        }
+
+        function triggerErrorShake() {
+            DOM.container.classList.remove('shake');
+            void DOM.container.offsetWidth; 
+            DOM.container.classList.add('shake');
+            
+            // Flash red
+            const flash = document.createElement('div');
+            flash.className = 'absolute inset-0 bg-red-500/20 z-10 pointer-events-none transition-opacity duration-300';
+            DOM.container.appendChild(flash);
+            setTimeout(() => { flash.style.opacity = '0'; setTimeout(()=>flash.remove(), 300); }, 100);
+        }
+
+        function formatTime(secs) {
+            const m = Math.floor(secs / 60);
+            const s = secs % 60;
+            return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }
+
+        function loadQuestion(index) {
+            if (index >= WORKSHEET_DATA.length) {
+                endLevel(true);
+                return;
+            }
+            
+            currentQuestion = WORKSHEET_DATA[index];
+            questionIndex = index;
+            
+            // Update UI
+            DOM.hudQ.context.innerText = currentQuestion.context;
+            DOM.hudQ.counter.innerText = `${index + 1} / ${WORKSHEET_DATA.length}`;
+            DOM.hudQ.speakerInit.innerText = currentQuestion.speaker.charAt(0);
+            DOM.hudQ.speakerName.innerText = currentQuestion.speaker;
+            
+            // Highlight speaker color based on char code for consistency
+            const colors = ['text-holo-cyan', 'text-holo-purple', 'text-holo-emerald', 'text-yellow-400'];
+            const charCode = currentQuestion.speaker.charCodeAt(0);
+            DOM.hudQ.speakerInit.className = `w-full h-full rounded-full bg-holo-dark flex items-center justify-center font-bold text-xl ${colors[charCode % colors.length]}`;
+            
+            // Prepare text with blank
+            let formattedText = currentQuestion.text.replace('[BLANK]', `<span id="blank-spot" class="inline-block min-w-[120px] text-center border-b-2 border-holo-cyan text-holo-cyan px-2 pb-1 bg-holo-cyan/10 rounded-t-lg mx-1 animate-pulse transition-all">______</span>`);
+            DOM.hudQ.text.innerHTML = formattedText;
+            
+            // Update progress bar
+            DOM.hudQ.progress.style.width = `${((index) / WORKSHEET_DATA.length) * 100}%`;
+            
+            // Clear current orbs to force new answer spawns
+            orbs = []; 
+            gameState = 'playing';
+        }
+
+        function handlePop(orb) {
+            totalHits++;
+            createExplosion(orb.x, orb.y, orb.baseColor);
+            
+            if (orb.text === currentQuestion.answer) {
+                // CORRECT
+                correctHits++;
+                score += currentLevel.points;
+                Synth.correct();
+                floatTexts.push(new FloatText(orb.x, orb.y, `+${currentLevel.points} 🎯`, '#00FF9D'));
+                DOM.stats.score.innerText = score.toString().padStart(3, '0');
+                
+                // Animation fill blank
+                gameState = 'transitioning'; // pause gameplay briefly
+                orbs = []; // clear screen
+                const blank = document.getElementById('blank-spot');
+                if(blank) {
+                    blank.innerText = orb.text;
+                    blank.classList.remove('text-holo-cyan', 'border-holo-cyan', 'bg-holo-cyan/10', 'animate-pulse');
+                    blank.classList.add('text-holo-emerald', 'border-holo-emerald', 'bg-holo-emerald/20', 'shadow-[0_0_15px_#00FF9D]');
+                }
+                
+                // Next question delay
+                clearTimeout(nextQuestionTimeout);
+                nextQuestionTimeout = setTimeout(() => {
+                    loadQuestion(questionIndex + 1);
+                }, 1500);
+
+            } else {
+                // WRONG
+                score = Math.max(0, score - 5);
+                Synth.error();
+                triggerErrorShake();
+                floatTexts.push(new FloatText(orb.x, orb.y, 'ERROR ❌', '#FF0055'));
+                DOM.stats.score.innerText = score.toString().padStart(3, '0');
+            }
+        }
+
+        function updateTimer() {
+            if (gameState !== 'playing') return;
+            timeLeft--;
+            DOM.stats.timer.innerText = formatTime(timeLeft);
+            
+            if (timeLeft <= 10) DOM.stats.timer.classList.add('text-red-400', 'animate-pulse');
+            else DOM.stats.timer.classList.remove('text-red-400', 'animate-pulse');
+
+            if (timeLeft <= 0) {
+                endLevel(false);
+            }
+        }
+
+        function gameLoop() {
+            if (gameState === 'menu' || gameState === 'paused') {
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Entities
+            for (let i = orbs.length - 1; i >= 0; i--) {
+                let o = orbs[i];
+                if(gameState === 'playing') o.update();
+                o.draw(ctx);
+                
+                // Interaction
+                if (gameState === 'playing' && cursor.active && o.checkHit(cursor.x, cursor.y)) {
+                    handlePop(o);
+                    o.markedForDeletion = true;
+                    cursor.active = false; 
+                }
+                if (o.markedForDeletion) orbs.splice(i, 1);
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.update();
+                p.draw(ctx);
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            for (let i = floatTexts.length - 1; i >= 0; i--) {
+                let t = floatTexts[i];
+                t.update();
+                t.draw(ctx);
+                if (t.life <= 0) floatTexts.splice(i, 1);
+            }
+
+            // Draw AR Cursor
+            if (inputMode === 'ai' && cursor.x > 0) {
+                ctx.beginPath();
+                ctx.arc(cursor.x, cursor.y, 20, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(0, 240, 255, 0.2)';
+                ctx.fill();
+                
+                // Crosshair
+                ctx.beginPath();
+                ctx.moveTo(cursor.x - 10, cursor.y); ctx.lineTo(cursor.x + 10, cursor.y);
+                ctx.moveTo(cursor.x, cursor.y - 10); ctx.lineTo(cursor.x, cursor.y + 10);
+                ctx.strokeStyle = '#00F0FF';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+        requestAnimationFrame(gameLoop);
+
+        function startLevel(levelId) {
+            Synth.init();
+            currentLevel = LEVELS.find(l => l.id === levelId);
+            score = 0;
+            totalHits = 0;
+            correctHits = 0;
+            timeLeft = currentLevel.time;
+            orbs = [];
+            particles = [];
+            floatTexts = [];
+            
+            DOM.stats.level.innerText = currentLevel.id;
+            DOM.stats.score.innerText = "000";
+            DOM.stats.timer.innerText = formatTime(timeLeft);
+            DOM.stats.timer.classList.remove('text-red-400', 'animate-pulse');
+            
+            showScreen('hud');
+            loadQuestion(0); // Starts game loop logic
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            setTimeout(spawnOrb, 1000);
+        }
+
+        function endLevel(win) {
+            gameState = 'result';
+            clearInterval(timerInterval);
+            DOM.hud.classList.add('hidden'); // Hide HUD immediately
+            showScreen('result');
+            
+            const pnl = document.getElementById('result-panel');
+            const title = document.getElementById('result-title');
+            const subtitle = document.getElementById('result-subtitle');
+            const starsContainer = document.getElementById('result-stars-container');
+            
+            pnl.classList.remove('border-holo-cyan', 'border-red-500', 'shadow-[0_0_50px_rgba(0,240,255,0.3)]', 'shadow-[0_0_50px_rgba(255,0,0,0.3)]');
+            starsContainer.innerHTML = '';
+
+            let accuracy = totalHits === 0 ? 0 : Math.round((correctHits / totalHits) * 100);
+            
+            if (win) {
+                Synth.victory();
+                title.innerText = "MISSION ACCOMPLISHED";
+                title.className = "font-outfit text-4xl md:text-5xl font-black mb-6 text-holo-cyan";
+                subtitle.innerText = "Simulation Passed";
+                subtitle.className = "font-mono text-sm tracking-widest uppercase mb-2 text-holo-emerald";
+                pnl.classList.add('border-holo-cyan', 'shadow-[0_0_50px_rgba(0,240,255,0.2)]');
+                
+                // Calculate Stars based on accuracy & time
+                let stars = 1;
+                if (accuracy >= 80 && timeLeft >= currentLevel.time * 0.2) stars = 2;
+                if (accuracy >= 95 && timeLeft >= currentLevel.time * 0.4) stars = 3;
+                
+                for(let i=0; i<3; i++) {
+                    const star = document.createElement('div');
+                    star.className = `text-5xl ${i < stars ? 'text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.8)]' : 'text-gray-700 opacity-50'}`;
+                    star.innerText = '★';
+                    starsContainer.appendChild(star);
+                }
+                
+                // Bonus logic
+                let bonus = timeLeft * 2;
+                score += bonus;
+                document.getElementById('result-time').innerText = `+ ${bonus} PTS (${timeLeft}s)`;
+                
+                // Save progress
+                if(!saveScore[currentLevel.id] || saveScore[currentLevel.id].stars < stars) {
+                    saveScore[currentLevel.id] = { stars: stars, unlocked: true };
+                }
+                // Unlock next
+                if (currentLevel.id < LEVELS.length) {
+                    if(!saveScore[currentLevel.id + 1]) {
+                        saveScore[currentLevel.id + 1] = { stars: 0, unlocked: true };
+                    }
+                    document.getElementById('btn-result-next').classList.remove('hidden');
+                } else {
+                    document.getElementById('btn-result-next').classList.add('hidden');
+                }
+                saveProgress();
+                
+            } else {
+                Synth.error();
+                title.innerText = "SYSTEM FAILURE";
+                title.className = "font-outfit text-4xl md:text-5xl font-black mb-6 text-red-500";
+                subtitle.innerText = "Time Expired";
+                subtitle.className = "font-mono text-sm tracking-widest uppercase mb-2 text-red-400";
+                pnl.classList.add('border-red-500', 'shadow-[0_0_50px_rgba(255,0,0,0.2)]');
+                
+                starsContainer.innerHTML = `<div class="text-5xl text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]">⚠</div>`;
+                document.getElementById('btn-result-next').classList.add('hidden');
+                document.getElementById('result-time').innerText = `0 PTS`;
+            }
+            
+            document.getElementById('result-score').innerText = score.toString().padStart(3, '0');
+            document.getElementById('result-accuracy').innerText = `${accuracy}%`;
+        }
+
+        // --- UI & MENUS ---
+        function generateLevelGrid() {
+            const grid = document.getElementById('level-grid');
+            grid.innerHTML = '';
+            LEVELS.forEach(lvl => {
+                const data = saveScore[lvl.id];
+                const isUnlocked = !!data;
+                const stars = isUnlocked ? data.stars : 0;
+                
+                const btn = document.createElement('button');
+                btn.className = `p-5 rounded-2xl flex flex-col text-left justify-between gap-4 border transition-all duration-300 ${
+                    isUnlocked ? 'border-holo-cyan/40 bg-holo-cyan/5 hover:bg-holo-cyan/15 hover:-translate-y-1 cursor-pointer group' : 'border-gray-800 bg-black/40 opacity-50 cursor-not-allowed'
+                }`;
+                
+                let starHTML = '';
+                if(isUnlocked) {
+                    for(let i=0; i<3; i++) {
+                        starHTML += `<span class="${i < stars ? 'text-yellow-400' : 'text-gray-700'} text-lg">★</span>`;
+                    }
+                } else {
+                    starHTML = `<span class="text-gray-500 text-sm tracking-widest uppercase"><svg class="w-4 h-4 inline mb-1 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>LOCKED</span>`;
+                }
+
+                btn.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-outfit font-black text-2xl ${isUnlocked ? 'text-white' : 'text-gray-500'}">0${lvl.id}</span>
+                            <div class="flex gap-1">${starHTML}</div>
+                        </div>
+                        <span class="font-mono text-xs ${isUnlocked ? 'text-holo-cyan' : 'text-gray-600'} uppercase block h-8">${lvl.title}</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t ${isUnlocked ? 'border-holo-cyan/20 group-hover:border-holo-cyan/50' : 'border-gray-800'} flex justify-between font-mono text-[10px] text-gray-400 uppercase">
+                        <span>Time: ${lvl.time}s</span>
+                        <span>Pts: ${lvl.points}</span>
+                    </div>
+                `;
+                
+                if (isUnlocked) {
+                    btn.onclick = () => { startLevel(lvl.id); };
+                }
+                grid.appendChild(btn);
+            });
+        }
+
+        // Button Click Listeners
+        DOM.screens.main.querySelector('#btn-play').onclick = () => { Synth.init(); generateLevelGrid(); showScreen('levels'); };
+        document.getElementById('btn-tutorial').onclick = () => showScreen('tutorial');
+        document.getElementById('btn-close-tutorial').onclick = () => showScreen('main');
+        document.getElementById('btn-tutorial-ok').onclick = () => showScreen('main');
+        document.getElementById('btn-close-levels').onclick = () => showScreen('main');
+        
+        document.getElementById('btn-pause').onclick = () => {
+            if(gameState === 'playing' || gameState === 'transitioning') {
+                gameState = 'paused';
+                clearInterval(timerInterval);
+                DOM.screens.pause.classList.remove('hidden');
+                DOM.screens.pause.style.display = 'flex';
+            }
+        };
+        document.getElementById('btn-resume').onclick = () => {
+            gameState = 'playing'; // might overwrite transitioning, but acceptable
+            DOM.screens.pause.classList.add('hidden');
+            timerInterval = setInterval(updateTimer, 1000);
+        };
+        document.getElementById('btn-restart-pause').onclick = () => {
+            DOM.screens.pause.classList.add('hidden');
+            startLevel(currentLevel.id);
+        };
+        document.getElementById('btn-quit-pause').onclick = () => {
+            DOM.screens.pause.classList.add('hidden');
+            gameState = 'menu';
+            showScreen('main');
+        };
+
+        document.getElementById('btn-result-menu').onclick = () => { gameState = 'menu'; showScreen('main'); };
+        document.getElementById('btn-result-restart').onclick = () => startLevel(currentLevel.id);
+        document.getElementById('btn-result-next').onclick = () => startLevel(currentLevel.id + 1);
+
+        // Input Switcher
+        document.getElementById('btn-input-mode').onclick = toggleInputMode;
+
+        function toggleInputMode() {
+            const btn = document.getElementById('btn-input-mode');
+            if (inputMode === 'mouse') {
+                inputMode = 'ai';
+                document.getElementById('icon-mouse').classList.add('hidden');
+                document.getElementById('icon-hand').classList.remove('hidden');
+                btn.classList.replace('border-holo-purple/30', 'border-holo-emerald/50');
+                btn.classList.replace('text-holo-purple', 'text-holo-emerald');
+                if(!cameraStarted) initCamera();
+            } else {
+                inputMode = 'mouse';
+                document.getElementById('icon-mouse').classList.remove('hidden');
+                document.getElementById('icon-hand').classList.add('hidden');
+                btn.classList.replace('border-holo-emerald/50', 'border-holo-purple/30');
+                btn.classList.replace('text-holo-emerald', 'text-holo-purple');
+                cursor.x = -100; cursor.y = -100;
+            }
+        }
+
+        function handleMouseInput(e) {
+            if (inputMode !== 'mouse' || gameState !== 'playing') return;
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            cursor.x = (clientX - rect.left) * scaleX;
+            cursor.y = (clientY - rect.top) * scaleY;
+            cursor.active = true;
+
+            setTimeout(() => cursor.active = false, 50);
+        }
+
+        canvas.addEventListener('mousedown', handleMouseInput);
+        canvas.addEventListener('touchstart', handleMouseInput, {passive: true});
+
+        // MediaPipe Integration
+        let cameraStarted = false;
+        const videoElement = document.getElementById('video-bg');
+        
+        async function initCamera() {
+            if (cameraStarted) return;
+            try {
+                if (typeof Hands === 'undefined' || typeof Camera === 'undefined') {
+                    throw new Error("AI Library failed to load.");
+                }
+
+                const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+                hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 });
+                hands.onResults(onResults);
+                
+                const camera = new Camera(videoElement, {
+                    onFrame: async () => { await hands.send({image: videoElement}); },
+                    width: 640, height: 480
+                });
+                
+                await camera.start();
+                cameraStarted = true;
+                
+                // Update UI
+                DOM.camStatus.innerHTML = '<span class="text-lg">✔</span> Optics Online (AR Active)';
+                DOM.camStatus.className = 'mb-8 font-mono text-xs flex items-center gap-3 text-holo-emerald bg-holo-emerald/10 px-4 py-2 rounded-full border border-holo-emerald/30';
+
+            } catch (error) {
+                console.error("Camera error:", error);
+                DOM.camStatus.innerHTML = '<span class="text-lg">⚠</span> Optics Offline. Standard Mouse Mode Engaged.';
+                DOM.camStatus.className = 'mb-8 font-mono text-xs flex items-center gap-3 text-holo-purple bg-holo-purple/10 px-4 py-2 rounded-full border border-holo-purple/30';
+                
+                inputMode = 'mouse';
+                document.getElementById('icon-mouse').classList.remove('hidden');
+                document.getElementById('icon-hand').classList.add('hidden');
+            }
+        }
+
+        function onResults(results) {
+            if (gameState !== 'playing' || inputMode !== 'ai') return;
+            
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                const indexTip = landmarks[8];
+                cursor.x = (1 - indexTip.x) * canvas.width; // Mirrored
+                cursor.y = indexTip.y * canvas.height;
+                cursor.active = true; 
+            } else {
+                cursor.active = false;
+                cursor.x = -100;
+            }
+        }
+
+        window.addEventListener('load', () => {
+            // Attempt bg init of camera for seamless switch later, but don't force UI wait
+            setTimeout(() => {
+               if(!cameraStarted && navigator.mediaDevices) {
+                   DOM.camStatus.innerHTML = '<span class="text-lg">ℹ</span> Standby. Click Play to initialize.';
+                   DOM.camStatus.classList.remove('animate-spin');
+               }
+            }, 1000);
+        });
+
+    </script>
+</body>
+</html>
