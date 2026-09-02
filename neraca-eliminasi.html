@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neraca Eliminasi AR</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- MediaPipe Hands -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        outfit: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        neon: {
+                            cyan: '#00F0FF',
+                            purple: '#8A2BE2',
+                            emerald: '#00FF9D',
+                            pink: '#FF007F',
+                            amber: '#FFB800',
+                            dark: '#0B0F19',
+                            panel: 'rgba(11, 15, 25, 0.75)'
+                        }
+                    },
+                    animation: {
+                        'glow-pulse': 'glowPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 4s ease-in-out infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        glowPulse: {
+                            '0%, 100%': { opacity: 1, filter: 'drop-shadow(0 0 15px #00F0FF)' },
+                            '50%': { opacity: .6, filter: 'drop-shadow(0 0 5px #00F0FF)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #05070A;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.15), transparent 60%);
+            background-size: 50px 50px, 50px 50px, 100% 100%;
+            margin: 0;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+        }
+        
+        .glass-panel {
+            background: rgba(11, 15, 25, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 240, 255, 0.05);
+        }
+
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-4px, 0, 0); }
+            20%, 80% { transform: translate3d(5px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-7px, 0, 0); }
+            40%, 60% { transform: translate3d(7px, 0, 0); }
+        }
+
+        #video-bg {
+            transform: scaleX(-1);
+            opacity: 0.15;
+            filter: contrast(120%) saturate(50%) hue-rotate(180deg) brightness(60%);
+            mix-blend-mode: screen;
+        }
+
+        /* Drag and Drop Styles */
+        .draggable {
+            cursor: grab;
+            transition: transform 0.1s;
+        }
+        .draggable:active {
+            cursor: grabbing;
+            transform: scale(1.1);
+        }
+        .dropzone {
+            transition: all 0.3s ease;
+        }
+        .dropzone.hovered {
+            background-color: rgba(0, 240, 255, 0.2);
+            border-color: #00F0FF;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+        }
+        .dropzone.filled {
+            border-style: solid;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.4); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.8); }
+
+        .math-font {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body class="text-white h-screen w-screen flex items-center justify-center p-0 md:p-4 font-outfit">
+
+    <!-- Main Container -->
+    <div id="app-container" class="relative w-full h-full md:max-w-[1280px] md:max-h-[720px] md:aspect-video bg-[#0B0F19] md:rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(0,240,255,0.15)] border-0 md:border md:border-neon-cyan/30">
+        
+        <!-- Webcam Background -->
+        <video id="video-bg" class="absolute inset-0 w-full h-full object-cover hidden md:block" autoplay playsinline></video>
+        
+        <!-- AR Canvas Overlay -->
+        <canvas id="ar-canvas" class="absolute inset-0 w-full h-full z-40 pointer-events-none"></canvas>
+
+        <!-- UI Overlay Base -->
+        <div class="absolute inset-0 w-full h-full z-10 flex flex-col">
+            
+            <!-- Top HUD -->
+            <div id="hud-top" class="p-4 md:p-6 flex justify-between items-start w-full hidden">
+                <div class="flex gap-4">
+                    <div class="glass-panel px-6 py-2 rounded-2xl flex items-center gap-4">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-neon-cyan uppercase tracking-widest font-mono">Tahap</span>
+                            <span id="hud-level" class="font-bold text-xl leading-none text-white">1</span>
+                        </div>
+                        <div class="w-px h-8 bg-neon-cyan/30"></div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-neon-emerald uppercase tracking-widest font-mono">Fase</span>
+                            <span id="hud-phase" class="font-bold text-lg leading-none text-neon-emerald">Eliminasi 1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pointer-events-auto">
+                    <button id="btn-input-mode" class="glass-panel p-3 rounded-2xl hover:bg-white/10 transition-all border-neon-purple/30 text-neon-purple hover:text-white group relative" title="Toggle Input Mode">
+                        <svg id="icon-mouse" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                        <svg id="icon-hand" class="w-6 h-6 hidden text-neon-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"></path></svg>
+                    </button>
+                    <button id="btn-home" class="glass-panel p-3 rounded-2xl hover:bg-white/10 transition-all border-neon-cyan/30 text-neon-cyan hover:text-white" title="Menu Utama">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game Area -->
+            <div id="game-area" class="flex-1 flex flex-col p-4 md:p-8 hidden z-20">
+                <!-- Instruction Banner -->
+                <div class="w-full flex justify-center mb-6">
+                    <div class="glass-panel px-8 py-3 rounded-full border-neon-cyan/50 text-center animate-glow-pulse">
+                        <p id="instruction-text" class="font-mono text-sm md:text-base text-neon-cyan tracking-wider uppercase">Samakan koefisien X atau Y menggunakan pengali</p>
+                    </div>
+                </div>
+
+                <!-- Main Balance Board -->
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-[1fr_auto_1.5fr] gap-4 md:gap-8 items-center max-w-5xl mx-auto w-full">
+                    
+                    <!-- Left: Original Equations -->
+                    <div class="glass-panel p-6 rounded-3xl h-full flex flex-col justify-center border-t-2 border-neon-purple relative">
+                        <div class="absolute -top-3 left-6 bg-[#0B0F19] px-3 font-mono text-xs text-neon-purple tracking-widest">PERSAMAAN ASLI</div>
+                        <div class="space-y-8 math-font text-2xl md:text-3xl text-center">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500 text-sm">(1)</span>
+                                <span id="eq1-original" class="font-bold tracking-widest text-white">x + y = 7</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500 text-sm">(2)</span>
+                                <span id="eq2-original" class="font-bold tracking-widest text-white">x - y = 1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Middle: Multipliers (Dropzones) -->
+                    <div class="flex flex-col gap-8 justify-center items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="text-neon-cyan font-bold text-2xl">×</span>
+                            <div id="drop-mul1" class="dropzone w-20 h-20 md:w-24 md:h-24 rounded-2xl border-2 border-dashed border-neon-cyan/50 bg-neon-cyan/5 flex items-center justify-center text-3xl md:text-4xl font-bold font-mono text-neon-cyan" data-type="multiplier" data-target="eq1"></div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-neon-cyan font-bold text-2xl">×</span>
+                            <div id="drop-mul2" class="dropzone w-20 h-20 md:w-24 md:h-24 rounded-2xl border-2 border-dashed border-neon-cyan/50 bg-neon-cyan/5 flex items-center justify-center text-3xl md:text-4xl font-bold font-mono text-neon-cyan" data-type="multiplier" data-target="eq2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Resulting Equations & Operation -->
+                    <div class="glass-panel p-6 rounded-3xl h-full flex flex-col justify-center border-t-2 border-neon-emerald relative">
+                        <div class="absolute -top-3 left-6 bg-[#0B0F19] px-3 font-mono text-xs text-neon-emerald tracking-widest">SETELAH DIKALI</div>
+                        
+                        <!-- Memindahkan Kotak Target Operasi ke Kanan -->
+                        <div class="relative w-full pr-16 md:pr-24">
+                            <div class="space-y-8 math-font text-2xl md:text-3xl text-right pr-2">
+                                <div id="eq1-result" class="text-gray-400 min-h-[40px] tracking-widest transition-colors duration-300">...</div>
+                                <div id="eq2-result" class="text-gray-400 min-h-[40px] tracking-widest transition-colors duration-300">...</div>
+                            </div>
+                            
+                            <!-- Operation Dropzone (posisi di kanan bawah) -->
+                            <div class="absolute right-0 bottom-0 transform translate-y-4 z-30">
+                                <div id="drop-op" class="dropzone w-20 h-20 md:w-24 md:h-24 rounded-2xl border-4 border-dashed border-neon-pink/50 bg-neon-pink/5 flex items-center justify-center text-5xl md:text-6xl font-bold font-mono text-neon-pink shadow-[0_0_20px_rgba(255,0,127,0.2)] transition-all" data-type="operator" style="display: none;"></div>
+                            </div>
+                        </div>
+                            
+                        <!-- Calculation Line -->
+                        <div id="calc-line" class="w-full h-1 bg-neon-emerald/50 mt-6 mb-4 hidden rounded"></div>
+                        
+                        <!-- Elimination Result -->
+                        <div id="elimination-result" class="math-font text-2xl md:text-3xl text-center text-neon-emerald font-bold min-h-[40px] tracking-widest opacity-0 transition-opacity duration-500">
+                            <!-- Result appears here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom: Tools Arsenal (Draggables) -->
+                <div class="w-full mt-6 p-4 glass-panel rounded-2xl flex flex-col items-center border-t border-neon-cyan/20">
+                    <span class="font-mono text-xs text-gray-400 tracking-widest mb-3 uppercase">Peralatan (Sentuh lalu lepaskan di kotak kosong)</span>
+                    
+                    <!-- Multipliers -->
+                    <div id="arsenal-multipliers" class="flex gap-6 mb-4 flex-wrap justify-center">
+                        <!-- Filled by JS -->
+                    </div>
+                    
+                    <!-- Operators (Diubah jadi kotak membulat persis seperti angka pengali) -->
+                    <div id="arsenal-operators" class="flex gap-10 hidden pb-4">
+                        <div class="draggable w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-neon-pink/20 to-neon-pink/40 border-2 border-neon-pink text-neon-pink flex items-center justify-center text-5xl md:text-6xl font-bold font-mono shadow-[0_0_20px_rgba(255,0,127,0.4)] hover:scale-110 cursor-pointer" data-val="+">+</div>
+                        <div class="draggable w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-neon-pink/20 to-neon-pink/40 border-2 border-neon-pink text-neon-pink flex items-center justify-center text-5xl md:text-6xl font-bold font-mono shadow-[0_0_20px_rgba(255,0,127,0.4)] hover:scale-110 cursor-pointer" data-val="-">-</div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div id="action-buttons" class="mt-4 hidden">
+                        <button id="btn-check" class="bg-gradient-to-r from-neon-emerald to-[#0099ff] text-black px-8 py-3 rounded-xl font-bold tracking-widest uppercase hover:shadow-[0_0_20px_rgba(0,255,157,0.5)] transition-all">
+                            Eksekusi Eliminasi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREENS (z-50) -->
+        
+        <!-- Main Screen -->
+        <div id="screen-main" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#0B0F19]/90 backdrop-blur-md">
+            <div class="absolute w-[800px] h-[800px] border border-neon-cyan/5 rounded-full animate-spin-slow pointer-events-none"></div>
+            
+            <div class="glass-panel p-10 rounded-3xl flex flex-col items-center max-w-xl w-full relative z-10 border-t-2 border-t-neon-cyan">
+                <div class="text-xs font-mono tracking-[0.3em] text-neon-emerald mb-2">LKPD INTERAKTIF SPLDV</div>
+                <h1 class="font-outfit text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-white to-neon-purple mb-4 text-center drop-shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+                    NERACA ELIMINASI
+                </h1>
+                <p class="text-gray-300 text-center mb-8 font-light leading-relaxed">Selesaikan Sistem Persamaan Linear Dua Variabel dengan menimbang koefisien secara tepat. Gunakan jarimu di depan kamera untuk menyeret (drag) pengali.</p>
+                
+                <div id="camera-status" class="mb-8 font-mono text-xs flex items-center gap-3 text-neon-amber bg-neon-amber/10 px-4 py-2 rounded-full border border-neon-amber/30">
+                    <span class="animate-pulse text-lg">⚙</span> Menginisialisasi Sensor Optik...
+                </div>
+
+                <div class="flex flex-col gap-4 w-full">
+                    <button id="btn-start" class="w-full bg-gradient-to-r from-neon-cyan to-neon-purple text-white py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] hover:scale-[1.02] transition-all duration-300 uppercase tracking-widest cursor-pointer">
+                        Mulai Simulasi
+                    </button>
+                    <button id="btn-tutorial" class="w-full glass-panel py-4 rounded-xl font-bold text-white hover:bg-white/10 transition-all uppercase tracking-widest text-sm">
+                        Petunjuk Gestur
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Level Select Modal -->
+        <div id="screen-levels" class="absolute inset-0 z-50 hidden flex-col items-center justify-center bg-[#0B0F19]/90 backdrop-blur-xl p-6">
+            <div class="w-full max-w-4xl glass-panel p-8 md:p-10 rounded-3xl relative flex flex-col h-[85%] border-t-2 border-t-neon-purple">
+                <button id="btn-close-levels" class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-gray-400 hover:text-white transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                
+                <div class="text-center mb-10">
+                    <h2 class="font-outfit text-3xl md:text-4xl font-black text-white tracking-wide">PILIH TAHAPAN</h2>
+                    <p class="font-mono text-sm text-neon-purple mt-2 uppercase tracking-widest">Materi: Metode Eliminasi SPLDV</p>
+                </div>
+                
+                <div id="level-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-y-auto pb-4 flex-grow content-start custom-scrollbar pr-2">
+                    <!-- Levels injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Level Complete Screen -->
+        <div id="screen-result" class="absolute inset-0 z-50 hidden flex-col items-center justify-center bg-[#0B0F19]/90 backdrop-blur-xl">
+            <div class="glass-panel p-10 rounded-3xl text-center max-w-lg w-full transform scale-95 transition-transform duration-500 border-t-2 border-neon-emerald shadow-[0_0_50px_rgba(0,255,157,0.2)]">
+                
+                <div class="font-mono text-sm tracking-widest uppercase mb-2 text-neon-cyan">Analisis Selesai</div>
+                <h2 class="font-outfit text-4xl md:text-5xl font-black mb-6 text-white">TAHAP TUNTAS</h2>
+                
+                <div class="bg-black/40 rounded-2xl p-6 mb-8 text-center font-mono space-y-4 border border-white/5">
+                    <p class="text-gray-400 uppercase text-sm">Himpunan Penyelesaian:</p>
+                    <div id="result-hp" class="text-3xl font-bold text-neon-emerald tracking-widest">
+                        { x, y }
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="btn-result-menu" class="glass-panel p-4 rounded-xl hover:bg-white/10 transition flex items-center justify-center gap-2 text-sm uppercase tracking-wider text-gray-300">
+                        Menu Utama
+                    </button>
+                    <button id="btn-result-next" class="bg-gradient-to-r from-neon-cyan to-neon-purple text-white p-4 rounded-xl font-bold hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all uppercase tracking-widest">
+                        Tahap Lanjut ▶
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tutorial Modal -->
+        <div id="screen-tutorial" class="absolute inset-0 z-50 hidden flex-col items-center justify-center bg-[#0B0F19]/90 backdrop-blur-xl p-6">
+            <div class="w-full max-w-2xl glass-panel p-8 rounded-3xl relative border-t-2 border-t-neon-amber shadow-[0_0_40px_rgba(255,184,0,0.15)]">
+                <button id="btn-close-tutorial" class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/20 text-gray-400 hover:text-white transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                
+                <h2 class="font-outfit text-3xl font-black text-white mb-8 text-center tracking-wide">PETUNJUK GESTUR AI</h2>
+                
+                <div class="space-y-6 text-gray-300 text-sm md:text-base font-outfit">
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <div class="w-12 h-12 rounded-full bg-neon-cyan/20 flex items-center justify-center shrink-0 border border-neon-cyan text-neon-cyan text-2xl shadow-[0_0_15px_rgba(0,240,255,0.3)]">👆</div>
+                        <div>
+                            <h3 class="font-bold text-white mb-1 text-lg">1. Arahkan Jari (Pointer)</h3>
+                            <p class="leading-relaxed">Gunakan jari telunjuk Anda di depan kamera untuk menggerakkan kursor neon di layar.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <div class="w-12 h-12 rounded-full bg-neon-emerald/20 flex items-center justify-center shrink-0 border border-neon-emerald text-neon-emerald text-2xl shadow-[0_0_15px_rgba(0,255,157,0.3)]">🤏</div>
+                        <div>
+                            <h3 class="font-bold text-white mb-1 text-lg">2. Cubit Singkat (Klik) untuk Mengambil</h3>
+                            <p class="leading-relaxed">Arahkan kursor ke angka/operator, lalu <strong>cubit singkat sekali (seperti mengklik)</strong>. Angka akan menempel di kursor Anda.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <div class="w-12 h-12 rounded-full bg-neon-pink/20 flex items-center justify-center shrink-0 border border-neon-pink text-neon-pink text-2xl shadow-[0_0_15px_rgba(255,0,127,0.3)]">🎯</div>
+                        <div>
+                            <h3 class="font-bold text-white mb-1 text-lg">3. Cubit Singkat Lagi untuk Menaruh</h3>
+                            <p class="leading-relaxed">Arahkan angka yang Anda bawa ke kotak putus-putus kosong, lalu <strong>cubit singkat sekali lagi</strong> untuk menempatkannya.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <div class="w-12 h-12 rounded-full bg-neon-pink/20 flex items-center justify-center shrink-0 border border-neon-pink text-neon-pink text-2xl shadow-[0_0_15px_rgba(255,0,127,0.3)]">🖐️</div>
+                        <div>
+                            <h3 class="font-bold text-white mb-1 text-lg">3. Lepaskan untuk Menaruh (Drop)</h3>
+                            <p class="leading-relaxed">Seret angka ke kotak putus-putus kosong yang berkedip, lalu <strong>lepaskan cubitan Anda</strong> untuk menempatkannya.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA & LEVELS ---
+        const LEVELS = [
+            { id: 1, eq1: {x: 1, y: 1, c: 7}, eq2: {x: 1, y: -1, c: 1}, title: "Tahap 1", desc: "Koefisien sama (Latihan 1)" },
+            { id: 2, eq1: {x: 2, y: 3, c: 12}, eq2: {x: 1, y: 2, c: 7}, title: "Tahap 2", desc: "Satu persamaan dikali (Latihan 2)" },
+            { id: 3, eq1: {x: 3, y: 2, c: 16}, eq2: {x: 2, y: 5, c: 18}, title: "Tahap 3", desc: "Dua persamaan dikali (Latihan 3)" },
+            { id: 4, eq1: {x: 4, y: 1, c: 14}, eq2: {x: 2, y: 3, c: 12}, title: "Tahap 4", desc: "Latihan Mandiri 1" }
+        ];
+
+        let currentLevelIndex = 0;
+        let currentLevel = null;
+        let eliminationPhase = 1; // 1 = Find first var, 2 = Find second var
+        let eliminatedVarInPhase1 = null; // 'x' or 'y'
+        let foundValues = { x: null, y: null };
+        
+        let state = {
+            mul1: null,
+            mul2: null,
+            op: null, // '+' or '-'
+            res1: null, // {x, y, c}
+            res2: null
+        };
+
+        // Progress Tracking
+        let saveProgressData = JSON.parse(localStorage.getItem('neracaEliminasi')) || {};
+        if (!saveProgressData[1]) saveProgressData[1] = { unlocked: true };
+        function saveProgress() { localStorage.setItem('neracaEliminasi', JSON.stringify(saveProgressData)); }
+
+        // --- AUDIO SYNTHESIZER ---
+        let audioCtx = null;
+        const Synth = {
+            init: () => {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+            },
+            playTone: (freq, type, duration, vol=0.1) => {
+                if(!audioCtx || audioCtx.state !== 'running') return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            },
+            snap: () => Synth.playTone(600, 'sine', 0.1, 0.1),
+            error: () => { Synth.playTone(150, 'sawtooth', 0.2, 0.2); setTimeout(()=>Synth.playTone(100, 'sawtooth', 0.3, 0.2), 100); },
+            success: () => { Synth.playTone(800, 'sine', 0.2, 0.1); setTimeout(()=>Synth.playTone(1200, 'sine', 0.3, 0.15), 150); },
+            levelComplete: () => { [440, 554.37, 659.25, 880].forEach((f, i) => setTimeout(() => Synth.playTone(f, 'square', 0.4, 0.1), i*150)); }
+        };
+
+        // --- DOM ELEMENTS ---
+        const DOM = {
+            screens: {
+                main: document.getElementById('screen-main'),
+                levels: document.getElementById('screen-levels'),
+                result: document.getElementById('screen-result'),
+                tutorial: document.getElementById('screen-tutorial')
+            },
+            hud: document.getElementById('hud-top'),
+            gameArea: document.getElementById('game-area'),
+            eq1Orig: document.getElementById('eq1-original'),
+            eq2Orig: document.getElementById('eq2-original'),
+            dropMul1: document.getElementById('drop-mul1'),
+            dropMul2: document.getElementById('drop-mul2'),
+            eq1Res: document.getElementById('eq1-result'),
+            eq2Res: document.getElementById('eq2-result'),
+            dropOp: document.getElementById('drop-op'),
+            calcLine: document.getElementById('calc-line'),
+            elimRes: document.getElementById('elimination-result'),
+            arsenalMul: document.getElementById('arsenal-multipliers'),
+            arsenalOp: document.getElementById('arsenal-operators'),
+            btnCheck: document.getElementById('btn-check'),
+            actionBtns: document.getElementById('action-buttons'),
+            instruction: document.getElementById('instruction-text')
+        };
+
+        // --- UTILS ---
+        function formatEq(eq) {
+            let str = '';
+            if (eq.x !== 0) str += `${eq.x === 1 ? '' : eq.x === -1 ? '-' : eq.x}x `;
+            
+            if (eq.y !== 0) {
+                if (str !== '') {
+                    str += eq.y > 0 ? '+ ' : '- ';
+                    str += `${Math.abs(eq.y) === 1 ? '' : Math.abs(eq.y)}y `;
+                } else {
+                    str += `${eq.y === 1 ? '' : eq.y === -1 ? '-' : eq.y}y `;
+                }
+            }
+            if (str === '') str = '0 ';
+            return `${str.trim()} = ${eq.c}`;
+        }
+
+        function shakeElement(el) {
+            el.classList.remove('shake');
+            void el.offsetWidth;
+            el.classList.add('shake');
+        }
+
+        // --- GAME LOGIC ---
+        function loadLevel(index) {
+            currentLevelIndex = index;
+            currentLevel = LEVELS[index];
+            eliminationPhase = 1;
+            eliminatedVarInPhase1 = null;
+            foundValues = { x: null, y: null };
+            
+            document.getElementById('hud-level').innerText = currentLevel.id;
+            setupPhase();
+        }
+
+        function setupPhase() {
+            state = { mul1: null, mul2: null, op: null, res1: null, res2: null };
+            
+            // Setup UI for phase
+            document.getElementById('hud-phase').innerText = `Eliminasi ${eliminationPhase}`;
+            DOM.instruction.innerText = `Fase ${eliminationPhase}: Samakan koefisien ${eliminationPhase === 1 ? 'X atau Y' : (eliminatedVarInPhase1 === 'x' ? 'Y' : 'X')} dengan pengali`;
+            
+            DOM.eq1Orig.innerText = formatEq(currentLevel.eq1);
+            DOM.eq2Orig.innerText = formatEq(currentLevel.eq2);
+            
+            // Reset dropzones
+            DOM.dropMul1.innerText = ''; DOM.dropMul1.classList.remove('filled', 'border-solid');
+            DOM.dropMul2.innerText = ''; DOM.dropMul2.classList.remove('filled', 'border-solid');
+            DOM.dropOp.innerText = ''; DOM.dropOp.classList.remove('filled', 'border-solid'); DOM.dropOp.style.display = 'none';
+            
+            // Reset results
+            DOM.eq1Res.innerText = '...'; DOM.eq1Res.className = 'text-gray-600 min-h-[40px] tracking-widest';
+            DOM.eq2Res.innerText = '...'; DOM.eq2Res.className = 'text-gray-600 min-h-[40px] tracking-widest';
+            DOM.calcLine.classList.add('hidden');
+            DOM.elimRes.style.opacity = '0';
+            DOM.elimRes.innerText = '';
+            
+            DOM.actionBtns.classList.add('hidden');
+            DOM.arsenalOp.classList.add('hidden');
+            DOM.arsenalMul.classList.remove('hidden');
+
+            generateMultipliers();
+        }
+
+        function generateMultipliers() {
+            DOM.arsenalMul.innerHTML = '';
+            // Generate multipliers based on current level needs to avoid too much clutter, but allow errors
+            const muls = [1, 2, 3, 4, 5]; 
+            muls.forEach(m => {
+                const el = document.createElement('div');
+                el.className = 'draggable w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-neon-cyan/20 to-neon-cyan/40 border-2 border-neon-cyan text-neon-cyan flex items-center justify-center text-4xl md:text-5xl font-bold font-mono shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:scale-110 cursor-pointer';
+                el.innerText = m;
+                el.dataset.val = m;
+                DOM.arsenalMul.appendChild(el);
+            });
+            initDraggables();
+        }
+
+        function updateResultEquation(target) {
+            if (target === 'eq1' && state.mul1 !== null) {
+                state.res1 = {
+                    x: currentLevel.eq1.x * state.mul1,
+                    y: currentLevel.eq1.y * state.mul1,
+                    c: currentLevel.eq1.c * state.mul1
+                };
+                DOM.eq1Res.innerText = formatEq(state.res1);
+                DOM.eq1Res.className = 'text-white font-bold min-h-[40px] tracking-widest';
+            }
+            if (target === 'eq2' && state.mul2 !== null) {
+                state.res2 = {
+                    x: currentLevel.eq2.x * state.mul2,
+                    y: currentLevel.eq2.y * state.mul2,
+                    c: currentLevel.eq2.c * state.mul2
+                };
+                DOM.eq2Res.innerText = formatEq(state.res2);
+                DOM.eq2Res.className = 'text-white font-bold min-h-[40px] tracking-widest';
+            }
+
+            checkMultipliers();
+        }
+
+        function checkMultipliers() {
+            if (state.mul1 !== null && state.mul2 !== null) {
+                // Check if coefficients match for either x or y
+                const xMatch = Math.abs(state.res1.x) === Math.abs(state.res2.x);
+                const yMatch = Math.abs(state.res1.y) === Math.abs(state.res2.y);
+
+                if (xMatch || yMatch) {
+                    // Valid multipliers found
+                    Synth.success();
+                    DOM.arsenalMul.classList.add('hidden');
+                    DOM.arsenalOp.classList.remove('hidden');
+                    DOM.dropOp.style.display = 'flex';
+                    DOM.instruction.innerText = "Pilih Operasi Tambah (+) atau Kurang (-) agar variabel lenyap";
+                    initDraggables();
+                } else {
+                    Synth.error();
+                    shakeElement(DOM.dropMul1); shakeElement(DOM.dropMul2);
+                    // Reset slightly
+                    setTimeout(() => {
+                        state.mul1 = null; state.mul2 = null;
+                        DOM.dropMul1.innerText = ''; DOM.dropMul1.classList.remove('filled', 'border-solid');
+                        DOM.dropMul2.innerText = ''; DOM.dropMul2.classList.remove('filled', 'border-solid');
+                        DOM.eq1Res.innerText = '...'; DOM.eq1Res.className = 'text-gray-600 min-h-[40px] tracking-widest';
+                        DOM.eq2Res.innerText = '...'; DOM.eq2Res.className = 'text-gray-600 min-h-[40px] tracking-widest';
+                    }, 500);
+                }
+            }
+        }
+
+        DOM.btnCheck.onclick = () => {
+            if (!state.op) return;
+
+            let finalX = state.op === '+' ? state.res1.x + state.res2.x : state.res1.x - state.res2.x;
+            let finalY = state.op === '+' ? state.res1.y + state.res2.y : state.res1.y - state.res2.y;
+            let finalC = state.op === '+' ? state.res1.c + state.res2.c : state.res1.c - state.res2.c;
+
+            if (finalX === 0 || finalY === 0) {
+                // Successful elimination
+                Synth.success();
+                DOM.actionBtns.classList.add('hidden');
+                
+                let resStr = '';
+                let foundVar = '';
+                let val = 0;
+
+                if (finalX === 0) {
+                    resStr = `${finalY}y = ${finalC}`;
+                    val = finalC / finalY;
+                    resStr += `<br><span class="text-white text-xl">y = ${val}</span>`;
+                    foundValues.y = val;
+                    foundVar = 'y';
+                    if (eliminationPhase === 1) eliminatedVarInPhase1 = 'x';
+                } else {
+                    resStr = `${finalX}x = ${finalC}`;
+                    val = finalC / finalX;
+                    resStr += `<br><span class="text-white text-xl">x = ${val}</span>`;
+                    foundValues.x = val;
+                    foundVar = 'x';
+                    if (eliminationPhase === 1) eliminatedVarInPhase1 = 'y';
+                }
+
+                DOM.elimRes.innerHTML = resStr;
+                DOM.elimRes.style.opacity = '1';
+
+                setTimeout(() => {
+                    if (eliminationPhase === 1) {
+                        eliminationPhase = 2;
+                        setupPhase();
+                    } else {
+                        levelComplete();
+                    }
+                }, 3000);
+
+            } else {
+                Synth.error();
+                shakeElement(DOM.dropOp);
+                DOM.instruction.innerText = "Salah operasi! Variabel tidak ada yang lenyap.";
+                setTimeout(() => {
+                    state.op = null;
+                    DOM.dropOp.innerText = ''; DOM.dropOp.classList.remove('filled', 'border-solid');
+                    DOM.actionBtns.classList.add('hidden');
+                    DOM.calcLine.classList.add('hidden');
+                    DOM.elimRes.style.opacity = '0';
+                    DOM.instruction.innerText = "Pilih Operasi Tambah (+) atau Kurang (-) agar variabel lenyap";
+                }, 1500);
+            }
+        };
+
+        function levelComplete() {
+            Synth.levelComplete();
+            
+            // Save Progress
+            if (!saveProgressData[currentLevel.id + 1]) {
+                saveProgressData[currentLevel.id + 1] = { unlocked: true };
+                saveProgress();
+            }
+
+            document.getElementById('result-hp').innerText = `{ x = ${foundValues.x}, y = ${foundValues.y} }`;
+            
+            if (currentLevelIndex < LEVELS.length - 1) {
+                document.getElementById('btn-result-next').classList.remove('hidden');
+            } else {
+                document.getElementById('btn-result-next').classList.add('hidden');
+            }
+
+            hideScreen('game');
+            showScreen('result');
+        }
+
+        // --- DRAG AND DROP (MOUSE/TOUCH) ---
+        let draggedElement = null;
+
+        function initDraggables() {
+            document.querySelectorAll('.draggable').forEach(el => {
+                // Mouse events
+                el.addEventListener('mousedown', handleDragStart);
+                // Touch events
+                el.addEventListener('touchstart', handleTouchStart, {passive: false});
+            });
+
+            document.querySelectorAll('.dropzone').forEach(zone => {
+                zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('hovered'); });
+                zone.addEventListener('dragleave', () => zone.classList.remove('hovered'));
+                zone.addEventListener('drop', handleDrop);
+            });
+        }
+
+        // Mouse Drag
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            // Native drag setup for mouse
+            e.target.setAttribute('draggable', 'true');
+            e.target.addEventListener('dragstart', (evt) => {
+                evt.dataTransfer.setData('text/plain', draggedElement.dataset.val);
+            });
+            e.target.addEventListener('dragend', () => { draggedElement = null; e.target.removeAttribute('draggable'); });
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const zone = e.target.closest('.dropzone');
+            zone.classList.remove('hovered');
+            if(!draggedElement || !zone) return;
+
+            processDrop(zone, draggedElement.dataset.val);
+        }
+
+        // Touch Drag (Polyfill for native drag)
+        let touchTarget = null;
+        let touchClone = null;
+
+        function handleTouchStart(e) {
+            e.preventDefault(); // Prevent scroll
+            touchTarget = e.target;
+            const touch = e.touches[0];
+            
+            touchClone = touchTarget.cloneNode(true);
+            touchClone.style.position = 'absolute';
+            touchClone.style.zIndex = '1000';
+            touchClone.style.pointerEvents = 'none';
+            document.body.appendChild(touchClone);
+            
+            moveTouchClone(touch.pageX, touch.pageY);
+
+            document.addEventListener('touchmove', handleTouchMove, {passive: false});
+            document.addEventListener('touchend', handleTouchEnd);
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            moveTouchClone(touch.pageX, touch.pageY);
+            
+            // Highlight dropzones
+            const elUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
+            document.querySelectorAll('.dropzone').forEach(z => z.classList.remove('hovered'));
+            if(elUnderTouch && elUnderTouch.closest('.dropzone')) {
+                elUnderTouch.closest('.dropzone').classList.add('hovered');
+            }
+        }
+
+        function handleTouchEnd(e) {
+            document.removeEventListener('touchmove', handleTouchMove);
+            document.removeEventListener('touchend', handleTouchEnd);
+            
+            if(touchClone) {
+                touchClone.remove();
+                touchClone = null;
+            }
+
+            const touch = e.changedTouches[0];
+            const elUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
+            const zone = elUnderTouch ? elUnderTouch.closest('.dropzone') : null;
+            
+            document.querySelectorAll('.dropzone').forEach(z => z.classList.remove('hovered'));
+
+            if(zone && touchTarget) {
+                processDrop(zone, touchTarget.dataset.val);
+            }
+            touchTarget = null;
+        }
+
+        function moveTouchClone(pageX, pageY) {
+            if(touchClone) {
+                touchClone.style.left = (pageX - touchClone.offsetWidth / 2) + 'px';
+                touchClone.style.top = (pageY - touchClone.offsetHeight / 2) + 'px';
+            }
+        }
+
+        function processDrop(zone, val) {
+            const expectedType = zone.dataset.type;
+            const droppedType = isNaN(val) ? 'operator' : 'multiplier';
+
+            if (expectedType !== droppedType) {
+                Synth.error();
+                shakeElement(zone);
+                return;
+            }
+
+            Synth.snap();
+            zone.innerText = val;
+            zone.classList.add('filled', 'border-solid');
+            zone.classList.remove('border-dashed');
+
+            if (expectedType === 'multiplier') {
+                const targetEq = zone.dataset.target;
+                if (targetEq === 'eq1') state.mul1 = parseInt(val);
+                if (targetEq === 'eq2') state.mul2 = parseInt(val);
+                updateResultEquation(targetEq);
+            } else if (expectedType === 'operator') {
+                state.op = val;
+                DOM.calcLine.classList.remove('hidden');
+                DOM.actionBtns.classList.remove('hidden');
+            }
+        }
+
+        // --- AR / MEDIA PIPE HAND TRACKING ---
+        let inputMode = 'mouse';
+        let cameraStarted = false;
+        const videoElement = document.getElementById('video-bg');
+        const arCanvas = document.getElementById('ar-canvas');
+        const arCtx = arCanvas.getContext('2d');
+        
+        let arCursor = { x: -100, y: -100, active: false, pinching: false };
+        let arDraggedItem = null;
+
+        function resizeARCanvas() {
+            const rect = document.getElementById('app-container').getBoundingClientRect();
+            arCanvas.width = rect.width;
+            arCanvas.height = rect.height;
+        }
+        window.addEventListener('resize', resizeARCanvas);
+        resizeARCanvas();
+
+        async function initCamera() {
+            if (cameraStarted) return;
+            const camStatus = document.getElementById('camera-status');
+            try {
+                if (typeof Hands === 'undefined') throw new Error("MediaPipe not loaded");
+
+                const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
+                hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 });
+                hands.onResults(onARResults);
+                
+                const camera = new Camera(videoElement, {
+                    onFrame: async () => { await hands.send({image: videoElement}); },
+                    width: 640, height: 480
+                });
+                
+                await camera.start();
+                cameraStarted = true;
+                
+                camStatus.innerHTML = '<span class="text-lg">✔</span> Optik Aktif (AR Siap)';
+                camStatus.className = 'mb-8 font-mono text-xs flex items-center gap-3 text-neon-emerald bg-neon-emerald/10 px-4 py-2 rounded-full border border-neon-emerald/30';
+                
+                // Switch mode automatically
+                inputMode = 'ai';
+                updateInputUI();
+                arLoop();
+
+            } catch (error) {
+                console.error("Camera error:", error);
+                camStatus.innerHTML = '<span class="text-lg">⚠</span> Optik Gagal. Mode Sentuh/Mouse Aktif.';
+                camStatus.className = 'mb-8 font-mono text-xs flex items-center gap-3 text-neon-pink bg-neon-pink/10 px-4 py-2 rounded-full border border-neon-pink/30';
+            }
+        }
+
+        function updateInputUI() {
+            const btn = document.getElementById('btn-input-mode');
+            if (inputMode === 'ai') {
+                document.getElementById('icon-mouse').classList.add('hidden');
+                document.getElementById('icon-hand').classList.remove('hidden');
+                btn.classList.replace('border-neon-purple/30', 'border-neon-emerald/50');
+            } else {
+                document.getElementById('icon-mouse').classList.remove('hidden');
+                document.getElementById('icon-hand').classList.add('hidden');
+                btn.classList.replace('border-neon-emerald/50', 'border-neon-purple/30');
+            }
+        }
+
+        document.getElementById('btn-input-mode').onclick = () => {
+            inputMode = inputMode === 'mouse' ? 'ai' : 'mouse';
+            updateInputUI();
+            if(inputMode === 'ai' && !cameraStarted) initCamera();
+        };
+
+        function onARResults(results) {
+            if (inputMode !== 'ai') return;
+            
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                const indexTip = landmarks[8];
+                const thumbTip = landmarks[4];
+                
+                // Map to container coordinates
+                arCursor.x = (1 - indexTip.x) * arCanvas.width; // Mirrored
+                arCursor.y = indexTip.y * arCanvas.height;
+                arCursor.active = true;
+                
+                // Calculate Pinch (distance between thumb and index)
+                const dist = Math.hypot(indexTip.x - thumbTip.x, indexTip.y - thumbTip.y);
+                const wasPinching = arCursor.pinching;
+                arCursor.pinching = dist < 0.05; // Pinch threshold
+
+                handleARGesture(wasPinching);
+            } else {
+                arCursor.active = false;
+                arCursor.pinching = false;
+                if(arDraggedItem) dropARItem();
+            }
+        }
+
+        function handleARGesture(wasPinching) {
+            // Find element under cursor
+            const appRect = document.getElementById('app-container').getBoundingClientRect();
+            // Convert canvas local coords back to viewport coords for elementFromPoint
+            const viewportX = arCursor.x + appRect.left;
+            const viewportY = arCursor.y + appRect.top;
+            
+            const elUnder = document.elementFromPoint(viewportX, viewportY);
+
+            // Pinch Start (Grab)
+            if (arCursor.pinching && !wasPinching && !arDraggedItem) {
+                if (elUnder && elUnder.classList.contains('draggable')) {
+                    arDraggedItem = {
+                        val: elUnder.dataset.val,
+                        type: isNaN(elUnder.dataset.val) ? 'operator' : 'multiplier',
+                        color: isNaN(elUnder.dataset.val) ? '#FF007F' : '#00F0FF'
+                    };
+                    Synth.snap();
+                } else if (elUnder && elUnder.id === 'btn-check') {
+                    DOM.btnCheck.click(); // AR Click on button
+                }
+            }
+
+            // Pinch Release (Drop)
+            if (!arCursor.pinching && wasPinching && arDraggedItem) {
+                if (elUnder) {
+                    const zone = elUnder.closest('.dropzone');
+                    if (zone) processDrop(zone, arDraggedItem.val);
+                }
+                dropARItem();
+            }
+
+            // Hover effects
+            document.querySelectorAll('.dropzone').forEach(z => z.classList.remove('hovered'));
+            if(elUnder && elUnder.closest('.dropzone') && arDraggedItem) {
+                elUnder.closest('.dropzone').classList.add('hovered');
+            }
+        }
+
+        function dropARItem() {
+            arDraggedItem = null;
+        }
+
+        // AR Render Loop
+        function arLoop() {
+            if (inputMode !== 'ai') {
+                requestAnimationFrame(arLoop);
+                return;
+            }
+
+            arCtx.clearRect(0, 0, arCanvas.width, arCanvas.height);
+
+            if (arCursor.active) {
+                // Draw Cursor
+                arCtx.beginPath();
+                arCtx.arc(arCursor.x, arCursor.y, arCursor.pinching ? 15 : 20, 0, Math.PI*2);
+                arCtx.fillStyle = arCursor.pinching ? 'rgba(0, 255, 157, 0.4)' : 'rgba(0, 240, 255, 0.2)';
+                arCtx.fill();
+                
+                arCtx.beginPath();
+                arCtx.arc(arCursor.x, arCursor.y, 4, 0, Math.PI*2);
+                arCtx.fillStyle = arCursor.pinching ? '#00FF9D' : '#00F0FF';
+                arCtx.fill();
+
+                // Draw Dragged Item
+                if (arDraggedItem) {
+                    arCtx.beginPath();
+                    arCtx.arc(arCursor.x, arCursor.y + 30, 25, 0, Math.PI*2);
+                    arCtx.fillStyle = 'rgba(11, 15, 25, 0.9)';
+                    arCtx.fill();
+                    arCtx.strokeStyle = arDraggedItem.color;
+                    arCtx.lineWidth = 2;
+                    arCtx.stroke();
+                    
+                    arCtx.fillStyle = arDraggedItem.color;
+                    arCtx.font = 'bold 24px JetBrains Mono';
+                    arCtx.textAlign = 'center';
+                    arCtx.textBaseline = 'middle';
+                    arCtx.fillText(arDraggedItem.val, arCursor.x, arCursor.y + 30);
+                }
+            }
+
+            requestAnimationFrame(arLoop);
+        }
+
+        // --- SCREEN NAVIGATION ---
+        function showScreen(screenId) {
+            Object.values(DOM.screens).forEach(s => { s.classList.add('hidden'); s.style.display = ''; });
+            if (screenId === 'game') {
+                DOM.hud.classList.remove('hidden');
+                DOM.gameArea.classList.remove('hidden');
+                DOM.gameArea.classList.add('flex');
+            } else if (DOM.screens[screenId]) {
+                DOM.screens[screenId].classList.remove('hidden');
+                DOM.screens[screenId].style.display = 'flex';
+                DOM.hud.classList.add('hidden');
+                DOM.gameArea.classList.add('hidden');
+                DOM.gameArea.classList.remove('flex');
+            }
+        }
+        function hideScreen(screenId) {
+             if (screenId === 'game') {
+                DOM.hud.classList.add('hidden');
+                DOM.gameArea.classList.add('hidden');
+                DOM.gameArea.classList.remove('flex');
+            }
+        }
+
+        function renderLevelGrid() {
+            const grid = document.getElementById('level-grid');
+            grid.innerHTML = '';
+            LEVELS.forEach(lvl => {
+                const data = saveProgressData[lvl.id];
+                const isUnlocked = !!data;
+                
+                const btn = document.createElement('button');
+                btn.className = `p-6 rounded-2xl flex flex-col text-left gap-4 border transition-all duration-300 ${
+                    isUnlocked ? 'border-neon-cyan/40 bg-neon-cyan/5 hover:bg-neon-cyan/15 hover:-translate-y-1 cursor-pointer group' : 'border-gray-800 bg-black/40 opacity-50 cursor-not-allowed'
+                }`;
+                
+                btn.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <span class="font-outfit font-black text-3xl ${isUnlocked ? 'text-white' : 'text-gray-500'}">0${lvl.id}</span>
+                        ${!isUnlocked ? `<svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>` : '<span class="text-neon-emerald text-sm">TERBUKA</span>'}
+                    </div>
+                    <span class="font-mono text-sm ${isUnlocked ? 'text-neon-cyan' : 'text-gray-600'} uppercase">${lvl.title}</span>
+                    <p class="text-xs text-gray-400 mt-2">${lvl.desc}</p>
+                `;
+                
+                if (isUnlocked) {
+                    btn.onclick = () => { Synth.snap(); loadLevel(lvl.id - 1); showScreen('game'); };
+                }
+                grid.appendChild(btn);
+            });
+        }
+
+        // --- INIT & LISTENERS ---
+        document.getElementById('btn-start').onclick = () => { Synth.init(); renderLevelGrid(); showScreen('levels'); };
+        document.getElementById('btn-tutorial').onclick = () => { Synth.init(); Synth.snap(); showScreen('tutorial'); };
+        document.getElementById('btn-close-tutorial').onclick = () => { Synth.snap(); showScreen('main'); };
+        document.getElementById('btn-close-levels').onclick = () => { Synth.snap(); showScreen('main'); };
+        document.getElementById('btn-home').onclick = () => { Synth.snap(); showScreen('main'); };
+        
+        document.getElementById('btn-result-menu').onclick = () => { Synth.snap(); showScreen('main'); };
+        document.getElementById('btn-result-next').onclick = () => { Synth.snap(); loadLevel(currentLevelIndex + 1); showScreen('game'); };
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+               if(!cameraStarted && navigator.mediaDevices) {
+                   const cam = document.getElementById('camera-status');
+                   cam.innerHTML = '<span class="text-lg">ℹ</span> Standby. Kamera AI siap digunakan.';
+                   cam.classList.remove('animate-pulse');
+                   cam.className = 'mb-8 font-mono text-xs flex items-center gap-3 text-neon-cyan bg-neon-cyan/10 px-4 py-2 rounded-full border border-neon-cyan/30';
+               }
+            }, 1000);
+        });
+
+    </script>
+</body>
+</html>
